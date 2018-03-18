@@ -7,7 +7,7 @@
 
 package au.com.shawware.finska.persistence;
 
-import java.util.List;
+import java.util.Map;
 
 import au.com.shawware.finska.entity.AbstractEntity;
 
@@ -27,7 +27,7 @@ public interface IEntityStore<Entity extends AbstractEntity>
      * 
      * @throws PersistenceException error accessing the store
      */
-    List<Entity> getAll()
+    Map<Integer, Entity> getAll()
         throws PersistenceException;
 
     /**

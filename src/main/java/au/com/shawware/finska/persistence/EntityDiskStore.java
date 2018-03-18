@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,6 +29,8 @@ import au.com.shawware.util.StringUtil;
  * Persists entities to disk as JSON.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
+ * 
+ * @param <EntityType> the entity to be persisted
  */
 public class EntityDiskStore<EntityType extends AbstractEntity> implements IEntityStore<EntityType>
 {
@@ -78,14 +82,14 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
     }
 
     @Override
-    public List<EntityType> getAll()
+    public Map<Integer, EntityType> getAll()
         throws PersistenceException
     {
         try
         {
             return getIdStream()
                     .mapToObj(id -> getForStream(id))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toMap(AbstractEntity::getId, Function.identity()));
         }
         catch (IOException | UncheckedPersistenceException e)
         {
@@ -220,5 +224,11 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
             throw new IllegalArgumentException("Invalid ID:"  + id);
         }
         return new File(mDirectory, mPrefix + String.format(ID_FORMAT, id) + JSON_EXTENSION);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "{" + mEntityName + ", " + mDirectory + '}';
     }
 }
