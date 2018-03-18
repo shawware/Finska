@@ -8,6 +8,7 @@
 package au.com.shawware.finska.persistence;
 
 import au.com.shawware.finska.entity.AbstractEntity;
+import au.com.shawware.util.StringUtil;
 
 /**
  * Factory for creating persistence stores.
@@ -16,12 +17,40 @@ import au.com.shawware.finska.entity.AbstractEntity;
  */
 public class PersistenceFactory
 {
-    private static final String ROOT = "/tmp/finska";
+    /** The singleton instance. */
+    private static PersistenceFactory sFactory;
+    /** The root directory for entity sub-directories. */
+    private final String mRoot;
 
     /**
-     * Prevent construction.
+     * Construct a new instance.
+     * 
+     * @param root the root directory to store entities in
      */
-    private PersistenceFactory() {}
+    private PersistenceFactory(String root)
+    {
+        if (StringUtil.isEmpty(root))
+        {
+            throw new IllegalArgumentException("Empty root directory");
+        }
+        mRoot = root;
+    }
+
+    /**
+     * Retrieves a single instance of this factory.
+     * 
+     * @param root the root directory to store entities in
+     * 
+     * @return The factory.
+     */
+    public static synchronized PersistenceFactory getFactory(String root)
+    {
+        if (sFactory == null)
+        {
+            sFactory = new PersistenceFactory(root);
+        }
+        return sFactory;
+    }
 
     /**
      * Creates an entity store for the given class.
@@ -30,10 +59,10 @@ public class PersistenceFactory
      * 
      * @return The store.
      */
-    public static <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz)
+    public <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz)
     {
         String name = clazz.getSimpleName();
-        String directory = ROOT + '/' + name.toLowerCase();
+        String directory = mRoot + '/' + name.toLowerCase();
         return new EntityDiskStore<EntityType>(directory, name, name.substring(0, 1), clazz);
     }
 }
