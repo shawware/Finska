@@ -8,6 +8,10 @@
 package au.com.shawware.finska.entity;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -16,7 +20,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 /**
- * Models a Finska competition
+ * Models a Finska competition.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
@@ -26,6 +30,10 @@ public class Competition extends AbstractEntity
     private final String mName;
     /** The competition start date. */
     private final LocalDate mStartDate;
+    /** The matches that make up this competition. */
+    private final Map<Integer, Match> mMatches;
+    /** The set of match IDs. */
+    private final Set<Integer> mMatchIds;
 
     /**
      * Constructs a new, identified competition.
@@ -39,8 +47,10 @@ public class Competition extends AbstractEntity
                        @JsonProperty("startDate") LocalDate startDate)
     {
         super(id);
-        mName = name;
+        mName      = name;
         mStartDate = startDate;
+        mMatches   = new HashMap<>();
+        mMatchIds  = new HashSet<>();
     }
 
     /**
@@ -70,5 +80,50 @@ public class Competition extends AbstractEntity
     public LocalDate getStartDate()
     {
         return mStartDate;
+    }
+
+    /**
+     * Adds the given match to this competition.
+     * 
+     * @param match the match to add
+     */
+    @SuppressWarnings("boxing")
+    public void addMatch(Match match)
+    {
+        if (match == null) {
+            throw new IllegalArgumentException("Null match");
+        }
+        if (match.getId() == DEFAULT_ID) {
+            throw new IllegalArgumentException("Invalid match ID");
+        }
+        if (mMatches.containsKey(match.getId())) {
+            throw new IllegalArgumentException("Competition " + getId() + " already contains match " + match.getId());
+        }
+        // Duplicate is okay.
+        mMatchIds.add(match.getId());
+        mMatches.put(match.getId(), match);
+    }
+
+    /**
+     * @return The competition's matches.
+     */
+    public Set<Integer> getMatchIds()
+    {
+        return mMatchIds;
+    }
+
+    /**
+     * Updates this competition's match IDs.
+     */
+    public void setMatchIds(Set<Integer> matchIds)
+    {
+        mMatchIds.clear();
+        mMatchIds.addAll(matchIds);
+    }
+    @Override
+    public String toString()
+    {
+        return "{" + getId() + ", " + mName + ", " + mStartDate + '}';
+//        return StringUtil.toString(null);
     }
 }

@@ -12,10 +12,10 @@ package au.com.shawware.finska.entity;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class AbstractEntity
+public abstract class AbstractEntity implements Comparable<AbstractEntity>
 {
     /** The default ID to use when an entity is yet to be assigned one. */
-    protected static final int DEFAULT_ID = 0;
+    public static final int DEFAULT_ID = 0;
 
     /** The entity's ID. */
     private int mId;
@@ -58,5 +58,11 @@ public abstract class AbstractEntity
             throw new IllegalArgumentException("Invalid id: " + id);
         }
         mId = id;
+    }
+
+    @Override
+    public int compareTo(AbstractEntity that)
+    {
+        return this.mId - that.mId;
     }
 }
