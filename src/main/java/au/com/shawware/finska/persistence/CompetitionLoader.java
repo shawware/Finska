@@ -8,6 +8,9 @@
 package au.com.shawware.finska.persistence;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 import au.com.shawware.finska.entity.AbstractEntity;
 import au.com.shawware.finska.entity.Competition;
@@ -68,7 +71,6 @@ public class CompetitionLoader
      * 
      * @throws PersistenceException error loading players
      */
-    @SuppressWarnings("boxing")
     public Map<Integer, Player> getPlayers()
         throws PersistenceException
     {
@@ -107,45 +109,42 @@ public class CompetitionLoader
             }
         }
 
-        for (Match match : matches.values())
-        {
-            for (Integer id : match.getGameIds())
-            {
-                if (games.containsKey(id))
-                {
-                    match.addGame(games.get(id));
-                }
-                else
-                {
-                    throw new PersistenceException("Match " + match.getId() + " refers to non-existent game; " + id);
-                }
-            }
-            for (Integer id : match.getPlayersIds())
-            {
-                if (players.containsKey(id))
-                {
-                    match.addPlayer(players.get(id));
-                }
-                else
-                {
-                    throw new PersistenceException("Match " + match.getId() + " refers to non-existent player; " + id);
-                }
-            }
-        }
-        for (Competition competition : competitions.values())
-        {
-            for (Integer id : competition.getMatchIds())
-            {
-                if (matches.containsKey(id))
-                {
-                    competition.addMatch(matches.get(id));
-                }
-                else
-                {
-                    throw new PersistenceException("Competition " + competition.getId() + " refers to non-existent match; " + id);
-                }
-            }
-        }
+        loadDependentEntities(competitions, matches, Competition::getMatchIds, Competition::addMatch);
+        loadDependentEntities(matches, games, Match::getGameIds, Match::addGame);
+        loadDependentEntities(matches, players, Match::getPlayersIds, Match::addPlayer);
+
         return competitions;
+    }
+
+    /**
+     * Load the dependent entities into their appropriate containers.
+     * 
+     * @param containers the container class that holds the dependent entities
+     * @param dependents the dependent entities to be added to a container
+     * @param getIdsFor the method for obtaining the IDs of the dependent entities
+     * @param addTo the method for adding a dependent entity into a container
+     * 
+     * @throws PersistenceException missing entity
+     */
+    @SuppressWarnings("static-method")
+    private <Container extends AbstractEntity, Dependent extends AbstractEntity>
+                void loadDependentEntities(Map<Integer, Container> containers, Map<Integer, Dependent> dependents,
+                                           Function<Container, Set<Integer>> getIdsFor, BiConsumer<Container, Dependent> addTo)
+        throws PersistenceException
+    {
+        for (Container container : containers.values())
+        {
+            for (Integer id : getIdsFor.apply(container))
+            {
+                if (dependents.containsKey(id))
+                {
+                    addTo.accept(container, dependents.get(id));
+                }
+                else
+                {
+                    throw new PersistenceException("Entity " + container.getId() + " refers to non-existent entity; " + id);
+                }
+            }
+        }
     }
 }
