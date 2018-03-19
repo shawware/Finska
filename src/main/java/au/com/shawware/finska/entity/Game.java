@@ -53,6 +53,14 @@ public class Game extends AbstractEntity
     }
 
     /**
+     * @return The game's number.
+     */
+    public int getNumber()
+    {
+        return mNumber;
+    }
+
+    /**
      * @return The game's winning player.
      */
     @JsonIgnore
@@ -94,7 +102,7 @@ public class Game extends AbstractEntity
     @Override
     public String toString()
     {
-        return "{" + getId() + ", " + mNumber + '}';
+        return "{" + getId() + ", " + mNumber + ", " + mWinnerId + '}';
 //        return StringUtil.toString(null);
     }
 }
