@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
+import au.com.shawware.util.StringUtil;
+
 /**
  * Models a single round match (of one or more games).
  *
@@ -155,9 +157,9 @@ public class Match extends AbstractEntity
     }
 
     @Override
+    @SuppressWarnings("boxing")
     public String toString()
     {
-        return "{" + getId() + ", " + mRound + ", " + mMatchDate + '}';
-//        return StringUtil.toString(null);
+        return StringUtil.toString(getId(), mRound, mMatchDate, mPlayersIds, mGameIds);
     }
 }

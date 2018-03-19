@@ -53,9 +53,9 @@ public class Player extends AbstractEntity
     }
 
     @Override
+    @SuppressWarnings("boxing")
     public String toString()
     {
-        return "{" + getId() + ", " + mName + '}';
-//        return StringUtil.toString(null);
+        return StringUtil.toString(getId(), mName);
     }
 }

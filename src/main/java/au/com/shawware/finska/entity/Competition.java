@@ -19,6 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
+import au.com.shawware.util.StringUtil;
+
 /**
  * Models a Finska competition.
  *
@@ -114,16 +116,19 @@ public class Competition extends AbstractEntity
 
     /**
      * Updates this competition's match IDs.
+     * 
+     * @param matchIds the new match IDs
      */
     public void setMatchIds(Set<Integer> matchIds)
     {
         mMatchIds.clear();
         mMatchIds.addAll(matchIds);
     }
+
     @Override
+    @SuppressWarnings("boxing")
     public String toString()
     {
-        return "{" + getId() + ", " + mName + ", " + mStartDate + '}';
-//        return StringUtil.toString(null);
+        return StringUtil.toString(getId(), mName, mStartDate, mMatchIds);
     }
 }
