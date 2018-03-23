@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -104,6 +105,27 @@ public class Competition extends AbstractEntity
         // Duplicate is okay.
         mMatchIds.add(match.getId());
         mMatches.put(match.getId(), match);
+    }
+
+    /**
+     * Retrieve the given match from this competition.
+     * 
+     * @param id the match's ID
+     * 
+     * @return The corresponding match.
+     * 
+     * @throws IllegalArgumentException match cannot be found
+     */
+    @SuppressWarnings("boxing")
+    @JsonIgnore
+    public Match getMatch(int id)
+        throws IllegalArgumentException
+    {
+        if (!mMatches.containsKey(id))
+        {
+            throw new IllegalArgumentException("Match " + id + " is not present in this competition");
+        }
+        return mMatches.get(id);
     }
 
     /**

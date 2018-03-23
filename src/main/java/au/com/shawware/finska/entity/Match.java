@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -124,6 +125,27 @@ public class Match extends AbstractEntity
     }
 
     /**
+     * Retrieve the given player from this competition.
+     * 
+     * @param id the player's ID
+     * 
+     * @return The corresponding player.
+     * 
+     * @throws IllegalArgumentException player cannot be found
+     */
+    @SuppressWarnings("boxing")
+    @JsonIgnore
+    public Player getPlayer(int id)
+        throws IllegalArgumentException
+    {
+        if (!mPlayers.containsKey(id))
+        {
+            throw new IllegalArgumentException("Player " + id + " is not present in this match");
+        }
+        return mPlayers.get(id);
+    }
+
+    /**
      * @return The IDs of the games that make up this match.
      */
     public Set<Integer> getGameIds()
@@ -154,6 +176,27 @@ public class Match extends AbstractEntity
         // TODO; error checks
         mGameIds.add(game.getId());
         mGames.put(game.getId(), game);
+    }
+
+    /**
+     * Retrieve the given game from this competition.
+     * 
+     * @param id the game's ID
+     * 
+     * @return The corresponding game.
+     * 
+     * @throws IllegalArgumentException game cannot be found
+     */
+    @SuppressWarnings("boxing")
+    @JsonIgnore
+    public Game getGame(int id)
+        throws IllegalArgumentException
+    {
+        if (!mGames.containsKey(id))
+        {
+            throw new IllegalArgumentException("Game " + id + " is not present in this match");
+        }
+        return mGames.get(id);
     }
 
     @Override
