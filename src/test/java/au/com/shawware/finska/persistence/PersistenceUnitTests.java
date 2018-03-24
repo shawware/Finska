@@ -93,7 +93,7 @@ public class PersistenceUnitTests
 
         Game g1 = new Game(1);
         g1.setWinnerId(p1.getId());
-        g1.setFastWin(true);
+        g1.setHasFastWinner(true);
         verifyBasicStorage(gameStore, g1);
 
         Match m1 = new Match(1, LocalDate.of(2018, 3, 10));

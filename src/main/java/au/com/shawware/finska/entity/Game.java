@@ -26,7 +26,7 @@ public class Game extends AbstractEntity
     /** The winning player. */
     private int mWinnerId;
     /** Was the game won in 5 tosses. */
-    private boolean mFastWin;
+    private boolean mHasFastWinner;
 
     /**
      * Constructs a new game.
@@ -38,9 +38,9 @@ public class Game extends AbstractEntity
                 @JsonProperty("number") int number)
     {
         super(id);
-        mNumber   = number;
-        mWinnerId = DEFAULT_ID;
-        mFastWin  = false;
+        mNumber         = number;
+        mWinnerId       = DEFAULT_ID;
+        mHasFastWinner  = false;
     }
 
     /**
@@ -83,6 +83,15 @@ public class Game extends AbstractEntity
     }
 
     /**
+     * @return Whether this game has a winner yet.
+     */
+    @JsonIgnore
+    public boolean hasWinner()
+    {
+        return (mWinnerId > DEFAULT_ID);
+    }
+
+    /**
      * @return This game's winning player's ID.
      */
     public int getWinnerId()
@@ -103,9 +112,9 @@ public class Game extends AbstractEntity
     /**
      * @return Whether this game's winner won in 5 tosses.
      */
-    public boolean isFastWin()
+    public boolean getHasFastWinner()
     {
-        return mFastWin;
+        return mHasFastWinner;
     }
 
     /**
@@ -113,15 +122,15 @@ public class Game extends AbstractEntity
      * 
      * @param fastWin the new setting
      */
-    public void setFastWin(boolean fastWin)
+    public void setHasFastWinner(boolean fastWin)
     {
-        mFastWin = fastWin;
+        mHasFastWinner = fastWin;
     }
 
     @Override
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mNumber, mWinnerId, mFastWin);
+        return StringUtil.toString(getId(), mNumber, mWinnerId, mHasFastWinner);
     }
 }
