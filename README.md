@@ -17,7 +17,9 @@ Packages
 au.com.shawware.finska.scoring
 au.com.shawware.finska.persistence
 au.com.shawware.finska.entity
+au.com.shawware.compadmin.converter
 au.com.shawware.compadmin.scoring
+au.com.shawware.compadmin.entity
 </pre>
 
 License
