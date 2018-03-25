@@ -12,7 +12,7 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import au.com.shawware.finska.entity.AbstractEntity;
+import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Game;
 import au.com.shawware.finska.entity.Match;

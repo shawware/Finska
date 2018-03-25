@@ -10,6 +10,7 @@ package au.com.shawware.finska.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.util.StringUtil;
 
 /**

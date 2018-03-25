@@ -5,7 +5,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-package au.com.shawware.finska.entity;
+package au.com.shawware.compadmin.entity;
 
 /**
  * The base class for all entities.
@@ -63,6 +63,10 @@ public abstract class AbstractEntity implements Comparable<AbstractEntity>
     @Override
     public int compareTo(AbstractEntity that)
     {
+        if (that == null)
+        {
+            throw new IllegalArgumentException("Null entity");
+        }
         return this.mId - that.mId;
     }
 }

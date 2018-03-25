@@ -9,7 +9,7 @@ package au.com.shawware.finska.persistence;
 
 import java.util.Map;
 
-import au.com.shawware.finska.entity.AbstractEntity;
+import au.com.shawware.compadmin.entity.AbstractEntity;
 
 /**
  * The persistence API for all entities.

@@ -7,7 +7,7 @@
 
 package au.com.shawware.finska.persistence;
 
-import au.com.shawware.finska.entity.AbstractEntity;
+import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.util.StringUtil;
 
 /**

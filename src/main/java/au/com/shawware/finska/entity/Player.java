@@ -9,18 +9,15 @@ package au.com.shawware.finska.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import au.com.shawware.util.StringUtil;
+import au.com.shawware.compadmin.entity.Entrant;
 
 /**
  * Models a Finska player.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class Player extends AbstractEntity
+public class Player extends Entrant
 {
-    /** The player's name. */
-    private final String mName;
-
     /**
      * Constructs a new, identified player.
      * 
@@ -30,8 +27,7 @@ public class Player extends AbstractEntity
     public Player(@JsonProperty("id") int id,
                   @JsonProperty("name") String name)
     {
-        super(id);
-        mName = name;
+        super(id, name);
     }
 
     /**
@@ -41,21 +37,6 @@ public class Player extends AbstractEntity
      */
     public Player(String name)
     {
-        this(DEFAULT_ID, name);
-    }
-
-    /**
-     * @return The player's name.
-     */
-    public String getName()
-    {
-        return mName;
-    }
-
-    @Override
-    @SuppressWarnings("boxing")
-    public String toString()
-    {
-        return StringUtil.toString(getId(), mName);
+        super(name);
     }
 }

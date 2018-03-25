@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import au.com.shawware.finska.entity.AbstractEntity;
+import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.util.StringUtil;
 
 /**
