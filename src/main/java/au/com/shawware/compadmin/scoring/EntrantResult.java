@@ -26,6 +26,8 @@ public class EntrantResult
 {
     /** Identifies the competition entrant to whom these results belong. */
     private final int mEntrantID;
+    /** The result item names. */
+    private final List<String> mItemNames;
     /** The ordered sets of result items. */
     private final Map<String, MutableInteger> mItems;
     /** The current ranking (if assigned) for this entrant. */
@@ -49,6 +51,7 @@ public class EntrantResult
 
         mEntrantID = entrantID;
         mRank      = 0;
+        mItemNames = names;
         mItems     = new TreeMap<>();
         for (String name : names)
         {
@@ -74,6 +77,14 @@ public class EntrantResult
     public int getRank()
     {
         return mRank;
+    }
+
+    /**
+     * @return This entrant's result item names.
+     */
+    public List<String> getItemNames()
+    {
+        return mItemNames;
     }
 
     /**

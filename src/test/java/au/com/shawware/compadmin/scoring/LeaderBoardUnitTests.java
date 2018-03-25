@@ -7,11 +7,9 @@
 
 package au.com.shawware.compadmin.scoring;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -19,33 +17,9 @@ import org.junit.Test;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "static-method" })
-public class LeaderBoardUnitTests
+@SuppressWarnings({ "static-method" })
+public class LeaderBoardUnitTests extends AbstractScoringUnitTest
 {
-    /** The full set of result items. */
-    private static List<String> sResultItems;
-    /** The result items to use is comparisons. */
-    private static List<String> sComparisonItems;
-
-    /**
-     * Set up test fixtures.
-     */
-    @BeforeClass
-    public static void setUp()
-    {
-        sResultItems = new ArrayList<>();
-        sResultItems.add("Games");
-        sResultItems.add("Wins");
-        sResultItems.add("For");
-        sResultItems.add("GD");
-        sResultItems.add("Points");
-
-        sComparisonItems = new ArrayList<>();
-        sComparisonItems.add("Points");
-        sComparisonItems.add("GD");
-        sComparisonItems.add("For");
-    }
-
     /**
      * Test the basic leader board generation algorithm for a simple case.
      */
@@ -67,7 +41,7 @@ public class LeaderBoardUnitTests
             { 1, 4 },
         };
 
-        verifyCase(results,  ranks);
+        verifyCase(results, ranks);
     }
 
     /**
@@ -103,7 +77,7 @@ public class LeaderBoardUnitTests
             { 9, 9 },
         };
 
-        verifyCase(results,  ranks);
+        verifyCase(results, ranks);
     }
 
     /**
@@ -146,28 +120,5 @@ public class LeaderBoardUnitTests
             Assert.assertEquals(expectedRanks[i][0], result.getEntrantID());
             Assert.assertEquals(expectedRanks[i][1], result.getRank());
         }
-    }
-
-    /**
-     * Converts a test fixture to a set of results.
-     * 
-     * @param fixture the test fixture to convert
-     *
-     * @return The corresponding results.
-     */
-    private List<EntrantResult> convertFixture(int[][] fixture)
-    {
-        List<EntrantResult> results = new ArrayList<>(fixture.length);
-        for (int[] entrantData : fixture)
-        {
-            EntrantResult result = new EntrantResult(entrantData[0], sResultItems);
-            result.updateResultItem("Games",  entrantData[1]);
-            result.updateResultItem("Wins",   entrantData[2]);
-            result.updateResultItem("For",    entrantData[3]);
-            result.updateResultItem("GD",     entrantData[4]);
-            result.updateResultItem("Points", entrantData[5]);
-            results.add(result);
-        }
-        return results;
     }
 }

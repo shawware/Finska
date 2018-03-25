@@ -11,7 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Specifies what a competition must provide to help created a leader board.
+ * Specifies what a competition must provide to help create a leader board.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
