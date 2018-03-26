@@ -93,10 +93,6 @@ public class Game extends AbstractEntity
         {
             throw new IllegalArgumentException("Null player");
         }
-        if (mWinnerIds.contains(player.getId()))
-        {
-            throw new IllegalArgumentException("Player " + player.getId() + " is already recorded");
-        }
         mWinnerIds.add(player.getId());
         mWinners.put(player.getId(), player);
     }

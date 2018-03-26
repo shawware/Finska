@@ -124,10 +124,6 @@ public class Match extends AbstractEntity
         {
             throw new IllegalArgumentException("Null player");
         }
-        if (mPlayersIds.contains(player.getId()))
-        {
-            throw new IllegalArgumentException("Player " + player.getId() + " is already recorded");
-        }
         mPlayersIds.add(player.getId());
         mPlayers.put(player.getId(), player);
     }
