@@ -73,7 +73,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
             boolean sameWinner = true;
             Set<Integer> lastWinners = new HashSet<>();
-            for (Integer gameID : match.getGameIds())
+            for (Integer gameID : gameIDs)
             {
                 Game game = match.getGame(gameID);
                 if (!game.hasWinner())
@@ -81,7 +81,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                     continue; // Skip games that have not been played yet.
                 }
                 Set<Integer> winnerIds = game.getWinnerIds();
-                for (Integer winnerId : lastWinners)
+                for (Integer winnerId : winnerIds)
                 {
                     EntrantResult result = results.get(winnerId);
                     result.updateResultItem(ResultItem.WINS.toString(), 1);
@@ -101,7 +101,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                     else
                     {
                         // TODO: check this does what we expect
-                        if (lastWinners.equals(winnerIds))
+                        if (!lastWinners.equals(winnerIds))
                         {
                             sameWinner = false;
                         }

@@ -65,24 +65,27 @@ public class AnalyserUnitTests
             { 2, 2, 5, 3, 0, 0, 11 },
             { 3, 3, 4, 2, 0, 0,  8 },
         };
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and fast wins.
         scoringSystem = new ScoringSystem(2, 0, 5, 0);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 1, 0, 15 },
-            { 3, 2, 4, 2, 1, 0,  7 },
-            { 2, 3, 5, 3, 0, 0,  6 },
+            { 1, 1, 5, 4, 1, 0, 13 },
+            { 2, 3, 4, 2, 1, 0,  9 },
+            { 3, 2, 5, 3, 0, 0,  6 },
         };
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win alls.
         scoringSystem = new ScoringSystem(4, 0, 0, 1);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 1, 0, 17 },
+            { 1, 1, 5, 4, 0, 1, 17 },
             { 2, 2, 5, 3, 0, 0, 12 },
-            { 3, 3, 4, 2, 1, 0,  8 },
+            { 3, 3, 4, 2, 0, 0,  8 },
         };
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
     }
 
     /**
