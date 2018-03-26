@@ -77,6 +77,14 @@ public class Game extends AbstractEntity
     @SuppressWarnings("boxing")
     public void addWinner(Player player, boolean fastWinner)
     {
+        if (player == null)
+        {
+            throw new IllegalArgumentException("Null player");
+        }
+        if (mWinnerIds.contains(player.getId()))
+        {
+            throw new IllegalArgumentException("Player " + player.getId() + " has already been recorded");
+        }
         addWinner(player);
         mFastWinnerIds.add(player.getId());
     }
