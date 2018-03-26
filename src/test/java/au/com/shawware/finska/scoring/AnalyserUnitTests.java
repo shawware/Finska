@@ -134,8 +134,7 @@ public class AnalyserUnitTests
         // A match of three players, two games with two different winners, one a fast win.
         Game g1 = new Game(1, 1);
         Game g2 = new Game(2, 2);
-        g1.addWinner(p1);
-        g1.setHasFastWinner(true);
+        g1.addWinner(p1, true);
         g2.addWinner(p2);
 
         Match m1 = new Match(1, 1, LocalDate.of(2018, 3, 10));
@@ -184,8 +183,7 @@ public class AnalyserUnitTests
         Game g8 = new Game(8, 8);
         Game g9 = new Game(9, 9);
         g8.addWinner(p1);
-        g9.addWinner(p3);
-        g9.setHasFastWinner(true);
+        g9.addWinner(p3, true);
 
         Match m5 = new Match(5, 5, LocalDate.of(2018, 3, 14));
         m5.addPlayer(p1);

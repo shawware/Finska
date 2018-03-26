@@ -86,7 +86,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                     EntrantResult result = results.get(winnerId);
                     result.updateResultItem(ResultItem.WINS.toString(), 1);
                     result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
-                    if (mScoringSystem.scoreFastWins() && game.getHasFastWinner())
+                    if (mScoringSystem.scoreFastWins() && game.isFastWinner(winnerId))
                     {
                         result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
                         result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());

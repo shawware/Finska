@@ -27,12 +27,12 @@ public class Game extends AbstractEntity
 {
     /** The game number. */
     private final int mNumber;
-    /** The winning player. */
+    /** The winning players' IDs. */
     private Set<Integer> mWinnerIds;
-    /** The ID of the winning player. */
+    /** The winning players. */
     private Map<Integer, Player> mWinners;
-    /** Was the game won in 5 tosses. */
-    private boolean mHasFastWinner;
+    /** Any of the winning players that won in 5 tosses.  */
+    private Set<Integer> mFastWinnerIds;
 
     /**
      * Constructs a new game.
@@ -47,7 +47,7 @@ public class Game extends AbstractEntity
         mNumber         = number;
         mWinnerIds      = new HashSet<>();
         mWinners        = new HashMap<>();
-        mHasFastWinner  = false;
+        mFastWinnerIds  = new HashSet<>();
     }
 
     /**
@@ -72,11 +72,31 @@ public class Game extends AbstractEntity
      * Adds a winner to this match.
      * 
      * @param player the winning player to add
+     * @param fastWinner whether the player one in 5 tosses
+     */
+    @SuppressWarnings("boxing")
+    public void addWinner(Player player, boolean fastWinner)
+    {
+        addWinner(player);
+        mFastWinnerIds.add(player.getId());
+    }
+
+    /**
+     * Adds a winner to this match.
+     * 
+     * @param player the winning player to add
      */
     @SuppressWarnings("boxing")
     public void addWinner(Player player)
     {
-        // TODO; error checks
+        if (player == null)
+        {
+            throw new IllegalArgumentException("Null player");
+        }
+        if (mWinnerIds.contains(player.getId()))
+        {
+            throw new IllegalArgumentException("Player " + player.getId() + " is already recorded");
+        }
         mWinnerIds.add(player.getId());
         mWinners.put(player.getId(), player);
     }
@@ -132,27 +152,42 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * @return Whether this game's winner won in 5 tosses.
+     * Whether the given player ID won the game in 5 tosses.
+     * 
+     * @param winnerId the player ID to test
+     * 
+     * @return Whether they won fast.
      */
-    public boolean getHasFastWinner()
+    @JsonIgnore
+    public boolean isFastWinner(int winnerId)
     {
-        return mHasFastWinner;
+        return mFastWinnerIds.contains(winnerId);
+    }
+
+    /**
+     * @return The IDs of any fast winners.
+     */
+    public Set<Integer> getFastWinnerIds()
+    {
+        return mFastWinnerIds;
     }
 
     /**
      * Specifies whether this game was won in 5 tosses.
      * 
-     * @param fastWin the new setting
+     * @param fastWinnerIds the new setting
      */
-    public void setHasFastWinner(boolean fastWin)
+    public void setFastWinnerIds(Set<Integer> fastWinnerIds)
     {
-        mHasFastWinner = fastWin;
+        // TODO: check IDs in players
+        mFastWinnerIds.clear();
+        mFastWinnerIds.addAll(fastWinnerIds);
     }
 
     @Override
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mNumber, mWinnerIds, mHasFastWinner);
+        return StringUtil.toString(getId(), mNumber, mWinnerIds, mFastWinnerIds);
     }
 }

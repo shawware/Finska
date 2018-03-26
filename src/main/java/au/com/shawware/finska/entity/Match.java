@@ -120,7 +120,14 @@ public class Match extends AbstractEntity
     @SuppressWarnings("boxing")
     public void addPlayer(Player player)
     {
-        // TODO; error checks
+        if (player == null)
+        {
+            throw new IllegalArgumentException("Null player");
+        }
+        if (mPlayersIds.contains(player.getId()))
+        {
+            throw new IllegalArgumentException("Player " + player.getId() + " is already recorded");
+        }
         mPlayersIds.add(player.getId());
         mPlayers.put(player.getId(), player);
     }
