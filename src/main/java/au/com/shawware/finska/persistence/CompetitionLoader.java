@@ -84,7 +84,6 @@ public class CompetitionLoader
      * 
      * @throws PersistenceException error loading data
      */
-    @SuppressWarnings("boxing")
     public Map<Integer, Competition> getCompetitions()
         throws PersistenceException
     {
@@ -93,25 +92,10 @@ public class CompetitionLoader
         Map<Integer, Match> matches = mMatchStore.getAll();
         Map<Integer, Competition> competitions = mCompetitionStore.getAll();
 
-        for (Game game : games.values())
-        {
-            int id = game.getWinnerId();
-            if (id != AbstractEntity.DEFAULT_ID)
-            {
-                if (players.containsKey(id))
-                {
-                    game.setWinner(players.get(id));
-                }
-                else
-                {
-                    throw new PersistenceException("Game " + game.getId() + " refers to non-existent player; " + id);
-                }
-            }
-        }
-
         loadDependentEntities(competitions, matches, Competition::getMatchIds, Competition::addMatch);
         loadDependentEntities(matches, games, Match::getGameIds, Match::addGame);
         loadDependentEntities(matches, players, Match::getPlayersIds, Match::addPlayer);
+        loadDependentEntities(games, players, Game::getWinnerIds, Game::addWinner);
 
         return competitions;
     }

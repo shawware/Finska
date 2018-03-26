@@ -37,7 +37,7 @@ public class ScoringSystemUnitTests
         // Setup a very basic competition with enough data to ensure one result item.
         Player p1 = new Player(1, "David");
         Game g1 = new Game(1, 1);
-        g1.setWinner(p1);
+        g1.addWinner(p1);
         Match m1 = new Match(1, 1, LocalDate.of(2018, 3, 9));
         m1.addPlayer(p1);
         m1.addGame(g1);

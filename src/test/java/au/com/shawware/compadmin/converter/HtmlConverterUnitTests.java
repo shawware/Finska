@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -20,6 +21,10 @@ import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.compadmin.scoring.TestAssistant;
+import au.com.shawware.finska.entity.Competition;
+import au.com.shawware.finska.entity.Player;
+import au.com.shawware.finska.persistence.CompetitionLoader;
+import au.com.shawware.finska.persistence.PersistenceException;
 
 /**
  * Exercise and verify HTML output.
@@ -58,6 +63,28 @@ public class HtmlConverterUnitTests extends AbstractScoringUnitTest
             output.flush();
         }
         catch (IOException | RuntimeException e)
+        {
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+            Assert.fail("Unexpected error");
+        }
+    }
+
+    /**
+     * Generates HTML from a set of persisted entities.
+     */
+    @Test
+    public void extendedTest()
+    {
+        try
+        {
+            CompetitionLoader loader = CompetitionLoader.getLoader("./data");
+            Map<Integer, Player> players = loader.getPlayers();
+            Map<Integer, Competition> comps = loader.getCompetitions();
+            System.out.println("Players: " + players.size());
+            System.out.println("Comp: " + comps.get(1).toString());
+        }
+        catch (PersistenceException e)
         {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);

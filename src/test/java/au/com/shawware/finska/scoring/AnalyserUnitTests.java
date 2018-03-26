@@ -134,9 +134,9 @@ public class AnalyserUnitTests
         // A match of three players, two games with two different winners, one a fast win.
         Game g1 = new Game(1, 1);
         Game g2 = new Game(2, 2);
-        g1.setWinner(p1);
+        g1.addWinner(p1);
         g1.setHasFastWinner(true);
-        g2.setWinner(p2);
+        g2.addWinner(p2);
 
         Match m1 = new Match(1, 1, LocalDate.of(2018, 3, 10));
         m1.addPlayer(p1);
@@ -148,8 +148,8 @@ public class AnalyserUnitTests
         // A match of three players, two games with two different winners, no fast wins.
         Game g3 = new Game(3, 3);
         Game g4 = new Game(4, 4);
-        g3.setWinner(p2);
-        g4.setWinner(p3);
+        g3.addWinner(p2);
+        g4.addWinner(p3);
 
         Match m2 = new Match(2, 2, LocalDate.of(2018, 3, 11));
         m2.addPlayer(p1);
@@ -160,7 +160,7 @@ public class AnalyserUnitTests
 
         // A match of two players, one game - ensure no "win all" scored.
         Game g5 = new Game(5, 5);
-        g5.setWinner(p2);
+        g5.addWinner(p2);
 
         Match m3 = new Match(3, 3, LocalDate.of(2018, 3, 12));
         m3.addPlayer(p1);
@@ -170,8 +170,8 @@ public class AnalyserUnitTests
         // A match of three players, two games with the same winner, no fast wins.
         Game g6 = new Game(6, 6);
         Game g7 = new Game(7, 7);
-        g6.setWinner(p1);
-        g7.setWinner(p1);
+        g6.addWinner(p1);
+        g7.addWinner(p1);
 
         Match m4 = new Match(4, 4, LocalDate.of(2018, 3, 13));
         m4.addPlayer(p1);
@@ -183,8 +183,8 @@ public class AnalyserUnitTests
         // A match of three players, two games with different winners, one fast win.
         Game g8 = new Game(8, 8);
         Game g9 = new Game(9, 9);
-        g8.setWinner(p1);
-        g9.setWinner(p3);
+        g8.addWinner(p1);
+        g9.addWinner(p3);
         g9.setHasFastWinner(true);
 
         Match m5 = new Match(5, 5, LocalDate.of(2018, 3, 14));

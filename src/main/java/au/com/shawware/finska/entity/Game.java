@@ -7,6 +7,11 @@
 
 package au.com.shawware.finska.entity;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -22,10 +27,10 @@ public class Game extends AbstractEntity
 {
     /** The game number. */
     private final int mNumber;
-    /** The ID of the winning player. */
-    private Player mWinner;
     /** The winning player. */
-    private int mWinnerId;
+    private Set<Integer> mWinnerIds;
+    /** The ID of the winning player. */
+    private Map<Integer, Player> mWinners;
     /** Was the game won in 5 tosses. */
     private boolean mHasFastWinner;
 
@@ -40,7 +45,8 @@ public class Game extends AbstractEntity
     {
         super(id);
         mNumber         = number;
-        mWinnerId       = DEFAULT_ID;
+        mWinnerIds      = new HashSet<>();
+        mWinners        = new HashMap<>();
         mHasFastWinner  = false;
     }
 
@@ -63,24 +69,37 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * @return The game's winning player.
+     * Adds a winner to this match.
+     * 
+     * @param player the winning player to add
      */
-    @JsonIgnore
-    public Player getWinner()
+    @SuppressWarnings("boxing")
+    public void addWinner(Player player)
     {
-        return mWinner;
+        // TODO; error checks
+        mWinnerIds.add(player.getId());
+        mWinners.put(player.getId(), player);
     }
 
     /**
-     * Sets this game's winner.
+     * Retrieve the given player from this game.
      * 
-     * @param winner the winning player
+     * @param id the player's ID
+     * 
+     * @return The corresponding player.
+     * 
+     * @throws IllegalArgumentException player cannot be found
      */
+    @SuppressWarnings("boxing")
     @JsonIgnore
-    public void setWinner(Player winner)
+    public Player getWinner(int id)
+        throws IllegalArgumentException
     {
-        mWinnerId = winner.getId();
-        mWinner = winner;
+        if (!mWinners.containsKey(id))
+        {
+            throw new IllegalArgumentException("Player " + id + " is not present in this game");
+        }
+        return mWinners.get(id);
     }
 
     /**
@@ -89,25 +108,27 @@ public class Game extends AbstractEntity
     @JsonIgnore
     public boolean hasWinner()
     {
-        return (mWinnerId > DEFAULT_ID);
+        return (mWinnerIds.size() > 0);
     }
 
     /**
-     * @return This game's winning player's ID.
+     * @return This game's winning players' IDs.
      */
-    public int getWinnerId()
+    public Set<Integer> getWinnerIds()
     {
-        return mWinnerId;
+        return mWinnerIds;
     }
 
     /**
-     * Sets this game's winning player ID.
+     * Sets this game's winning players' IDs.
      * 
-     * @param winnerId the winning player's ID
+     * @param winnerIds the winning players' IDs
      */
-    public void setWinnerId(int winnerId)
+    public void setWinnerIds(Set<Integer> winnerIds)
     {
-        mWinnerId = winnerId;
+        mWinners.clear();
+        mWinnerIds.clear();
+        mWinnerIds.addAll(winnerIds);
     }
 
     /**
@@ -132,6 +153,6 @@ public class Game extends AbstractEntity
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mNumber, mWinnerId, mHasFastWinner);
+        return StringUtil.toString(getId(), mNumber, mWinnerIds, mHasFastWinner);
     }
 }

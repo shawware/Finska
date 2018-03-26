@@ -92,7 +92,7 @@ public class PersistenceUnitTests
         verifyBasicStorage(playerStore, p1);
 
         Game g1 = new Game(1);
-        g1.setWinnerId(p1.getId());
+        g1.addWinner(p1);
         g1.setHasFastWinner(true);
         verifyBasicStorage(gameStore, g1);
 

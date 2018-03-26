@@ -9,6 +9,7 @@ package au.com.shawware.finska.scoring;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,7 +20,6 @@ import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Game;
 import au.com.shawware.finska.entity.Match;
-import au.com.shawware.finska.entity.Player;
 
 /**
  * Analyses competitions to produce artifacts such as leader boards.
@@ -72,7 +72,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             Set<Integer> gameIDs = match.getGameIds();
             boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
             boolean sameWinner = true;
-            int lastWinner = -1;
+            Set<Integer> lastWinners = new HashSet<>();
             for (Integer gameID : match.getGameIds())
             {
                 Game game = match.getGame(gameID);
@@ -80,24 +80,28 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                 {
                     continue; // Skip games that have not been played yet.
                 }
-                Player winner = game.getWinner();
-                EntrantResult result = results.get(winner.getId());
-                result.updateResultItem(ResultItem.WINS.toString(), 1);
-                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
-                if (mScoringSystem.scoreFastWins() && game.getHasFastWinner())
+                Set<Integer> winnerIds = game.getWinnerIds();
+                for (Integer winnerId : lastWinners)
                 {
-                    result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
+                    EntrantResult result = results.get(winnerId);
+                    result.updateResultItem(ResultItem.WINS.toString(), 1);
+                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
+                    if (mScoringSystem.scoreFastWins() && game.getHasFastWinner())
+                    {
+                        result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
+                        result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
+                    }
                 }
                 if (recordWinAll && sameWinner)
                 {
-                    if (lastWinner == -1)
+                    if (lastWinners.size() == 0)
                     {
-                        lastWinner = winner.getId();
+                        lastWinners.addAll(winnerIds);
                     }
                     else
                     {
-                        if (lastWinner != winner.getId())
+                        // TODO: check this does what we expect
+                        if (lastWinners.equals(winnerIds))
                         {
                             sameWinner = false;
                         }
@@ -106,9 +110,12 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             }
             if (recordWinAll && sameWinner)
             {
-                EntrantResult result = results.get(lastWinner);
-                result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
-                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
+                for (Integer winnerId : lastWinners)
+                {
+                    EntrantResult result = results.get(winnerId);
+                    result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
+                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
+                }
             }
         }
         return results.values().stream().collect(Collectors.toList());
