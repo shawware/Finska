@@ -37,19 +37,9 @@ public class AnalyserUnitTests
     {
         Competition competition = createCompetition();
 
-        // Test the Seertech Scoring System
-        ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
-        int[][] expectedResults = new int[][]
-        {
-            { 1, 1, 5, 4, 1, 1, 19 },
-            { 2, 2, 5, 3, 0, 0, 14 },
-            { 3, 3, 4, 2, 1, 0, 11 },
-        };
-        verifyAlgorithm(competition, scoringSystem, expectedResults);
-
         // Test the a basic scoring Scoring System - no bonuses of any kind.
-        scoringSystem = new ScoringSystem(5, 0, 0, 0);
-        expectedResults = new int[][]
+        ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0);
+        int[][] expectedResults = new int[][]
         {
             { 1, 1, 5, 4, 0, 0, 20 },
             { 2, 2, 5, 3, 0, 0, 15 },
@@ -84,6 +74,16 @@ public class AnalyserUnitTests
             { 1, 1, 5, 4, 0, 1, 17 },
             { 2, 2, 5, 3, 0, 0, 12 },
             { 3, 3, 4, 2, 0, 0,  8 },
+        };
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
+
+        // Test the Seertech Scoring System
+        scoringSystem = new ScoringSystem(3, 1, 1, 1);
+        expectedResults = new int[][]
+        {
+            { 1, 1, 5, 4, 1, 1, 19 },
+            { 2, 2, 5, 3, 0, 0, 14 },
+            { 3, 3, 4, 2, 1, 0, 11 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
     }
