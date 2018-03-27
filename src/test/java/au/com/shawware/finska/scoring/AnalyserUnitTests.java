@@ -41,9 +41,10 @@ public class AnalyserUnitTests
         ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0);
         int[][] expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 0, 0, 20 },
+            { 1, 1, 5, 5, 0, 0, 25 },
             { 2, 2, 5, 3, 0, 0, 15 },
             { 3, 3, 4, 2, 0, 0, 10 },
+            { 4, 4, 1, 1, 0, 0,  5 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -51,9 +52,10 @@ public class AnalyserUnitTests
         scoringSystem = new ScoringSystem(2, 1, 0, 0);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 0, 0, 13 },
+            { 1, 1, 5, 5, 0, 0, 15 },
             { 2, 2, 5, 3, 0, 0, 11 },
             { 3, 3, 4, 2, 0, 0,  8 },
+            { 4, 4, 1, 1, 0, 0,  3 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -61,9 +63,10 @@ public class AnalyserUnitTests
         scoringSystem = new ScoringSystem(2, 0, 5, 0);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 1, 0, 13 },
+            { 1, 1, 5, 5, 1, 0, 15 },
             { 2, 3, 4, 2, 1, 0,  9 },
             { 3, 2, 5, 3, 0, 0,  6 },
+            { 4, 4, 1, 1, 0, 0,  2 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -71,9 +74,10 @@ public class AnalyserUnitTests
         scoringSystem = new ScoringSystem(4, 0, 0, 1);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 0, 1, 17 },
+            { 1, 1, 5, 5, 0, 1, 21 },
             { 2, 2, 5, 3, 0, 0, 12 },
             { 3, 3, 4, 2, 0, 0,  8 },
+            { 4, 4, 1, 1, 0, 0,  4 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -81,9 +85,10 @@ public class AnalyserUnitTests
         scoringSystem = new ScoringSystem(3, 1, 1, 1);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 4, 1, 1, 19 },
+            { 1, 1, 5, 5, 1, 1, 22 },
             { 2, 2, 5, 3, 0, 0, 14 },
             { 3, 3, 4, 2, 1, 0, 11 },
+            { 4, 4, 1, 1, 0, 0,  4 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
     }
@@ -133,6 +138,8 @@ public class AnalyserUnitTests
         Player p1 = new Player(1, "David");
         Player p2 = new Player(2, "Mike");
         Player p3 = new Player(3, "Tom");
+        Player p4 = new Player(4, "Dick");
+        Player p5 = new Player(5, "Harry");
 
         // A match of three players, two games with two different winners, one a fast win.
         Game g1 = new Game(1, 1);
@@ -147,16 +154,19 @@ public class AnalyserUnitTests
         m1.addGame(g1);
         m1.addGame(g2);
 
-        // A match of three players, two games with two different winners, no fast wins.
+        // A match of four players in teams of two, two games with two different winners, no fast wins.
         Game g3 = new Game(3, 3);
         Game g4 = new Game(4, 4);
+        g3.addWinner(p1);
         g3.addWinner(p2);
         g4.addWinner(p3);
+        g4.addWinner(p4);
 
         Match m2 = new Match(2, 2, LocalDate.of(2018, 3, 11));
         m2.addPlayer(p1);
         m2.addPlayer(p2);
         m2.addPlayer(p3);
+        m2.addPlayer(p4);
         m2.addGame(g3);
         m2.addGame(g4);
 
