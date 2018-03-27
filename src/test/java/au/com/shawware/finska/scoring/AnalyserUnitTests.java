@@ -26,7 +26,7 @@ import au.com.shawware.finska.entity.Player;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "static-method" })
+@SuppressWarnings({ "nls", "static-method", "boxing" })
 public class AnalyserUnitTests
 {
     /**
@@ -44,7 +44,8 @@ public class AnalyserUnitTests
             { 1, 1, 5, 5, 0, 0, 25 },
             { 2, 2, 5, 3, 0, 0, 15 },
             { 3, 3, 4, 2, 0, 0, 10 },
-            { 4, 4, 1, 1, 0, 0,  5 },
+            { 3, 5, 1, 2, 0, 0, 10 },
+            { 5, 4, 2, 1, 0, 0,  5 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -55,7 +56,8 @@ public class AnalyserUnitTests
             { 1, 1, 5, 5, 0, 0, 15 },
             { 2, 2, 5, 3, 0, 0, 11 },
             { 3, 3, 4, 2, 0, 0,  8 },
-            { 4, 4, 1, 1, 0, 0,  3 },
+            { 4, 5, 1, 2, 0, 0,  5 },
+            { 5, 4, 2, 1, 0, 0,  4 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -66,7 +68,8 @@ public class AnalyserUnitTests
             { 1, 1, 5, 5, 1, 0, 15 },
             { 2, 3, 4, 2, 1, 0,  9 },
             { 3, 2, 5, 3, 0, 0,  6 },
-            { 4, 4, 1, 1, 0, 0,  2 },
+            { 4, 5, 1, 2, 0, 0,  4 },
+            { 5, 4, 2, 1, 0, 0,  2 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -76,8 +79,9 @@ public class AnalyserUnitTests
         {
             { 1, 1, 5, 5, 0, 1, 21 },
             { 2, 2, 5, 3, 0, 0, 12 },
-            { 3, 3, 4, 2, 0, 0,  8 },
-            { 4, 4, 1, 1, 0, 0,  4 },
+            { 3, 5, 1, 2, 0, 1,  9 },
+            { 4, 3, 4, 2, 0, 0,  8 },
+            { 5, 4, 2, 1, 0, 0,  4 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
 
@@ -88,7 +92,8 @@ public class AnalyserUnitTests
             { 1, 1, 5, 5, 1, 1, 22 },
             { 2, 2, 5, 3, 0, 0, 14 },
             { 3, 3, 4, 2, 1, 0, 11 },
-            { 4, 4, 1, 1, 0, 0,  4 },
+            { 4, 5, 1, 2, 0, 1,  8 },
+            { 5, 4, 2, 1, 0, 0,  5 },
         };
         verifyAlgorithm(competition, scoringSystem, expectedResults);
     }
@@ -111,20 +116,21 @@ public class AnalyserUnitTests
 
         for (int i = 0; i < expectedResults.length; i++)
         {
+            String id = "Index: " + i;
             EntrantResult result = leaderBoard.get(i);
-            Assert.assertEquals(expectedResults[i][0], result.getRank());
-            Assert.assertEquals(expectedResults[i][1], result.getEntrantID());
-            Assert.assertEquals(expectedResults[i][2], result.getResultItemValue(ResultItem.GAMES.toString()));
-            Assert.assertEquals(expectedResults[i][3], result.getResultItemValue(ResultItem.WINS.toString()));
+            Assert.assertEquals(id, expectedResults[i][0], result.getRank());
+            Assert.assertEquals(id, expectedResults[i][1], result.getEntrantID());
+            Assert.assertEquals(id, expectedResults[i][2], result.getResultItemValue(ResultItem.GAMES.toString()));
+            Assert.assertEquals(id, expectedResults[i][3], result.getResultItemValue(ResultItem.WINS.toString()));
             if (scoringSystem.scoreFastWins())
             {
-                Assert.assertEquals(expectedResults[i][4], result.getResultItemValue(ResultItem.FAST_WINS.toString()));
+                Assert.assertEquals(id, expectedResults[i][4], result.getResultItemValue(ResultItem.FAST_WINS.toString()));
             }
             if (scoringSystem.scoreWinAll())
             {
-                Assert.assertEquals(expectedResults[i][5], result.getResultItemValue(ResultItem.WIN_ALL.toString()));
+                Assert.assertEquals(id, expectedResults[i][5], result.getResultItemValue(ResultItem.WIN_ALL.toString()));
             }
-            Assert.assertEquals(expectedResults[i][6], result.getResultItemValue(ResultItem.POINTS.toString()));
+            Assert.assertEquals(id, expectedResults[i][6], result.getResultItemValue(ResultItem.POINTS.toString()));
         }
     }
 
@@ -179,16 +185,20 @@ public class AnalyserUnitTests
         m3.addPlayer(p2);
         m3.addGame(g5);
 
-        // A match of three players, two games with the same winner, no fast wins.
+        // A match of five players, two games with the same winner, no fast wins.
         Game g6 = new Game(6, 6);
         Game g7 = new Game(7, 7);
         g6.addWinner(p1);
+        g6.addWinner(p5);
         g7.addWinner(p1);
+        g7.addWinner(p5);
 
         Match m4 = new Match(4, 4, LocalDate.of(2018, 3, 13));
         m4.addPlayer(p1);
         m4.addPlayer(p2);
         m4.addPlayer(p3);
+        m4.addPlayer(p4);
+        m4.addPlayer(p5);
         m4.addGame(g6);
         m4.addGame(g7);
 
