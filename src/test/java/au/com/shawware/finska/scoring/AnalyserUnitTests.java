@@ -26,7 +26,7 @@ import au.com.shawware.finska.entity.Player;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "static-method", "boxing" })
+@SuppressWarnings({ "nls", "static-method" })
 public class AnalyserUnitTests
 {
     /**
@@ -122,15 +122,32 @@ public class AnalyserUnitTests
             Assert.assertEquals(id, expectedResults[i][1], result.getEntrantID());
             Assert.assertEquals(id, expectedResults[i][2], result.getResultItemValue(ResultItem.GAMES.toString()));
             Assert.assertEquals(id, expectedResults[i][3], result.getResultItemValue(ResultItem.WINS.toString()));
-            if (scoringSystem.scoreFastWins())
-            {
-                Assert.assertEquals(id, expectedResults[i][4], result.getResultItemValue(ResultItem.FAST_WINS.toString()));
-            }
-            if (scoringSystem.scoreWinAll())
-            {
-                Assert.assertEquals(id, expectedResults[i][5], result.getResultItemValue(ResultItem.WIN_ALL.toString()));
-            }
+            verifyOptionalResultItem(id, result, ResultItem.FAST_WINS, scoringSystem.scoreFastWins(), expectedResults[i][4]);
+            verifyOptionalResultItem(id, result, ResultItem.WIN_ALL, scoringSystem.scoreWinAll(), expectedResults[i][5]);
             Assert.assertEquals(id, expectedResults[i][6], result.getResultItemValue(ResultItem.POINTS.toString()));
+        }
+    }
+
+    /**
+     * Verify the given result either contains the given item at the right value
+     * or does not contain the item at all.
+     * 
+     * @param id result ID for error messages
+     * @param result the result under test
+     * @param item the result item that may or may no be present
+     * @param present whether the item should be present
+     * @param expectedResult the expected value of the item
+     */
+    private void verifyOptionalResultItem(String id, EntrantResult result, ResultItem item, boolean present, int expectedResult)
+    {
+        if (present)
+        {
+            Assert.assertEquals(id, expectedResult, result.getResultItemValue(item.toString()));
+        }
+        else
+        {
+            // TODO: verify this throws an exception when util supports this
+//            result.getResultItemValue(item.toString());
         }
     }
 
