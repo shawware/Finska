@@ -17,6 +17,8 @@ import java.util.List;
  */
 public enum ResultItem
 {
+    /** The total number of matches played. */
+    MATCHES,
     /** The total number of games played. */
     GAMES,
     /** The total number of wins. */

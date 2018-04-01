@@ -63,7 +63,8 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                     results.put(playerID, new EntrantResult(playerID, resultItems));
                 }
                 EntrantResult result = results.get(playerID);
-                result.updateResultItem(ResultItem.GAMES.toString(), 1);
+                result.updateResultItem(ResultItem.MATCHES.toString(), 1);
+                result.updateResultItem(ResultItem.GAMES.toString(), match.getGameIds().size());
                 if (mScoringSystem.scorePointsForPlaying())
                 {
                     result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
@@ -133,6 +134,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     {
         List<String>  resultItems = new ArrayList<>(ResultItem.values().length);
 
+        resultItems.add(ResultItem.MATCHES.toString());
         resultItems.add(ResultItem.GAMES.toString());
         resultItems.add(ResultItem.WINS.toString());
         if (system.scoreFastWins())

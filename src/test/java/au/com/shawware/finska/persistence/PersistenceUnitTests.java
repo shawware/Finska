@@ -30,19 +30,19 @@ import au.com.shawware.finska.entity.Player;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({"static-method", "boxing" })
+@SuppressWarnings({"nls", "static-method", "boxing" })
 public class PersistenceUnitTests
 {
     /** Test root directory for persisted entities. */
-    private static final String PERSISTENCE_ROOT = "/tmp/finska"; //$NON-NLS-1$
+    private static final String PERSISTENCE_ROOT = "/tmp/finska";
     /** Persisted game sub-directory. */
-    private static final String GAME_DIR   = "game";        //$NON-NLS-1$
+    private static final String GAME_DIR   = "game";
     /** Persisted match sub-directory. */
-    private static final String MATCH_DIR  = "match";       //$NON-NLS-1$
+    private static final String MATCH_DIR  = "match";
     /** Persisted player sub-directory. */
-    private static final String PLAYER_DIR = "player";      //$NON-NLS-1$
+    private static final String PLAYER_DIR = "player";
     /** Persisted competition sub-directory. */
-    private static final String COMP_DIR   = "competition"; //$NON-NLS-1$
+    private static final String COMP_DIR   = "competition";
 
     /**
      * Setup test fixtures and the like before all tests.
@@ -70,7 +70,7 @@ public class PersistenceUnitTests
     public static void tearDown()
         throws IOException
     {
-        Runtime.getRuntime().exec("rm -r " + PERSISTENCE_ROOT); //$NON-NLS-1$
+        Runtime.getRuntime().exec("rm -r " + PERSISTENCE_ROOT);
     }
 
     /**
@@ -88,7 +88,7 @@ public class PersistenceUnitTests
         IEntityStore<Match> matchStore = factory.getStore(Match.class);
         IEntityStore<Game> gameStore = factory.getStore(Game.class);
 
-        Player p1 = new Player("David"); //$NON-NLS-1$
+        Player p1 = new Player("David");
         verifyBasicStorage(playerStore, p1);
 
         Game g1 = new Game(1);
@@ -100,7 +100,7 @@ public class PersistenceUnitTests
         m1.addGame(g1);
         verifyBasicStorage(matchStore, m1);
 
-        Competition c1 = new Competition("C1", LocalDate.of(2018, 3, 9)); //$NON-NLS-1$
+        Competition c1 = new Competition("C1", LocalDate.of(2018, 3, 9));
         c1.addMatch(m1);
         verifyBasicStorage(competitionStore, c1);
 
