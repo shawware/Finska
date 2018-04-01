@@ -70,10 +70,11 @@ public class HtmlGenerator
      * 
      * @param tag the tag name
      * @param clazz the CSS class
+     * @param classes optional additional CSS classes
      * 
      * @throws IOException output error
      */
-    public void openTag(String tag, String clazz)
+    public void openTag(String tag, String clazz, String... classes)
         throws IOException
     {
         mWriter.write(indent());
@@ -81,6 +82,10 @@ public class HtmlGenerator
         mWriter.write(tag);
         mWriter.write(" class=\"");
         mWriter.write(mCssClassPrefix + clazz);
+        for (String c : classes)
+        {
+            mWriter.write(" " + mCssClassPrefix + c);
+        }
         mWriter.write("\">\n");
         mTagStack.push(tag);
     }

@@ -73,7 +73,7 @@ public class HtmlConverter implements IConverter
         {
             generator.openTag("tr", "row");
 
-            generator.openTag("td", "cell");
+            generator.openTag("td", "cell", "numeric");
             generator.value(result.getRank());
             generator.closeTag();
 
@@ -83,7 +83,7 @@ public class HtmlConverter implements IConverter
 
             for (String name : itemNames)
             {
-                generator.openTag("td", "cell");
+                generator.openTag("td", "cell", "numeric");
                 generator.value(result.getResultItemValue(name));
                 generator.closeTag();
             }
