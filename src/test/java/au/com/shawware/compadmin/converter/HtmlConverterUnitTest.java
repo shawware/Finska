@@ -34,7 +34,7 @@ import au.com.shawware.finska.scoring.ScoringSystem;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "boxing" })
+@SuppressWarnings({ "nls", "boxing", "static-method" })
 public class HtmlConverterUnitTest extends AbstractScoringUnitTest
 {
     /**
@@ -60,17 +60,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
 
         Writer output = new BufferedWriter(new OutputStreamWriter(System.out));
         IConverter converter = new HtmlConverter("finska");
-        try
-        {
-            converter.convert(sPlayers, leaderBoard, output);
-            output.flush();
-        }
-        catch (IOException | RuntimeException e)
-        {
-            System.err.println(e.getMessage());
-            e.printStackTrace(System.err);
-            Assert.fail("Unexpected error");
-        }
+        outputLeaderboard(sPlayers, leaderBoard, converter, output);
     }
 
     /**
@@ -91,12 +81,34 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
             ILeaderBoardAssistant assistant = new CompetitionAnalyser(competition, scoringSystem);
             List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
-            for (EntrantResult result : leaderBoard)
-            {
-                System.out.println(result);
-            }
+            Writer output = new BufferedWriter(new OutputStreamWriter(System.out));
+            IConverter converter = new HtmlConverter("finska");
+            outputLeaderboard(players, leaderBoard, converter, output);
         }
         catch (PersistenceException e)
+        {
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+            Assert.fail("Unexpected error");
+        }
+    }
+
+    /**
+     * Outputs the given leader board data using the given converter to the given output.
+     * 
+     * @param players the player data
+     * @param leaderBoard the leader board
+     * @param converter the converter to use
+     * @param output where to send the output
+     */
+    private void outputLeaderboard(Map<Integer, Player> players, List<EntrantResult> leaderBoard, IConverter converter, Writer output)
+    {
+        try
+        {
+            converter.convert(players, leaderBoard, output);
+            output.flush();
+        }
+        catch (IOException | RuntimeException e)
         {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);
