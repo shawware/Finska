@@ -19,20 +19,23 @@ import org.junit.Test;
 
 import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
+import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.compadmin.scoring.TestAssistant;
 import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.CompetitionLoader;
 import au.com.shawware.finska.persistence.PersistenceException;
+import au.com.shawware.finska.scoring.CompetitionAnalyser;
+import au.com.shawware.finska.scoring.ScoringSystem;
 
 /**
  * Exercise and verify HTML output.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings("nls")
-public class HtmlConverterUnitTests extends AbstractScoringUnitTest
+@SuppressWarnings({ "nls", "boxing" })
+public class HtmlConverterUnitTest extends AbstractScoringUnitTest
 {
     /**
      * Generates some HTML output for a set of results.
@@ -81,8 +84,17 @@ public class HtmlConverterUnitTests extends AbstractScoringUnitTest
             CompetitionLoader loader = CompetitionLoader.getLoader("./data");
             Map<Integer, Player> players = loader.getPlayers();
             Map<Integer, Competition> comps = loader.getCompetitions();
+            Competition competition = comps.get(1);
             System.out.println("Players: " + players.size());
-            System.out.println("Comp: " + comps.get(1).toString());
+            System.out.println("Comp: " + competition.toString());
+
+            ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
+            ILeaderBoardAssistant assistant = new CompetitionAnalyser(competition, scoringSystem);
+            List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
+            for (EntrantResult result : leaderBoard)
+            {
+                System.out.println(result);
+            }
         }
         catch (PersistenceException e)
         {

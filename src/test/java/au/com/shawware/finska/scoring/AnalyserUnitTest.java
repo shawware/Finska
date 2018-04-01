@@ -20,6 +20,7 @@ import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Game;
 import au.com.shawware.finska.entity.Match;
 import au.com.shawware.finska.entity.Player;
+import au.com.shawware.util.test.AbstractUnitTest;
 
 /**
  * Exercises and verifies the {@link CompetitionAnalyser} algorithm.
@@ -27,7 +28,7 @@ import au.com.shawware.finska.entity.Player;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({ "nls", "static-method" })
-public class AnalyserUnitTests
+public class AnalyserUnitTest extends AbstractUnitTest
 {
     /**
      * Test the {@link CompetitionAnalyser#compileResults()} algorithm.
@@ -147,8 +148,7 @@ public class AnalyserUnitTests
         }
         else
         {
-            // TODO: verify this throws an exception when util supports this
-//            result.getResultItemValue(item.toString());
+            verifyExceptionThrown(() -> result.getResultItemValue(item.toString()), IllegalArgumentException.class, "Unknown result item: " + item);
         }
     }
 

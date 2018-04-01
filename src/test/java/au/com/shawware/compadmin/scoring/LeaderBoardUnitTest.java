@@ -18,7 +18,7 @@ import org.junit.Test;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({ "static-method" })
-public class LeaderBoardUnitTests extends AbstractScoringUnitTest
+public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 {
     /**
      * Test the basic leader board generation algorithm for a simple case.

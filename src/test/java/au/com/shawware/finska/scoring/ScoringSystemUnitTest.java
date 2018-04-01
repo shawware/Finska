@@ -26,7 +26,7 @@ import au.com.shawware.finska.entity.Player;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({ "nls", "boxing", "static-method" })
-public class ScoringSystemUnitTests
+public class ScoringSystemUnitTest
 {
     /**
      * Verify the correct result items are used for each scoring system setting.

@@ -31,7 +31,7 @@ import au.com.shawware.finska.entity.Player;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({"nls", "static-method", "boxing" })
-public class PersistenceUnitTests
+public class PersistenceUnitTest
 {
     /** Test root directory for persisted entities. */
     private static final String PERSISTENCE_ROOT = "/tmp/finska";
