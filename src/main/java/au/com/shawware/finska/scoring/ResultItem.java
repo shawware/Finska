@@ -15,20 +15,21 @@ import java.util.List;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
+@SuppressWarnings("nls")
 public enum ResultItem
 {
     /** The total number of matches played. */
-    MATCHES,
+    MATCHES("Matches"),
     /** The total number of games played. */
-    GAMES,
+    GAMES("Games"),
     /** The total number of wins. */
-    WINS,
+    WINS("Wins"),
     /** The total name of "fast" wins, ie. 5 tosses. */
-    FAST_WINS,
+    FAST_WINS("Fast Wins"),
     /** The total number of times all games in a match were won. */
-    WIN_ALL,
+    WIN_ALL("Win All"),
     /** The total number of points. */
-    POINTS;
+    POINTS("Points");
 
     /** The items used to order and rank results. */
     private static final List<String> sComparisonItems;
@@ -37,11 +38,30 @@ public enum ResultItem
         sComparisonItems.add(ResultItem.POINTS.toString());
     }
 
+    /** The text to display for this item. */
+    private final String mText;
+
+    /**
+     * Constructs a new item.
+     * 
+     * @param text the display text
+     */
+    private ResultItem(String text)
+    {
+        mText = text;
+    }
+
     /**
      * @return The items used to order and rank results.
      */
     public static List<String> getComparisonItems()
     {
         return sComparisonItems;
+    }
+
+    @Override
+    public String toString()
+    {
+        return mText;
     }
 }
