@@ -8,6 +8,7 @@
 package au.com.shawware.compadmin.converter;
 
 import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -67,7 +68,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
      * Generates HTML from a set of persisted entities.
      */
     @Test
-    public void extendedTest()
+    public void leaderBoardTest()
     {
         try
         {
@@ -75,17 +76,43 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             Map<Integer, Player> players = loader.getPlayers();
             Map<Integer, Competition> comps = loader.getCompetitions();
             Competition competition = comps.get(1);
-            System.out.println("Players: " + players.size());
-            System.out.println("Comp: " + competition.toString());
-
             ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
-            ILeaderBoardAssistant assistant = new CompetitionAnalyser(competition, scoringSystem);
+            ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
             List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
-            Writer output = new BufferedWriter(new OutputStreamWriter(System.out));
+            Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/leaderboard.html")));
             IConverter converter = new HtmlConverter("finska");
             outputLeaderboard(players, leaderBoard, converter, output);
+            output.close();
         }
-        catch (PersistenceException e)
+        catch (PersistenceException | IOException e)
+        {
+            System.err.println(e.getMessage());
+            e.printStackTrace(System.err);
+            Assert.fail("Unexpected error");
+        }
+    }
+
+    /**
+     * Generates HTML from a set of persisted entities.
+     */
+    @Test
+    public void roundResultsTest()
+    {
+        try
+        {
+            CompetitionLoader loader = CompetitionLoader.getLoader("./data");
+            Map<Integer, Player> players = loader.getPlayers();
+            Map<Integer, Competition> comps = loader.getCompetitions();
+            Competition competition = comps.get(1);
+            ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
+            ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
+            List<List<EntrantResult>> roundResults = assistant.compileRoundResults();
+            Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/rounds.html")));
+            IConverter converter = new HtmlConverter("finska");
+            converter.convertRoundResults(players, roundResults, output);
+            output.close();
+        }
+        catch (PersistenceException | IOException e)
         {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);
@@ -105,7 +132,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            converter.convert(players, leaderBoard, output);
+            converter.convertOverallResults(players, leaderBoard, output);
             output.flush();
         }
         catch (IOException | RuntimeException e)

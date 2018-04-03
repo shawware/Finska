@@ -31,6 +31,18 @@ public interface IConverter
      * 
      * @throws IOException output stream error
      */
-    public void convert(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, Writer output)
+    public void convertOverallResults(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, Writer output)
         throws IOException;
+
+    /**
+     * Converts the given set of entrants and their round results to the given output stream.
+     * 
+     * @param entrants the entrants
+     * @param results the entrants' results
+     * @param output the output stream
+     * 
+     * @throws IOException output stream error
+     */
+    public void convertRoundResults(Map<Integer, ? extends Entrant> entrants, List<List<EntrantResult>> results, Writer output)
+            throws IOException;
 }

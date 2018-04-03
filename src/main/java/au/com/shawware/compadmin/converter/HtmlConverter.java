@@ -39,7 +39,7 @@ public class HtmlConverter implements IConverter
     }
 
     @Override
-    public void convert(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, Writer output)
+    public void convertOverallResults(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, Writer output)
         throws IOException
     {
         HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
@@ -93,5 +93,16 @@ public class HtmlConverter implements IConverter
         generator.closeTag();
 
         generator.closeTag();
+    }
+
+    @Override
+    public void convertRoundResults(Map<Integer, ? extends Entrant> entrants, List<List<EntrantResult>> results, Writer output)
+            throws IOException
+    {
+        HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
+        for (List<EntrantResult> result : results)
+        {
+            convertOverallResults(entrants, result, output);
+        }
     }
 }
