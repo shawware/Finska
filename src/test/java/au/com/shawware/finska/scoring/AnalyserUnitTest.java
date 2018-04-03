@@ -31,7 +31,7 @@ import au.com.shawware.util.test.AbstractUnitTest;
 public class AnalyserUnitTest extends AbstractUnitTest
 {
     /**
-     * Test the {@link CompetitionAnalyser#compileResults()} algorithm.
+     * Test the {@link CompetitionAnalyser#compileOverallResults()} algorithm.
      */
     @Test
     public void testAlgorithm()
@@ -100,7 +100,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
     }
 
     /**
-     * Verify the {@link CompetitionAnalyser#compileResults()} algorithm
+     * Verify the {@link CompetitionAnalyser#compileOverallResults()} algorithm
      * for the given competition and scoring system.
      * 
      * @param competition the competition
@@ -109,7 +109,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
      */
     private void verifyAlgorithm(Competition competition, ScoringSystem scoringSystem, int[][] expectedResults)
     {
-        ILeaderBoardAssistant assistant = new CompetitionAnalyser(competition, scoringSystem);
+        ILeaderBoardAssistant assistant = new CompetitionAnalyser(null, competition, scoringSystem);
         List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
 
         Assert.assertNotNull(leaderBoard);

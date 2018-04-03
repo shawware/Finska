@@ -20,35 +20,40 @@ import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Game;
 import au.com.shawware.finska.entity.Match;
+import au.com.shawware.finska.entity.Player;
 
 /**
  * Analyses competitions to produce artifacts such as leader boards.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
+@SuppressWarnings("boxing")
 public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
 {
+    /** The entrants in the competition. */
+    private final Map<Integer, Player> mPlayers;
     /** The competition being analysed. */
     private final Competition mCompetition;
     /** The scoring system in use. */
     private final ScoringSystem mScoringSystem;
 
     /**
-     * Constructs a new analyser for the given competition and scoring system.
+     * Constructs a new analyser for the given players, competition and scoring system.
      * 
+     * @param players the full set of players in the competition
      * @param competition the competition to analyse
      * @param scoringSystem the scoring system to use
      */
-    public CompetitionAnalyser(Competition competition, ScoringSystem scoringSystem)
+    public CompetitionAnalyser(Map<Integer, Player> players, Competition competition, ScoringSystem scoringSystem)
     {
         super(ResultItem.getComparisonItems());
+        mPlayers       = players;
         mCompetition   = competition;
         mScoringSystem = scoringSystem;
     }
 
-    @SuppressWarnings("boxing")
     @Override
-    public List<EntrantResult> compileResults()
+    public List<EntrantResult> compileOverallResults()
     {
         List<String> resultItems = determineResultItems(mScoringSystem);
 
@@ -120,6 +125,91 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             }
         }
         return results.values().stream().collect(Collectors.toList());
+    }
+
+    @Override
+    public List<List<EntrantResult>> compileRoundResults()
+    {
+        List<String> resultItems = determineResultItems(mScoringSystem);
+        Set<Integer> matchIds = mCompetition.getMatchIds();
+        List<List<EntrantResult>> results = new ArrayList<>(matchIds.size());
+
+        for (Integer matchID : mCompetition.getMatchIds())
+        {
+            Map<Integer, EntrantResult> roundResults = new HashMap<>(mPlayers.size());
+            for (Integer playerID : mPlayers.keySet())
+            {
+                roundResults.put(playerID, new EntrantResult(playerID, resultItems));
+            }
+
+            Match match = mCompetition.getMatch(matchID);
+            for (Integer playerID : match.getPlayersIds())
+            {
+                EntrantResult result = roundResults.get(playerID);
+                result.updateResultItem(ResultItem.MATCHES.toString(), 1);
+                result.updateResultItem(ResultItem.GAMES.toString(), match.getGameIds().size());
+                if (mScoringSystem.scorePointsForPlaying())
+                {
+                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
+                }
+            }
+            Set<Integer> gameIDs = match.getGameIds();
+            boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
+            boolean sameWinner = true;
+            Set<Integer> lastWinners = new HashSet<>();
+            for (Integer gameID : gameIDs)
+            {
+                Game game = match.getGame(gameID);
+                if (!game.hasWinner())
+                {
+                    continue; // Skip games that have not been played yet.
+                }
+                Set<Integer> winnerIds = game.getWinnerIds();
+                for (Integer winnerId : winnerIds)
+                {
+                    EntrantResult result = roundResults.get(winnerId);
+                    result.updateResultItem(ResultItem.WINS.toString(), 1);
+                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
+                    if (mScoringSystem.scoreFastWins() && game.isFastWinner(winnerId))
+                    {
+                        result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
+                        result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
+                    }
+                }
+                if (recordWinAll && sameWinner)
+                {
+                    if (lastWinners.size() == 0)
+                    {
+                        lastWinners.addAll(winnerIds);
+                    }
+                    else
+                    {
+                        // TODO: check this does what we expect
+                        if (!lastWinners.equals(winnerIds))
+                        {
+                            sameWinner = false;
+                        }
+                    }
+                }
+            }
+            if (recordWinAll && sameWinner)
+            {
+                for (Integer winnerId : lastWinners)
+                {
+                    EntrantResult result = roundResults.get(winnerId);
+                    result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
+                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
+                }
+            }
+            List<EntrantResult> roundResult = new ArrayList<>(mPlayers.size());
+            for (Integer playerID : mPlayers.keySet())
+            {
+                roundResult.add(roundResults.get(playerID));
+            }
+            results.add(roundResult);
+        }
+
+        return results;
     }
 
     /**

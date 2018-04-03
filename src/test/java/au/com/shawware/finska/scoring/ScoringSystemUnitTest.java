@@ -71,9 +71,9 @@ public class ScoringSystemUnitTest
 
         verifyScoringSystem(scoringSystem, win, play, fast, all, expectScoreForPlaying, expectScoreFastWins, expectScoreWinAll);
 
-        ILeaderBoardAssistant a1 = new CompetitionAnalyser(competition, scoringSystem);
+        ILeaderBoardAssistant a1 = new CompetitionAnalyser(null, competition, scoringSystem);
 
-        List<EntrantResult> results = a1.compileResults();
+        List<EntrantResult> results = a1.compileOverallResults();
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 

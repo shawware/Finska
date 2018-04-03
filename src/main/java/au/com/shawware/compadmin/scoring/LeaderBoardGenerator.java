@@ -27,7 +27,7 @@ public class LeaderBoardGenerator
      */
     public static List<EntrantResult> generateLeaderBoard(ILeaderBoardAssistant assistant)
     {
-        List<EntrantResult> results = assistant.compileResults();
+        List<EntrantResult> results = assistant.compileOverallResults();
 
         Collections.sort(results, assistant);
 
