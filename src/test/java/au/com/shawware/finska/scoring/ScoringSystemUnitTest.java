@@ -8,7 +8,9 @@
 package au.com.shawware.finska.scoring;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -44,11 +46,11 @@ public class ScoringSystemUnitTest
         Competition c1 = new Competition(1, "C1", LocalDate.of(2018, 3, 10));
         c1.addMatch(m1);
 
-        verifyResultItems(c1, 3, 0, -1, -7, false, false, false);
-        verifyResultItems(c1, 3, 1,  0,  0, true,  false, false);
-        verifyResultItems(c1, 3, 1,  2,  0, true,   true, false);
-        verifyResultItems(c1, 3, 1,  0,  3, true,  false,  true);
-        verifyResultItems(c1, 3, 1,  1,  1, true,   true,  true);
+        verifyResultItems(c1, p1, 3, 0, -1, -7, false, false, false);
+        verifyResultItems(c1, p1, 3, 1,  0,  0, true,  false, false);
+        verifyResultItems(c1, p1, 3, 1,  2,  0, true,   true, false);
+        verifyResultItems(c1, p1, 3, 1,  0,  3, true,  false,  true);
+        verifyResultItems(c1, p1, 3, 1,  1,  1, true,   true,  true);
     }
 
     /**
@@ -56,6 +58,7 @@ public class ScoringSystemUnitTest
      * as per the given configuration items for a scoring system.
      * 
      * @param competition the competition under test
+     * @param player the test player in the competition
      * @param win points for a win
      * @param play points for playing
      * @param fast points for fast wins
@@ -64,14 +67,17 @@ public class ScoringSystemUnitTest
      * @param expectScoreFastWins whether scoring for fast wins is expected
      * @param expectScoreWinAll whether scoring for win all is expected
      */
-    private void verifyResultItems(Competition competition, int win, int play, int fast, int all,
+    private void verifyResultItems(Competition competition, Player player, int win, int play, int fast, int all,
             boolean expectScoreForPlaying, boolean expectScoreFastWins, boolean expectScoreWinAll)
     {
+        Map<Integer, Player> players = new HashMap<>();
+        players.put(player.getId(), player);
+
         ScoringSystem scoringSystem = new ScoringSystem(win, play, fast, all);
 
         verifyScoringSystem(scoringSystem, win, play, fast, all, expectScoreForPlaying, expectScoreFastWins, expectScoreWinAll);
 
-        ILeaderBoardAssistant a1 = new CompetitionAnalyser(null, competition, scoringSystem);
+        ILeaderBoardAssistant a1 = new CompetitionAnalyser(players, competition, scoringSystem);
 
         List<EntrantResult> results = a1.compileOverallResults();
         Assert.assertNotNull(results);

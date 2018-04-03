@@ -8,7 +8,9 @@
 package au.com.shawware.finska.scoring;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -27,7 +29,7 @@ import au.com.shawware.util.test.AbstractUnitTest;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "static-method" })
+@SuppressWarnings({ "nls", "static-method", "boxing" })
 public class AnalyserUnitTest extends AbstractUnitTest
 {
     /**
@@ -36,7 +38,8 @@ public class AnalyserUnitTest extends AbstractUnitTest
     @Test
     public void testAlgorithm()
     {
-        Competition competition = createCompetition();
+        Map<Integer, Player> players = new HashMap<>();
+        Competition competition = createCompetition(players);
 
         // Test the a basic scoring Scoring System - no bonuses of any kind.
         ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0);
@@ -48,7 +51,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 3, 5, 1, 2, 2, 0, 0, 10 },
             { 5, 4, 2, 4, 1, 0, 0,  5 },
         };
-        verifyAlgorithm(competition, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and games.
         scoringSystem = new ScoringSystem(2, 1, 0, 0);
@@ -60,7 +63,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 5, 1, 2, 2, 0, 0,  5 },
             { 5, 4, 2, 4, 1, 0, 0,  4 },
         };
-        verifyAlgorithm(competition, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and fast wins.
         scoringSystem = new ScoringSystem(2, 0, 5, 0);
@@ -72,7 +75,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 5, 1, 2, 2, 0, 0,  4 },
             { 5, 4, 2, 4, 1, 0, 0,  2 },
         };
-        verifyAlgorithm(competition, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win alls.
         scoringSystem = new ScoringSystem(4, 0, 0, 1);
@@ -84,7 +87,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 3, 4, 8, 2, 0, 0,  8 },
             { 5, 4, 2, 4, 1, 0, 0,  4 },
         };
-        verifyAlgorithm(competition, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the Seertech Scoring System
         scoringSystem = new ScoringSystem(3, 1, 1, 1);
@@ -96,7 +99,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 5, 1, 2, 2, 0, 1,  8 },
             { 5, 4, 2, 4, 1, 0, 0,  5 },
         };
-        verifyAlgorithm(competition, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
     }
 
     /**
@@ -104,12 +107,13 @@ public class AnalyserUnitTest extends AbstractUnitTest
      * for the given competition and scoring system.
      * 
      * @param competition the competition
+     * @param players the players in the competition
      * @param scoringSystem the scoring system
      * @param expectedResults the expected results
      */
-    private void verifyAlgorithm(Competition competition, ScoringSystem scoringSystem, int[][] expectedResults)
+    private void verifyAlgorithm(Competition competition, Map<Integer, Player> players, ScoringSystem scoringSystem, int[][] expectedResults)
     {
-        ILeaderBoardAssistant assistant = new CompetitionAnalyser(null, competition, scoringSystem);
+        ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
         List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
 
         Assert.assertNotNull(leaderBoard);
@@ -155,15 +159,23 @@ public class AnalyserUnitTest extends AbstractUnitTest
     /**
      * Create a competition with players, matches and games.
      * 
+     * @param players holder for the players that are created for the competition
+     * 
      * @return The generated competition.
      */
-    private Competition createCompetition()
+    private Competition createCompetition(Map<Integer, Player> players)
     {
         Player p1 = new Player(1, "David");
         Player p2 = new Player(2, "Mike");
         Player p3 = new Player(3, "Tom");
         Player p4 = new Player(4, "Dick");
         Player p5 = new Player(5, "Harry");
+
+        players.put(p1.getId(), p1);
+        players.put(p2.getId(), p2);
+        players.put(p3.getId(), p3);
+        players.put(p4.getId(), p4);
+        players.put(p5.getId(), p5);
 
         // A match of three players, two games with two different winners, one a fast win.
         Game g1 = new Game(1, 1);

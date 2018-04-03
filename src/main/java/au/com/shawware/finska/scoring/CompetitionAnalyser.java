@@ -58,71 +58,15 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         List<String> resultItems = determineResultItems(mScoringSystem);
 
         Map<Integer, EntrantResult> results = new HashMap<>();
+        for (Integer playerID : mPlayers.keySet())
+        {
+            results.put(playerID, new EntrantResult(playerID, resultItems));
+        }
+
         for (Integer matchID : mCompetition.getMatchIds())
         {
             Match match = mCompetition.getMatch(matchID);
-            for (Integer playerID : match.getPlayersIds())
-            {
-                if (!results.containsKey(playerID))
-                {
-                    results.put(playerID, new EntrantResult(playerID, resultItems));
-                }
-                EntrantResult result = results.get(playerID);
-                result.updateResultItem(ResultItem.MATCHES.toString(), 1);
-                result.updateResultItem(ResultItem.GAMES.toString(), match.getGameIds().size());
-                if (mScoringSystem.scorePointsForPlaying())
-                {
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
-                }
-            }
-            Set<Integer> gameIDs = match.getGameIds();
-            boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
-            boolean sameWinner = true;
-            Set<Integer> lastWinners = new HashSet<>();
-            for (Integer gameID : gameIDs)
-            {
-                Game game = match.getGame(gameID);
-                if (!game.hasWinner())
-                {
-                    continue; // Skip games that have not been played yet.
-                }
-                Set<Integer> winnerIds = game.getWinnerIds();
-                for (Integer winnerId : winnerIds)
-                {
-                    EntrantResult result = results.get(winnerId);
-                    result.updateResultItem(ResultItem.WINS.toString(), 1);
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
-                    if (mScoringSystem.scoreFastWins() && game.isFastWinner(winnerId))
-                    {
-                        result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
-                        result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
-                    }
-                }
-                if (recordWinAll && sameWinner)
-                {
-                    if (lastWinners.size() == 0)
-                    {
-                        lastWinners.addAll(winnerIds);
-                    }
-                    else
-                    {
-                        // TODO: check this does what we expect
-                        if (!lastWinners.equals(winnerIds))
-                        {
-                            sameWinner = false;
-                        }
-                    }
-                }
-            }
-            if (recordWinAll && sameWinner)
-            {
-                for (Integer winnerId : lastWinners)
-                {
-                    EntrantResult result = results.get(winnerId);
-                    result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
-                }
-            }
+            processMatch(results, match);
         }
         return results.values().stream().collect(Collectors.toList());
     }
@@ -134,7 +78,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         Set<Integer> matchIds = mCompetition.getMatchIds();
         List<List<EntrantResult>> results = new ArrayList<>(matchIds.size());
 
-        for (Integer matchID : mCompetition.getMatchIds())
+        for (Integer matchID : matchIds)
         {
             Map<Integer, EntrantResult> roundResults = new HashMap<>(mPlayers.size());
             for (Integer playerID : mPlayers.keySet())
@@ -143,64 +87,8 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             }
 
             Match match = mCompetition.getMatch(matchID);
-            for (Integer playerID : match.getPlayersIds())
-            {
-                EntrantResult result = roundResults.get(playerID);
-                result.updateResultItem(ResultItem.MATCHES.toString(), 1);
-                result.updateResultItem(ResultItem.GAMES.toString(), match.getGameIds().size());
-                if (mScoringSystem.scorePointsForPlaying())
-                {
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
-                }
-            }
-            Set<Integer> gameIDs = match.getGameIds();
-            boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
-            boolean sameWinner = true;
-            Set<Integer> lastWinners = new HashSet<>();
-            for (Integer gameID : gameIDs)
-            {
-                Game game = match.getGame(gameID);
-                if (!game.hasWinner())
-                {
-                    continue; // Skip games that have not been played yet.
-                }
-                Set<Integer> winnerIds = game.getWinnerIds();
-                for (Integer winnerId : winnerIds)
-                {
-                    EntrantResult result = roundResults.get(winnerId);
-                    result.updateResultItem(ResultItem.WINS.toString(), 1);
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
-                    if (mScoringSystem.scoreFastWins() && game.isFastWinner(winnerId))
-                    {
-                        result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
-                        result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
-                    }
-                }
-                if (recordWinAll && sameWinner)
-                {
-                    if (lastWinners.size() == 0)
-                    {
-                        lastWinners.addAll(winnerIds);
-                    }
-                    else
-                    {
-                        // TODO: check this does what we expect
-                        if (!lastWinners.equals(winnerIds))
-                        {
-                            sameWinner = false;
-                        }
-                    }
-                }
-            }
-            if (recordWinAll && sameWinner)
-            {
-                for (Integer winnerId : lastWinners)
-                {
-                    EntrantResult result = roundResults.get(winnerId);
-                    result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
-                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
-                }
-            }
+            processMatch(roundResults, match);
+
             List<EntrantResult> roundResult = new ArrayList<>(mPlayers.size());
             for (Integer playerID : mPlayers.keySet())
             {
@@ -210,6 +98,75 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         }
 
         return results;
+    }
+
+    /**
+     * Process the given match. That is, evaluate each game and update
+     * the results for the entrants accordingly.
+     * 
+     * @param results the players' results so far
+     * @param match the match to process
+     */
+    private void processMatch(Map<Integer, EntrantResult> results, Match match)
+    {
+        for (Integer playerID : match.getPlayersIds())
+        {
+            EntrantResult result = results.get(playerID);
+            result.updateResultItem(ResultItem.MATCHES.toString(), 1);
+            result.updateResultItem(ResultItem.GAMES.toString(), match.getGameIds().size());
+            if (mScoringSystem.scorePointsForPlaying())
+            {
+                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
+            }
+        }
+        Set<Integer> gameIDs = match.getGameIds();
+        boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
+        boolean sameWinner = true;
+        Set<Integer> lastWinners = new HashSet<>();
+        for (Integer gameID : gameIDs)
+        {
+            Game game = match.getGame(gameID);
+            if (!game.hasWinner())
+            {
+                continue; // Skip games that have not been played yet.
+            }
+            Set<Integer> winnerIds = game.getWinnerIds();
+            for (Integer winnerId : winnerIds)
+            {
+                EntrantResult result = results.get(winnerId);
+                result.updateResultItem(ResultItem.WINS.toString(), 1);
+                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
+                if (mScoringSystem.scoreFastWins() && game.isFastWinner(winnerId))
+                {
+                    result.updateResultItem(ResultItem.FAST_WINS.toString(), 1);
+                    result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
+                }
+            }
+            if (recordWinAll && sameWinner)
+            {
+                if (lastWinners.size() == 0)
+                {
+                    lastWinners.addAll(winnerIds);
+                }
+                else
+                {
+                    // TODO: check this does what we expect
+                    if (!lastWinners.equals(winnerIds))
+                    {
+                        sameWinner = false;
+                    }
+                }
+            }
+        }
+        if (recordWinAll && sameWinner)
+        {
+            for (Integer winnerId : lastWinners)
+            {
+                EntrantResult result = results.get(winnerId);
+                result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
+                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
+            }
+        }
     }
 
     /**
