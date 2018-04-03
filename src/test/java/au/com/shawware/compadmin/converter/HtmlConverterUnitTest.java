@@ -74,10 +74,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
         {
             CompetitionLoader loader = CompetitionLoader.getLoader("./data");
             Map<Integer, Player> players = loader.getPlayers();
-            Map<Integer, Competition> comps = loader.getCompetitions();
-            Competition competition = comps.get(1);
-            ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
-            ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
+            ILeaderBoardAssistant assistant = buildAssistant(loader, players);
             List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/leaderboard.html")));
             IConverter converter = new HtmlConverter("finska");
@@ -102,10 +99,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
         {
             CompetitionLoader loader = CompetitionLoader.getLoader("./data");
             Map<Integer, Player> players = loader.getPlayers();
-            Map<Integer, Competition> comps = loader.getCompetitions();
-            Competition competition = comps.get(1);
-            ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
-            ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
+            ILeaderBoardAssistant assistant = buildAssistant(loader, players);
             List<List<EntrantResult>> roundResults = assistant.compileRoundResults();
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/rounds.html")));
             IConverter converter = new HtmlConverter("finska");
@@ -118,6 +112,25 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             e.printStackTrace(System.err);
             Assert.fail("Unexpected error");
         }
+    }
+
+    /**
+     * Builds a leader board assistant from the given players and data.
+     * 
+     * @param loader the loader to source the competition from
+     * @param players the players in the competition
+     * 
+     * @return The built assistant.
+     * 
+     * @throws PersistenceException error loading data
+     */
+    private ILeaderBoardAssistant buildAssistant(CompetitionLoader loader, Map<Integer, Player> players)
+        throws PersistenceException
+    {
+        Map<Integer, Competition> comps = loader.getCompetitions();
+        Competition competition = comps.get(1);
+        ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1);
+        return new CompetitionAnalyser(players, competition, scoringSystem);
     }
 
     /**
