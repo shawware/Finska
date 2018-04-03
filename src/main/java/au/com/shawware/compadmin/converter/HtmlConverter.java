@@ -43,7 +43,7 @@ public class HtmlConverter implements IConverter
         throws IOException
     {
         HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
-        generateHtml(entrants, results, generator);
+        generateHtml(entrants, results, generator, true);
 
     }
 
@@ -54,7 +54,9 @@ public class HtmlConverter implements IConverter
         HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
         for (List<EntrantResult> result : results)
         {
-            generateHtml(entrants, result, generator);
+            generateHtml(entrants, result, generator, false);
+            generator.openTag("p");
+            generator.closeTag();
         }
     }
 
@@ -64,10 +66,11 @@ public class HtmlConverter implements IConverter
      * @param entrants the entrants who achieved the results
      * @param results the results to convert
      * @param generator the HTML generator to use
+     * @param displayRank whether to include the rank in the output
      * 
      * @throws IOException output error
      */
-    private void generateHtml(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, HtmlGenerator generator)
+    private void generateHtml(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, HtmlGenerator generator, boolean displayRank)
         throws IOException
     {
         List<String> itemNames = results.get(0).getItemNames();
@@ -77,9 +80,12 @@ public class HtmlConverter implements IConverter
         generator.openTag("thead");
         generator.openTag("tr", "row");
 
-        generator.openTag("th", "header");
-        generator.value("Rank");
-        generator.closeTag();
+        if (displayRank)
+        {
+            generator.openTag("th", "header");
+            generator.value("Rank");
+            generator.closeTag();
+        }
 
         generator.openTag("th", "header");
         generator.value("Entrant");
@@ -100,9 +106,12 @@ public class HtmlConverter implements IConverter
         {
             generator.openTag("tr", "row");
 
-            generator.openTag("td", "cell", "numeric");
-            generator.value(result.getRank());
-            generator.closeTag();
+            if (displayRank)
+            {
+                generator.openTag("td", "cell", "numeric");
+                generator.value(result.getRank());
+                generator.closeTag();
+            }
 
             generator.openTag("td", "cell");
             generator.value(entrants.get(result.getEntrantID()).getName());
