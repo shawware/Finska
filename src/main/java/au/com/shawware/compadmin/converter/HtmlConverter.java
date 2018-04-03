@@ -20,7 +20,7 @@ import au.com.shawware.compadmin.scoring.EntrantResult;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "boxing" })
+@SuppressWarnings({ "nls", "boxing", "static-method" })
 public class HtmlConverter implements IConverter
 {
     /** The base CSS class prefix to use for all CSS classes. */
@@ -43,6 +43,33 @@ public class HtmlConverter implements IConverter
         throws IOException
     {
         HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
+        generateHtml(entrants, results, generator);
+
+    }
+
+    @Override
+    public void convertRoundResults(Map<Integer, ? extends Entrant> entrants, List<List<EntrantResult>> results, Writer output)
+            throws IOException
+    {
+        HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
+        for (List<EntrantResult> result : results)
+        {
+            generateHtml(entrants, result, generator);
+        }
+    }
+
+    /**
+     * Generates the HTML for the given results.
+     * 
+     * @param entrants the entrants who achieved the results
+     * @param results the results to convert
+     * @param generator the HTML generator to use
+     * 
+     * @throws IOException output error
+     */
+    private void generateHtml(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, HtmlGenerator generator)
+        throws IOException
+    {
         List<String> itemNames = results.get(0).getItemNames();
 
         generator.openTag("table", "table");
@@ -93,16 +120,5 @@ public class HtmlConverter implements IConverter
         generator.closeTag();
 
         generator.closeTag();
-    }
-
-    @Override
-    public void convertRoundResults(Map<Integer, ? extends Entrant> entrants, List<List<EntrantResult>> results, Writer output)
-            throws IOException
-    {
-        HtmlGenerator generator = new HtmlGenerator(output, CSS_CLASS_PREFIX, mCssClassPrefix);
-        for (List<EntrantResult> result : results)
-        {
-            convertOverallResults(entrants, result, output);
-        }
     }
 }
