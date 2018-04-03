@@ -29,7 +29,9 @@ public enum ResultItem
     /** The total number of times all games in a match were won. */
     WIN_ALL("Win All"),
     /** The total number of points. */
-    POINTS("Points");
+    POINTS("Points"),
+    /** The running total number of points. */
+    RUNNING_TOTAL("Total");
 
     /** The items used to order and rank results. */
     private static final List<String> sComparisonItems;

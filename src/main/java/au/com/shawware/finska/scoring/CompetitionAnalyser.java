@@ -21,6 +21,7 @@ import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Game;
 import au.com.shawware.finska.entity.Match;
 import au.com.shawware.finska.entity.Player;
+import au.com.shawware.util.MutableInteger;
 
 /**
  * Analyses competitions to produce artifacts such as leader boards.
@@ -55,7 +56,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     @Override
     public List<EntrantResult> compileOverallResults()
     {
-        List<String> resultItems = determineResultItems(mScoringSystem);
+        List<String> resultItems = determineResultItems(mScoringSystem, false);
 
         Map<Integer, EntrantResult> results = new HashMap<>();
         for (Integer playerID : mPlayers.keySet())
@@ -74,9 +75,15 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     @Override
     public List<List<EntrantResult>> compileRoundResults()
     {
-        List<String> resultItems = determineResultItems(mScoringSystem);
+        List<String> resultItems = determineResultItems(mScoringSystem, true);
         Set<Integer> matchIds = mCompetition.getMatchIds();
         List<List<EntrantResult>> results = new ArrayList<>(matchIds.size());
+
+        Map<Integer, MutableInteger> runningTotals = new HashMap<>(mPlayers.size());
+        for (Integer playerID : mPlayers.keySet())
+        {
+            runningTotals.put(playerID, new MutableInteger(0));
+        }
 
         for (Integer matchID : matchIds)
         {
@@ -92,7 +99,11 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             List<EntrantResult> roundResult = new ArrayList<>(mPlayers.size());
             for (Integer playerID : mPlayers.keySet())
             {
-                roundResult.add(roundResults.get(playerID));
+                EntrantResult playerResult = roundResults.get(playerID);
+                MutableInteger runningTotal = runningTotals.get(playerID);
+                runningTotal.incrementBy(playerResult.getResultItemValue(ResultItem.POINTS.toString()));
+                playerResult.updateResultItem(ResultItem.RUNNING_TOTAL.toString(), runningTotal.getValue());
+                roundResult.add(playerResult);
             }
             results.add(roundResult);
         }
@@ -173,11 +184,12 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
      * Determine the result items to use in calculations based on the scoring system.
      * 
      * @param system the scoring system to use
+     * @param runningTotal whether to include a running total (for multi-table outputs)
      * 
      * @return The result items.
      */
     @SuppressWarnings("static-method")
-    private List<String> determineResultItems(ScoringSystem system)
+    private List<String> determineResultItems(ScoringSystem system, boolean runningTotal)
     {
         List<String>  resultItems = new ArrayList<>(ResultItem.values().length);
 
@@ -193,6 +205,10 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             resultItems.add(ResultItem.WIN_ALL.toString());
         }
         resultItems.add(ResultItem.POINTS.toString());
+        if (runningTotal)
+        {
+            resultItems.add(ResultItem.RUNNING_TOTAL.toString());
+        }
 
         return resultItems;
     }
