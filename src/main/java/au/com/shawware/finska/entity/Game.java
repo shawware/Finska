@@ -79,11 +79,11 @@ public class Game extends AbstractEntity
     {
         if (player == null)
         {
-            throw new IllegalArgumentException("Null player");
+            throw new IllegalArgumentException("Null player"); //$NON-NLS-1$
         }
         if (mWinnerIds.contains(player.getId()))
         {
-            throw new IllegalArgumentException("Player " + player.getId() + " has already been recorded");
+            throw new IllegalArgumentException("Player " + player.getId() + " has already been recorded"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         addWinner(player);
         mFastWinnerIds.add(player.getId());
@@ -99,7 +99,7 @@ public class Game extends AbstractEntity
     {
         if (player == null)
         {
-            throw new IllegalArgumentException("Null player");
+            throw new IllegalArgumentException("Null player"); //$NON-NLS-1$
         }
         mWinnerIds.add(player.getId());
         mWinners.put(player.getId(), player);
@@ -121,7 +121,7 @@ public class Game extends AbstractEntity
     {
         if (!mWinners.containsKey(id))
         {
-            throw new IllegalArgumentException("Player " + id + " is not present in this game");
+            throw new IllegalArgumentException("Player " + id + " is not present in this game"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mWinners.get(id);
     }
@@ -163,6 +163,7 @@ public class Game extends AbstractEntity
      * @return Whether they won fast.
      */
     @JsonIgnore
+    @SuppressWarnings("boxing")
     public boolean isFastWinner(int winnerId)
     {
         return mFastWinnerIds.contains(winnerId);

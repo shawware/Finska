@@ -55,7 +55,7 @@ public abstract class AbstractEntity implements Comparable<AbstractEntity>
     {
         if (id < DEFAULT_ID)
         {
-            throw new IllegalArgumentException("Invalid id: " + id);
+            throw new IllegalArgumentException("Invalid id: " + id); //$NON-NLS-1$
         }
         mId = id;
     }
@@ -65,7 +65,7 @@ public abstract class AbstractEntity implements Comparable<AbstractEntity>
     {
         if (that == null)
         {
-            throw new IllegalArgumentException("Null entity");
+            throw new IllegalArgumentException("Null entity"); //$NON-NLS-1$
         }
         return this.mId - that.mId;
     }

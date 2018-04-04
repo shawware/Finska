@@ -122,7 +122,7 @@ public class Match extends AbstractEntity
     {
         if (player == null)
         {
-            throw new IllegalArgumentException("Null player");
+            throw new IllegalArgumentException("Null player"); //$NON-NLS-1$
         }
         mPlayersIds.add(player.getId());
         mPlayers.put(player.getId(), player);
@@ -137,14 +137,14 @@ public class Match extends AbstractEntity
      * 
      * @throws IllegalArgumentException player cannot be found
      */
-    @SuppressWarnings("boxing")
     @JsonIgnore
+    @SuppressWarnings("boxing")
     public Player getPlayer(int id)
         throws IllegalArgumentException
     {
         if (!mPlayers.containsKey(id))
         {
-            throw new IllegalArgumentException("Player " + id + " is not present in this match");
+            throw new IllegalArgumentException("Player " + id + " is not present in this match"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mPlayers.get(id);
     }
@@ -198,7 +198,7 @@ public class Match extends AbstractEntity
     {
         if (!mGames.containsKey(id))
         {
-            throw new IllegalArgumentException("Game " + id + " is not present in this match");
+            throw new IllegalArgumentException("Game " + id + " is not present in this match"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mGames.get(id);
     }

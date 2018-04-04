@@ -126,7 +126,7 @@ public class CompetitionLoader
                 }
                 else
                 {
-                    throw new PersistenceException("Entity " + container.getId() + " refers to non-existent entity; " + id);
+                    throw new PersistenceException("Entity " + container.getId() + " refers to non-existent entity; " + id);  //$NON-NLS-1$//$NON-NLS-2$
                 }
             }
         }

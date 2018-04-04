@@ -31,7 +31,7 @@ public class PersistenceFactory
     {
         if (StringUtil.isEmpty(root))
         {
-            throw new IllegalArgumentException("Empty root directory");
+            throw new IllegalArgumentException("Empty root directory"); //$NON-NLS-1$
         }
         mRoot = root;
     }

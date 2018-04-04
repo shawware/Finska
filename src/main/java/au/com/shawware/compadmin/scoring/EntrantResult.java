@@ -46,7 +46,7 @@ public class EntrantResult
     {
         if ((names == null) || (names.size() == 0))
         {
-            throw new IllegalArgumentException("Empty result item names");
+            throw new IllegalArgumentException("Empty result item names"); //$NON-NLS-1$
         }
 
         mEntrantID = entrantID;
@@ -57,7 +57,7 @@ public class EntrantResult
         {
             if (StringUtil.isEmpty(name))
             {
-                throw new IllegalArgumentException("Empty result item");
+                throw new IllegalArgumentException("Empty result item"); //$NON-NLS-1$
             }
             mItems.put(name, new MutableInteger(0));
         }
@@ -111,7 +111,7 @@ public class EntrantResult
     {
         if (!mItems.containsKey(name))
         {
-            throw new IllegalArgumentException("Unknown result item: " + name);
+            throw new IllegalArgumentException("Unknown result item: " + name); //$NON-NLS-1$
         }
         return mItems.get(name).getValue();
     }
@@ -130,12 +130,13 @@ public class EntrantResult
     {
         if (!mItems.containsKey(name))
         {
-            throw new IllegalArgumentException("Unknown result item: " + name);
+            throw new IllegalArgumentException("Unknown result item: " + name); //$NON-NLS-1$
         }
         mItems.get(name).incrementBy(increment);
     }
 
     @Override
+    @SuppressWarnings("boxing")
     public String toString()
     {
         return StringUtil.toString(mRank, mEntrantID, mItems);

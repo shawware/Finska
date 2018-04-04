@@ -69,7 +69,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
             StringUtil.isEmpty(name) ||
             StringUtil.isEmpty(prefix))
         {
-            throw new IllegalArgumentException("Empty parameter");
+            throw new IllegalArgumentException("Empty parameter"); //$NON-NLS-1$
         }
         mDirectory = directory;
         mEntityName = name;
@@ -92,7 +92,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
         }
         catch (IOException | UncheckedPersistenceException e)
         {
-            throw new PersistenceException("Error retrieving every " + mEntityName, e);
+            throw new PersistenceException("Error retrieving every " + mEntityName, e); //$NON-NLS-1$
         }
     }
 
@@ -109,7 +109,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
         }
         catch (IOException e)
         {
-            throw new PersistenceException("Error creating " + mEntityName, e);
+            throw new PersistenceException("Error creating " + mEntityName, e); //$NON-NLS-1$
         }
     }
 
@@ -133,7 +133,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
         }
         catch (IOException e)
         {
-            throw new PersistenceException("Error updating " + mEntityName + ": " + entity.getId(), e);
+            throw new PersistenceException("Error updating " + mEntityName + ": " + entity.getId(), e); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -181,7 +181,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
         }
         catch (PersistenceException e)
         {
-            throw new UncheckedPersistenceException("Error accessing " + mEntityName + ": " + id, e.getCause());
+            throw new UncheckedPersistenceException("Error accessing " + mEntityName + ": " + id, e.getCause()); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -204,7 +204,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
         }
         catch (IOException e)
         {
-            throw new PersistenceException("Error accessing " + mEntityName + ": " + id, e);
+            throw new PersistenceException("Error accessing " + mEntityName + ": " + id, e); //$NON-NLS-1$ //$NON-NLS-2$
         }
     }
 
@@ -220,7 +220,7 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
     {
         if (id < 0)
         {
-            throw new IllegalArgumentException("Invalid ID:"  + id);
+            throw new IllegalArgumentException("Invalid ID:"  + id); //$NON-NLS-1$
         }
         return new File(mDirectory, mPrefix + String.format(ID_FORMAT, id) + JSON_EXTENSION);
     }
@@ -228,6 +228,6 @@ public class EntityDiskStore<EntityType extends AbstractEntity> implements IEnti
     @Override
     public String toString()
     {
-        return "{" + mEntityName + ", " + mDirectory + '}';
+        return StringUtil.toString(mEntityName, mDirectory);
     }
 }

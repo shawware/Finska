@@ -35,7 +35,7 @@ public abstract class AbstractLeaderBoardAssistant implements ILeaderBoardAssist
         if ((comparisonItems == null) || (comparisonItems.size() == 0) ||
             comparisonItems.stream().filter(StringUtil::isEmpty).findAny().isPresent())
         {
-            throw new IllegalArgumentException("Empty comparison items");
+            throw new IllegalArgumentException("Empty comparison items"); //$NON-NLS-1$
         }
         mComparisonItems = comparisonItems;
     }

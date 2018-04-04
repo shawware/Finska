@@ -4,7 +4,7 @@
  */
 
 /**
- * Converts that accept compadmin entities and produce various types of output.
+ * Converters that accept compadmin entities and produce various types of output.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */

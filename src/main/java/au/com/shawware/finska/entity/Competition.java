@@ -95,13 +95,13 @@ public class Competition extends AbstractEntity
     public void addMatch(Match match)
     {
         if (match == null) {
-            throw new IllegalArgumentException("Null match");
+            throw new IllegalArgumentException("Null match"); //$NON-NLS-1$
         }
         if (match.getId() == DEFAULT_ID) {
-            throw new IllegalArgumentException("Invalid match ID");
+            throw new IllegalArgumentException("Invalid match ID"); //$NON-NLS-1$
         }
         if (mMatches.containsKey(match.getId())) {
-            throw new IllegalArgumentException("Competition " + getId() + " already contains match " + match.getId());
+            throw new IllegalArgumentException("Competition " + getId() + " already contains match " + match.getId());  //$NON-NLS-1$//$NON-NLS-2$
         }
         // Duplicate is okay.
         mMatchIds.add(match.getId());
@@ -124,7 +124,7 @@ public class Competition extends AbstractEntity
     {
         if (!mMatches.containsKey(id))
         {
-            throw new IllegalArgumentException("Match " + id + " is not present in this competition");
+            throw new IllegalArgumentException("Match " + id + " is not present in this competition"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mMatches.get(id);
     }
