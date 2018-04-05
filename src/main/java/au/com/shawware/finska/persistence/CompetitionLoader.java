@@ -7,6 +7,7 @@
 
 package au.com.shawware.finska.persistence;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
@@ -19,18 +20,22 @@ import au.com.shawware.finska.entity.Match;
 import au.com.shawware.finska.entity.Player;
 
 /**
- * Loads the competitions from store and makes them available.
+ * Loads players and competitions from a store and makes them available.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 public class CompetitionLoader
 {
-    /* The singleton instance. */
-    private static CompetitionLoader sLoader;
+    /* The singleton instances. */
+    private static Map<String, CompetitionLoader> sLoaders = new HashMap<>();
 
+    /** The competition store. */
     private final IEntityStore<Competition> mCompetitionStore;
+    /** The match store. */
     private final IEntityStore<Match> mMatchStore;
+    /** The game store. */
     private final IEntityStore<Game> mGameStore;
+    /** The player store. */
     private final IEntityStore<Player> mPlayerStore;
 
     /**
@@ -57,11 +62,11 @@ public class CompetitionLoader
      */
     public static synchronized final CompetitionLoader getLoader(String root)
     {
-        if (sLoader == null)
+        if (!sLoaders.containsKey(root))
         {
-            sLoader = new CompetitionLoader(root);
+            sLoaders.put(root, new CompetitionLoader(root));
         }
-        return sLoader;
+        return sLoaders.get(root);
     }
 
     /**

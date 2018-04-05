@@ -7,6 +7,9 @@
 
 package au.com.shawware.finska.persistence;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.util.StringUtil;
 
@@ -18,7 +21,7 @@ import au.com.shawware.util.StringUtil;
 public class PersistenceFactory
 {
     /** The singleton instance. */
-    private static PersistenceFactory sFactory;
+    private static Map<String, PersistenceFactory> sFactories = new HashMap<>();
     /** The root directory for entity sub-directories. */
     private final String mRoot;
 
@@ -45,11 +48,11 @@ public class PersistenceFactory
      */
     public static synchronized PersistenceFactory getFactory(String root)
     {
-        if (sFactory == null)
+        if (!sFactories.containsKey(root))
         {
-            sFactory = new PersistenceFactory(root);
+            sFactories.put(root, new PersistenceFactory(root));
         }
-        return sFactory;
+        return sFactories.get(root);
     }
 
     /**
