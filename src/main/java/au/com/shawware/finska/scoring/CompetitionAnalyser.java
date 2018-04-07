@@ -156,21 +156,9 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                     result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
                 }
             }
-            if (recordWinBoth && sameWinner && gameCount <= 2)
-            {
-                if (lastWinners.size() == 0)
-                {
-                    lastWinners.addAll(winnerIds);
-                }
-                else
-                {
-                    if (!lastWinners.equals(winnerIds))
-                    {
-                        sameWinner = false;
-                    }
-                }
-            }
-            if (recordWinAll && sameWinner)
+            // Track "win both" and "win all"
+            if ((recordWinBoth && sameWinner && gameCount <= 2) ||
+                (recordWinAll && sameWinner))
             {
                 if (lastWinners.size() == 0)
                 {
@@ -185,22 +173,16 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                 }
             }
         }
-        if (recordWinBoth && sameWinner)
+        // Score "win both" and "win all"
+        if (sameWinner && (recordWinBoth || recordWinAll))
         {
+            ResultItem winItem = recordWinBoth ? ResultItem.WIN_BOTH : ResultItem.WIN_ALL;
+            int winPoints      = recordWinBoth ? mScoringSystem.pointsForWinBoth() : mScoringSystem.pointsForWinAll();
             for (Integer winnerId : lastWinners)
             {
                 EntrantResult result = results.get(winnerId);
-                result.updateResultItem(ResultItem.WIN_BOTH.toString(), 1);
-                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinBoth());
-            }
-        }
-        if (recordWinAll && sameWinner)
-        {
-            for (Integer winnerId : lastWinners)
-            {
-                EntrantResult result = results.get(winnerId);
-                result.updateResultItem(ResultItem.WIN_ALL.toString(), 1);
-                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinAll());
+                result.updateResultItem(winItem.toString(), 1);
+                result.updateResultItem(ResultItem.POINTS.toString(), winPoints);
             }
         }
     }
