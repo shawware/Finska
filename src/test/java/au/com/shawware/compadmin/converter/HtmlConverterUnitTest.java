@@ -130,7 +130,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         Map<Integer, Competition> comps = loader.getCompetitions();
         Competition competition = comps.get(1);
-        ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 0, 1);
+        ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
         return new CompetitionAnalyser(players, competition, scoringSystem);
     }
 
