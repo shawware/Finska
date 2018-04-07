@@ -45,11 +45,11 @@ public class AnalyserUnitTest extends AbstractUnitTest
         ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0, 0);
         int[][] expectedResults = new int[][]
         {
-            { 1, 1, 5, 9, 5, 0, 0, 25 },
-            { 2, 2, 5, 9, 3, 0, 0, 15 },
-            { 3, 3, 4, 8, 2, 0, 0, 10 },
-            { 3, 5, 1, 2, 2, 0, 0, 10 },
-            { 5, 4, 2, 4, 1, 0, 0,  5 },
+            { 1, 1, 6, 12, 7, 0, 0, 0, 35 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 20 },
+            { 3, 3, 5, 11, 2, 0, 0, 0, 10 },
+            { 3, 5, 2,  5, 2, 0, 0, 0, 10 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  5 },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
@@ -57,11 +57,11 @@ public class AnalyserUnitTest extends AbstractUnitTest
         scoringSystem = new ScoringSystem(2, 1, 0, 0, 0);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 9, 5, 0, 0, 15 },
-            { 2, 2, 5, 9, 3, 0, 0, 11 },
-            { 3, 3, 4, 8, 2, 0, 0,  8 },
-            { 4, 5, 1, 2, 2, 0, 0,  5 },
-            { 5, 4, 2, 4, 1, 0, 0,  4 },
+            { 1, 1, 6, 12, 7, 0, 0, 0, 20 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 14 },
+            { 3, 3, 5, 11, 2, 0, 0, 0,  9 },
+            { 4, 5, 2,  5, 2, 0, 0, 0,  6 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  5 },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
@@ -69,11 +69,23 @@ public class AnalyserUnitTest extends AbstractUnitTest
         scoringSystem = new ScoringSystem(2, 0, 5, 0, 0);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 9, 5, 1, 0, 15 },
-            { 2, 3, 4, 8, 2, 1, 0,  9 },
-            { 3, 2, 5, 9, 3, 0, 0,  6 },
-            { 4, 5, 1, 2, 2, 0, 0,  4 },
-            { 5, 4, 2, 4, 1, 0, 0,  2 },
+            { 1, 1, 6, 12, 7, 1, 0, 0, 19 },
+            { 2, 3, 5, 11, 2, 1, 0, 0,  9 },
+            { 3, 2, 6, 12, 4, 0, 0, 0,  8 },
+            { 4, 5, 2,  5, 2, 0, 0, 0,  4 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  2 },
+        };
+        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+
+        // Test the a scoring Scoring System that counts wins and win both.
+        scoringSystem = new ScoringSystem(4, 0, 0, 1, 0);
+        expectedResults = new int[][]
+        {
+            { 1, 1, 6, 12, 7, 0, 2, 0, 30 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 16 },
+            { 3, 5, 2,  5, 2, 0, 1, 0,  9 },
+            { 4, 3, 5, 11, 2, 0, 0, 0,  8 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  4 },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
@@ -81,23 +93,23 @@ public class AnalyserUnitTest extends AbstractUnitTest
         scoringSystem = new ScoringSystem(4, 0, 0, 0, 1);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 9, 5, 0, 1, 21 },
-            { 2, 2, 5, 9, 3, 0, 0, 12 },
-            { 3, 5, 1, 2, 2, 0, 1,  9 },
-            { 4, 3, 4, 8, 2, 0, 0,  8 },
-            { 5, 4, 2, 4, 1, 0, 0,  4 },
+            { 1, 1, 6, 12, 7, 0, 0, 1, 29 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 16 },
+            { 3, 5, 2,  5, 2, 0, 0, 1,  9 },
+            { 4, 3, 5, 11, 2, 0, 0, 0,  8 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  4 },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the Seertech Scoring System
-        scoringSystem = new ScoringSystem(3, 1, 1, 0, 1);
+        scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
         expectedResults = new int[][]
         {
-            { 1, 1, 5, 9, 5, 1, 1, 22 },
-            { 2, 2, 5, 9, 3, 0, 0, 14 },
-            { 3, 3, 4, 8, 2, 1, 0, 11 },
-            { 4, 5, 1, 2, 2, 0, 1,  8 },
-            { 5, 4, 2, 4, 1, 0, 0,  5 },
+            { 1, 1, 6, 12, 7, 1, 2, 0, 30 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 18 },
+            { 3, 3, 5, 11, 2, 1, 0, 0, 12 },
+            { 4, 5, 2,  5, 2, 0, 1, 0,  9 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  6 },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
     }
@@ -129,8 +141,9 @@ public class AnalyserUnitTest extends AbstractUnitTest
             Assert.assertEquals(id, expectedResults[i][3], result.getResultItemValue(ResultItem.GAMES.toString()));
             Assert.assertEquals(id, expectedResults[i][4], result.getResultItemValue(ResultItem.WINS.toString()));
             verifyOptionalResultItem(id, result, ResultItem.FAST_WINS, scoringSystem.scoreFastWins(), expectedResults[i][5]);
-            verifyOptionalResultItem(id, result, ResultItem.WIN_ALL, scoringSystem.scoreWinAll(), expectedResults[i][6]);
-            Assert.assertEquals(id, expectedResults[i][7], result.getResultItemValue(ResultItem.POINTS.toString()));
+            verifyOptionalResultItem(id, result, ResultItem.WIN_BOTH, scoringSystem.scoreWinBoth(), expectedResults[i][6]);
+            verifyOptionalResultItem(id, result, ResultItem.WIN_ALL, scoringSystem.scoreWinAll(), expectedResults[i][7]);
+            Assert.assertEquals(id, expectedResults[i][8], result.getResultItemValue(ResultItem.POINTS.toString()));
         }
     }
 
@@ -206,7 +219,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         m2.addGame(g3);
         m2.addGame(g4);
 
-        // A match of two players, one game - ensure no "win all" scored.
+        // A match of two players, one game - ensure no "win both" or "win all" scored.
         Game g5 = new Game(5, 5);
         g5.addWinner(p2);
 
@@ -245,6 +258,24 @@ public class AnalyserUnitTest extends AbstractUnitTest
         m5.addGame(g8);
         m5.addGame(g9);
 
+        // A match of five players, first two games with same winner.
+        Game g10 = new Game(10, 10);
+        Game g11 = new Game(11, 11);
+        Game g12 = new Game(12, 12);
+        g10.addWinner(p1);
+        g11.addWinner(p1);
+        g12.addWinner(p2);
+
+        Match m6 = new Match(6, 6, LocalDate.of(2018, 3, 15));
+        m6.addPlayer(p1);
+        m6.addPlayer(p2);
+        m6.addPlayer(p3);
+        m6.addPlayer(p4);
+        m6.addPlayer(p5);
+        m6.addGame(g10);
+        m6.addGame(g11);
+        m6.addGame(g12);
+
         Competition competition = new Competition("C1", LocalDate.of(2018, 3, 9));
 
         competition.addMatch(m1);
@@ -252,6 +283,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         competition.addMatch(m3);
         competition.addMatch(m4);
         competition.addMatch(m5);
+        competition.addMatch(m6);
 
         return competition;
     }

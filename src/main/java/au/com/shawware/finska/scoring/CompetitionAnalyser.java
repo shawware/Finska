@@ -130,9 +130,11 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                 result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
             }
         }
-        Set<Integer> gameIDs = match.getGameIds();
-        boolean recordWinAll = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
-        boolean sameWinner = true;
+        Set<Integer> gameIDs     = match.getGameIds();
+        boolean recordWinBoth    = (mScoringSystem.scoreWinBoth() && (gameIDs.size() > 1));
+        boolean recordWinAll     = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
+        boolean sameWinner       = true;
+        int gameCount            = 0;
         Set<Integer> lastWinners = new HashSet<>();
         for (Integer gameID : gameIDs)
         {
@@ -141,6 +143,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             {
                 continue; // Skip games that have not been played yet.
             }
+            gameCount++;
             Set<Integer> winnerIds = game.getWinnerIds();
             for (Integer winnerId : winnerIds)
             {
@@ -153,6 +156,20 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                     result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
                 }
             }
+            if (recordWinBoth && sameWinner && gameCount <= 2)
+            {
+                if (lastWinners.size() == 0)
+                {
+                    lastWinners.addAll(winnerIds);
+                }
+                else
+                {
+                    if (!lastWinners.equals(winnerIds))
+                    {
+                        sameWinner = false;
+                    }
+                }
+            }
             if (recordWinAll && sameWinner)
             {
                 if (lastWinners.size() == 0)
@@ -161,12 +178,20 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                 }
                 else
                 {
-                    // TODO: check this does what we expect
                     if (!lastWinners.equals(winnerIds))
                     {
                         sameWinner = false;
                     }
                 }
+            }
+        }
+        if (recordWinBoth && sameWinner)
+        {
+            for (Integer winnerId : lastWinners)
+            {
+                EntrantResult result = results.get(winnerId);
+                result.updateResultItem(ResultItem.WIN_BOTH.toString(), 1);
+                result.updateResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWinBoth());
             }
         }
         if (recordWinAll && sameWinner)
