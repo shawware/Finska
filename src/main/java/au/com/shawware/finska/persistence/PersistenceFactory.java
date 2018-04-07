@@ -56,6 +56,14 @@ public class PersistenceFactory
     }
 
     /**
+     * @return This factory's root directory.
+     */
+    public String getRoot()
+    {
+        return mRoot;
+    }
+
+    /**
      * Creates an entity store for the given class.
      * 
      * @param clazz the entity type to store

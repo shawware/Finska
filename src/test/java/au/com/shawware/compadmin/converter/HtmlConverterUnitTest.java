@@ -27,6 +27,7 @@ import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.CompetitionLoader;
 import au.com.shawware.finska.persistence.PersistenceException;
+import au.com.shawware.finska.persistence.PersistenceFactory;
 import au.com.shawware.finska.scoring.CompetitionAnalyser;
 import au.com.shawware.finska.scoring.ScoringSystem;
 
@@ -72,7 +73,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            CompetitionLoader loader = CompetitionLoader.getLoader("./data");
+            CompetitionLoader loader = CompetitionLoader.getLoader(PersistenceFactory.getFactory("./data"));
             Map<Integer, Player> players = loader.getPlayers();
             ILeaderBoardAssistant assistant = buildAssistant(loader, players);
             List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
@@ -97,7 +98,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            CompetitionLoader loader = CompetitionLoader.getLoader("./data");
+            CompetitionLoader loader = CompetitionLoader.getLoader(PersistenceFactory.getFactory("./data"));
             Map<Integer, Player> players = loader.getPlayers();
             ILeaderBoardAssistant assistant = buildAssistant(loader, players);
             List<List<EntrantResult>> roundResults = assistant.compileRoundResults();

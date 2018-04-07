@@ -41,12 +41,10 @@ public class CompetitionLoader
     /**
      * Constructs a new loader.
      * 
-     * @param root the root directory to use for storage
+     * @param factory the persistence factory to use for obtaining stores
      */
-    private CompetitionLoader(String root)
+    private CompetitionLoader(PersistenceFactory factory)
     {
-        PersistenceFactory factory = PersistenceFactory.getFactory(root);
-
         mCompetitionStore = factory.getStore(Competition.class);
         mMatchStore       = factory.getStore(Match.class);
         mGameStore        = factory.getStore(Game.class);
@@ -55,18 +53,17 @@ public class CompetitionLoader
 
     /**
      * Gets a singleton instance of the loader.
-     * 
-     * @param root the root directory to use
+     * @param factory the factory to obtain persistence stores from
      * 
      * @return The loader.
      */
-    public static synchronized final CompetitionLoader getLoader(String root)
+    public static synchronized final CompetitionLoader getLoader(PersistenceFactory factory)
     {
-        if (!sLoaders.containsKey(root))
+        if (!sLoaders.containsKey(factory.getRoot()))
         {
-            sLoaders.put(root, new CompetitionLoader(root));
+            sLoaders.put(factory.getRoot(), new CompetitionLoader(factory));
         }
-        return sLoaders.get(root);
+        return sLoaders.get(factory.getRoot());
     }
 
     /**
