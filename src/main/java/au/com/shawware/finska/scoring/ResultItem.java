@@ -26,6 +26,8 @@ public enum ResultItem
     WINS("Wins"),
     /** The total name of "fast" wins, ie. 5 tosses. */
     FAST_WINS("Fast Wins"),
+    /** The total number of times the first two games in a match were won. */
+    WIN_BOTH("Win Both"),
     /** The total number of times all games in a match were won. */
     WIN_ALL("Win All"),
     /** The total number of points. */

@@ -21,6 +21,7 @@ import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Game;
 import au.com.shawware.finska.entity.Match;
 import au.com.shawware.finska.entity.Player;
+import au.com.shawware.util.test.AbstractUnitTest;
 
 /**
  * Exercise and verify the scoring system and related outputs.
@@ -28,7 +29,7 @@ import au.com.shawware.finska.entity.Player;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({ "nls", "boxing", "static-method" })
-public class ScoringSystemUnitTest
+public class ScoringSystemUnitTest extends AbstractUnitTest
 {
     /**
      * Verify the correct result items are used for each scoring system setting.
@@ -46,11 +47,15 @@ public class ScoringSystemUnitTest
         Competition c1 = new Competition(1, "C1", LocalDate.of(2018, 3, 10));
         c1.addMatch(m1);
 
-        verifyResultItems(c1, p1, 3, 0, -1, -7, false, false, false);
-        verifyResultItems(c1, p1, 3, 1,  0,  0, true,  false, false);
-        verifyResultItems(c1, p1, 3, 1,  2,  0, true,   true, false);
-        verifyResultItems(c1, p1, 3, 1,  0,  3, true,  false,  true);
-        verifyResultItems(c1, p1, 3, 1,  1,  1, true,   true,  true);
+        verifyResultItems(c1, p1, 3, 0, -1,  0, -7, false, false, false, false);
+        verifyResultItems(c1, p1, 3, 1,  0,  0,  0,  true, false, false, false);
+        verifyResultItems(c1, p1, 3, 1,  2,  0,  0,  true,  true, false, false);
+        verifyResultItems(c1, p1, 3, 1,  0,  2,  0,  true, false,  true, false);
+        verifyResultItems(c1, p1, 3, 1,  0,  0,  3,  true, false, false, true);
+        verifyResultItems(c1, p1, 3, 1,  1,  0,  1,  true,  true, false, true);
+
+        verifyExceptionThrown(() -> new ScoringSystem(3, 0, 0, 1, 1),
+                IllegalArgumentException.class, "Win both and win all specified simultaneously");
     }
 
     /**
@@ -62,24 +67,30 @@ public class ScoringSystemUnitTest
      * @param win points for a win
      * @param play points for playing
      * @param fast points for fast wins
+     * @param both points for winning both
      * @param all points for winning all
      * @param expectScoreForPlaying whether scoring for playing is expected
      * @param expectScoreFastWins whether scoring for fast wins is expected
+     * @param expectScoreWinBoth whether scoring for win both is expected
      * @param expectScoreWinAll whether scoring for win all is expected
      */
-    private void verifyResultItems(Competition competition, Player player, int win, int play, int fast, int all,
-            boolean expectScoreForPlaying, boolean expectScoreFastWins, boolean expectScoreWinAll)
+    private void verifyResultItems(Competition competition, Player player,
+            int win, int play, int fast, int both, int all,
+            boolean expectScoreForPlaying, boolean expectScoreFastWins,
+            boolean expectScoreWinBoth, boolean expectScoreWinAll)
     {
         Map<Integer, Player> players = new HashMap<>();
         players.put(player.getId(), player);
 
-        ScoringSystem scoringSystem = new ScoringSystem(win, play, fast, all);
+        ScoringSystem scoringSystem = new ScoringSystem(win, play, fast, both, all);
 
-        verifyScoringSystem(scoringSystem, win, play, fast, all, expectScoreForPlaying, expectScoreFastWins, expectScoreWinAll);
+        verifyScoringSystem(scoringSystem, win, play, fast, both, all,
+                expectScoreForPlaying, expectScoreFastWins,
+                expectScoreWinBoth, expectScoreWinAll);
 
-        ILeaderBoardAssistant a1 = new CompetitionAnalyser(players, competition, scoringSystem);
+        ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
 
-        List<EntrantResult> results = a1.compileOverallResults();
+        List<EntrantResult> results = assistant.compileOverallResults();
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 
@@ -91,6 +102,7 @@ public class ScoringSystemUnitTest
         result.getResultItemValue(ResultItem.POINTS.toString());
         // Verify the result items whose presence depends on the scoring system
         verifyResultItem(result, ResultItem.FAST_WINS, expectScoreFastWins);
+        verifyResultItem(result, ResultItem.WIN_BOTH, expectScoreWinBoth);
         verifyResultItem(result, ResultItem.WIN_ALL, expectScoreWinAll);
     }
 
@@ -101,21 +113,27 @@ public class ScoringSystemUnitTest
      * @param win points for a win
      * @param play points for playing
      * @param fast points for fast wins
+     * @param both points for winning both
      * @param all points for winning all
      * @param expectScoreForPlaying whether scoring for playing is expected
      * @param expectScoreFastWins whether scoring for fast wins is expected
+     * @param expectScoreWinBoth whether scoring for win both is expected
      * @param expectScoreWinAll whether scoring for win all is expected
      */
-    private void verifyScoringSystem(ScoringSystem scoringSystem, int win, int play, int fast, int all,
-            boolean expectScoreForPlaying, boolean expectScoreFastWins, boolean expectScoreWinAll)
+    private void verifyScoringSystem(ScoringSystem scoringSystem,
+            int win, int play, int fast, int both, int all,
+            boolean expectScoreForPlaying, boolean expectScoreFastWins,
+            boolean expectScoreWinBoth, boolean expectScoreWinAll)
     {
         Assert.assertNotNull(scoringSystem);
         Assert.assertEquals(expectScoreForPlaying, scoringSystem.scorePointsForPlaying());
         Assert.assertEquals(expectScoreFastWins,   scoringSystem.scoreFastWins());
+        Assert.assertEquals(expectScoreWinBoth,    scoringSystem.scoreWinBoth());
         Assert.assertEquals(expectScoreWinAll,     scoringSystem.scoreWinAll());
         Assert.assertEquals(win,                   scoringSystem.pointsForWin());
         Assert.assertEquals(expectScoreForPlaying ? play : 0, scoringSystem.pointsForPlaying());
         Assert.assertEquals(expectScoreFastWins   ? fast : 0, scoringSystem.pointsForFastWin());
+        Assert.assertEquals(expectScoreWinBoth    ? both : 0, scoringSystem.pointsForWinBoth());
         Assert.assertEquals(expectScoreForPlaying ? all  : 0, scoringSystem.pointsForWinAll());
     }
 

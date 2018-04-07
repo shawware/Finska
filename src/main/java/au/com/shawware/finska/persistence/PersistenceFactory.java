@@ -67,6 +67,7 @@ public class PersistenceFactory
      * Creates an entity store for the given class.
      * 
      * @param clazz the entity type to store
+     * @param <EntityType> the type of entity for the store
      * 
      * @return The store.
      */

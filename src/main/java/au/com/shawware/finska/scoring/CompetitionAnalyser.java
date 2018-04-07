@@ -200,6 +200,10 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         {
             resultItems.add(ResultItem.FAST_WINS.toString());
         }
+        if (system.scoreWinBoth())
+        {
+            resultItems.add(ResultItem.WIN_BOTH.toString());
+        }
         if (system.scoreWinAll())
         {
             resultItems.add(ResultItem.WIN_ALL.toString());

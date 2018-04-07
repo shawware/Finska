@@ -26,23 +26,35 @@ public class ScoringSystem
     private final boolean mScoreFastWins;
     /** The number of points for a fast win in a game. */
     private final int mPointsForFastWin;
+    /** Whether to score win both. */
+    private final boolean mScoreWinBoth;
+    /** The number of points for the first two games in a match. */
+    private final int mPointsForWinBoth;
     /** Whether to score win all. */
     private final boolean mScoreWinAll;
     /** The number of points for winning all games in a match. */
     private final int mPointsForWinAll;
 
     /**
-     * Specifies a Finska scoring system.
-     * Points for playing, fast wins and win all can be turned on by
-     * specifying a positive value.
+     * Specifies a Finska scoring system. Points for playing, fast wins, win
+     * both and win all can be turned on by specifying a positive value.
+     * Note: you cannot specify win both and win all simultaneously.
      * 
      * @param win the number of points for a win
-     * @param play if >0, then score these points for playing a match
-     * @param fast if >0, then score these points for a fast win in a game
-     * @param all if >0, then score these points for winning all games in a match
+     * @param play if &gt;0, then score these points for playing a match
+     * @param fast if &gt;0, then score these points for a fast win in a game
+     * @param both if &gt;0 then score these points for winning the first two games in match
+     * @param all if &gt;0, then score these points for winning all games in a match
+     * 
+     * @throws IllegalArgumentException win both and win all specified simultaneously
      */
-    public ScoringSystem(int win, int play, int fast, int all)
+    public ScoringSystem(int win, int play, int fast, int both, int all)
+        throws IllegalArgumentException
     {
+        if ((both > 0) && (all > 0))
+        {
+            throw new IllegalArgumentException("Win both and win all specified simultaneously"); //$NON-NLS-1$
+        }
         mPointsForWin = win;
         if (play > 0)
         {
@@ -63,6 +75,16 @@ public class ScoringSystem
         {
             mScoreFastWins    = false;
             mPointsForFastWin = 0;
+        }
+        if (both > 0)
+        {
+            mScoreWinBoth     = true;
+            mPointsForWinBoth = both;
+        }
+        else
+        {
+            mScoreWinBoth     = false;
+            mPointsForWinBoth = 0;
         }
         if (all > 0)
         {
@@ -117,6 +139,22 @@ public class ScoringSystem
     }
 
     /**
+     * @return Whether to score winning the first two games in a match.
+     */
+    public boolean scoreWinBoth()
+    {
+        return mScoreWinBoth;
+    }
+
+    /**
+     * @return The number of points for winning the first two games in a match.
+     */
+    public int pointsForWinBoth()
+    {
+        return mPointsForWinBoth;
+    }
+
+    /**
      * @return Whether to score winning all games in a match.
      */
     public boolean scoreWinAll()
@@ -136,6 +174,10 @@ public class ScoringSystem
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(mPointsForWin, mScorePlaying, mPointsForPlaying, mScoreFastWins, mPointsForFastWin, mScoreWinAll, mPointsForWinAll);
+        return StringUtil.toString(mPointsForWin,
+                mScorePlaying, mPointsForPlaying,
+                mScoreFastWins, mPointsForFastWin,
+                mScoreWinBoth, mPointsForWinBoth,
+                mScoreWinAll, mPointsForWinAll);
     }
 }

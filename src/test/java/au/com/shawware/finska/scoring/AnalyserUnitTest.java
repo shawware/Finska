@@ -42,7 +42,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         Competition competition = createCompetition(players);
 
         // Test the a basic scoring Scoring System - no bonuses of any kind.
-        ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0);
+        ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0, 0);
         int[][] expectedResults = new int[][]
         {
             { 1, 1, 5, 9, 5, 0, 0, 25 },
@@ -54,7 +54,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and games.
-        scoringSystem = new ScoringSystem(2, 1, 0, 0);
+        scoringSystem = new ScoringSystem(2, 1, 0, 0, 0);
         expectedResults = new int[][]
         {
             { 1, 1, 5, 9, 5, 0, 0, 15 },
@@ -66,7 +66,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and fast wins.
-        scoringSystem = new ScoringSystem(2, 0, 5, 0);
+        scoringSystem = new ScoringSystem(2, 0, 5, 0, 0);
         expectedResults = new int[][]
         {
             { 1, 1, 5, 9, 5, 1, 0, 15 },
@@ -78,7 +78,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win alls.
-        scoringSystem = new ScoringSystem(4, 0, 0, 1);
+        scoringSystem = new ScoringSystem(4, 0, 0, 0, 1);
         expectedResults = new int[][]
         {
             { 1, 1, 5, 9, 5, 0, 1, 21 },
@@ -90,7 +90,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the Seertech Scoring System
-        scoringSystem = new ScoringSystem(3, 1, 1, 1);
+        scoringSystem = new ScoringSystem(3, 1, 1, 0, 1);
         expectedResults = new int[][]
         {
             { 1, 1, 5, 9, 5, 1, 1, 22 },
