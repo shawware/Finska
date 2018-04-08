@@ -1,1 +1,9 @@
-mvn -q exec:java -Dexec.mainClass="au.com.shawware.finska.Finska" -Dexec.args="data /tmp"
+#! /bin/bash
+
+if [ "$#" -ne 2 ]; then
+	echo "usage: $0 <data dir> <output dir>"
+	exit 1
+fi
+args="$@"
+
+mvn -q exec:java -Dexec.mainClass=au.com.shawware.finska.Finska -Dexec.args="$args"
