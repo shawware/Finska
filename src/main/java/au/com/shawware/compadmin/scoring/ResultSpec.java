@@ -7,9 +7,9 @@
 
 package au.com.shawware.compadmin.scoring;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 
 import au.com.shawware.util.StringUtil;
 
@@ -21,14 +21,14 @@ import au.com.shawware.util.StringUtil;
 public class ResultSpec
 {
     /** The specification itself. */
-    Map<String, Boolean> mSpec;
+    private final Map<String, Boolean> mSpec;
 
     /**
      * Constructs a new, empty specification.
      */
     public ResultSpec()
     {
-        mSpec = new TreeMap<>();
+        mSpec = new LinkedHashMap<>();
     }
 
     /**

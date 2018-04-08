@@ -30,22 +30,22 @@ public class ResultSpecUnitTest extends AbstractUnitTest
 
         Assert.assertEquals(0, spec.getItemNames().size());
 
-        spec.addItem("a");
+        spec.addItem("alpha");
         Assert.assertEquals(1, spec.getItemNames().size());
-        Assert.assertEquals(true, spec.isInteger("a"));
-        Assert.assertEquals(false, spec.isFloatingPoint("a"));
+        Assert.assertEquals(true, spec.isInteger("alpha"));
+        Assert.assertEquals(false, spec.isFloatingPoint("alpha"));
 
-        spec.addItem("b", true);
+        spec.addItem("gamma", false);
         Assert.assertEquals(2, spec.getItemNames().size());
-        Assert.assertEquals(true, spec.isInteger("b"));
-        Assert.assertEquals(false, spec.isFloatingPoint("b"));
+        Assert.assertEquals(false, spec.isInteger("gamma"));
+        Assert.assertEquals(true, spec.isFloatingPoint("gamma"));
 
-        spec.addItem("c", false);
+        spec.addItem("beta", true);
         Assert.assertEquals(3, spec.getItemNames().size());
-        Assert.assertEquals(false, spec.isInteger("c"));
-        Assert.assertEquals(true, spec.isFloatingPoint("c"));
+        Assert.assertEquals(true, spec.isInteger("beta"));
+        Assert.assertEquals(false, spec.isFloatingPoint("beta"));
 
-        String[] expectedNames = { "a", "b", "c" };
+        String[] expectedNames = { "alpha", "gamma", "beta" };
         int i = 0;
         for (String actualName : spec.getItemNames())
         {
