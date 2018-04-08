@@ -47,7 +47,7 @@ public abstract class AbstractLeaderBoardAssistant implements ILeaderBoardAssist
         int rc = 0;
         for (String name : mComparisonItems)
         {
-            rc = result2.getResultItemValue(name) - result1.getResultItemValue(name);
+            rc = result2.getResultItemValueAsInt(name) - result1.getResultItemValueAsInt(name);
             if (rc != 0)
             {
                 break;

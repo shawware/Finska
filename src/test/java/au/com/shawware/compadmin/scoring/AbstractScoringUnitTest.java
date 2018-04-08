@@ -26,7 +26,7 @@ import au.com.shawware.finska.entity.Player;
 public class AbstractScoringUnitTest
 {
     /** The full set of result items. */
-    protected static List<String> sResultItems;
+    protected static ResultSpec sSpec;
     /** The result items to use is comparisons. */
     protected static List<String> sComparisonItems;
     /** A sample set of players. */
@@ -38,12 +38,12 @@ public class AbstractScoringUnitTest
     @BeforeClass
     public static void setUp()
     {
-        sResultItems = new ArrayList<>();
-        sResultItems.add("Games");
-        sResultItems.add("Wins");
-        sResultItems.add("For");
-        sResultItems.add("GD");
-        sResultItems.add("Points");
+        sSpec = new ResultSpec();
+        sSpec.addItem("Games");
+        sSpec.addItem("Wins");
+        sSpec.addItem("For");
+        sSpec.addItem("GD");
+        sSpec.addItem("Points");
 
         sComparisonItems = new ArrayList<>();
         sComparisonItems.add("Points");
@@ -70,12 +70,12 @@ public class AbstractScoringUnitTest
         List<EntrantResult> results = new ArrayList<>(fixture.length);
         for (int[] entrantData : fixture)
         {
-            EntrantResult result = new EntrantResult(entrantData[0], sResultItems);
-            result.updateResultItem("Games",  entrantData[1]);
-            result.updateResultItem("Wins",   entrantData[2]);
-            result.updateResultItem("For",    entrantData[3]);
-            result.updateResultItem("GD",     entrantData[4]);
-            result.updateResultItem("Points", entrantData[5]);
+            EntrantResult result = new EntrantResult(entrantData[0], sSpec);
+            result.incrementResultItem("Games",  entrantData[1]);
+            result.incrementResultItem("Wins",   entrantData[2]);
+            result.incrementResultItem("For",    entrantData[3]);
+            result.incrementResultItem("GD",     entrantData[4]);
+            result.incrementResultItem("Points", entrantData[5]);
             results.add(result);
         }
         return results;

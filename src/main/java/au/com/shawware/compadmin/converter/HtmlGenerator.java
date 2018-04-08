@@ -112,6 +112,20 @@ public class HtmlGenerator
      * 
      * @throws IOException output error
      */
+    @SuppressWarnings("boxing")
+    public void value(double value)
+        throws IOException
+    {
+        value(String.format("%0.2f", value));
+    }
+
+    /**
+     * Outputs a new value.
+     * 
+     * @param value the value
+     * 
+     * @throws IOException output error
+     */
     public void value(String value)
         throws IOException
     {

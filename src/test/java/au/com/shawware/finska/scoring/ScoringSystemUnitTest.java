@@ -97,9 +97,9 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
         EntrantResult result = results.get(0);
 
         // Verify the result items that are always present
-        result.getResultItemValue(ResultItem.GAMES.toString());
-        result.getResultItemValue(ResultItem.WINS.toString());
-        result.getResultItemValue(ResultItem.POINTS.toString());
+        result.getResultItemValueAsInt(ResultItem.GAMES.toString());
+        result.getResultItemValueAsInt(ResultItem.WINS.toString());
+        result.getResultItemValueAsInt(ResultItem.POINTS.toString());
         // Verify the result items whose presence depends on the scoring system
         verifyResultItem(result, ResultItem.FAST_WINS, expectScoreFastWins);
         verifyResultItem(result, ResultItem.WIN_BOTH, expectScoreWinBoth);
@@ -148,7 +148,7 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
     {
         try
         {
-            result.getResultItemValue(item.toString());
+            result.getResultItemValueAsInt(item.toString());
             Assert.assertEquals(true, present);
         }
         catch (IllegalArgumentException e)

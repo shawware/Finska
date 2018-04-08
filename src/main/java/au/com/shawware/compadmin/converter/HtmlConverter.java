@@ -14,6 +14,7 @@ import java.util.Map;
 
 import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.scoring.EntrantResult;
+import au.com.shawware.compadmin.scoring.ResultSpec;
 
 /**
  * Converts entities to HTML.
@@ -73,7 +74,7 @@ public class HtmlConverter implements IConverter
     private void generateHtml(Map<Integer, ? extends Entrant> entrants, List<EntrantResult> results, HtmlGenerator generator, boolean displayRank)
         throws IOException
     {
-        List<String> itemNames = results.get(0).getItemNames();
+        ResultSpec spec = results.get(0).getResultSpecification();
 
         generator.openTag("table", "table");
 
@@ -91,7 +92,7 @@ public class HtmlConverter implements IConverter
         generator.value("Entrant");
         generator.closeTag();
 
-        for (String name : itemNames)
+        for (String name : spec.getItemNames())
         {
             generator.openTag("th", "header");
             generator.value(name);
@@ -117,10 +118,18 @@ public class HtmlConverter implements IConverter
             generator.value(entrants.get(result.getEntrantID()).getName());
             generator.closeTag();
 
-            for (String name : itemNames)
+            for (String name : spec.getItemNames())
             {
                 generator.openTag("td", "cell", "numeric");
-                generator.value(result.getResultItemValue(name));
+                if (spec.isInteger(name))
+                {
+                    generator.value(result.getResultItemValueAsInt(name));
+                }
+                else
+                {
+                    generator.value(result.getResultItemValueAsDouble(name));
+                }
+                generator.value(result.getResultItemValueAsInt(name));
                 generator.closeTag();
             }
  

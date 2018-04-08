@@ -137,13 +137,13 @@ public class AnalyserUnitTest extends AbstractUnitTest
             EntrantResult result = leaderBoard.get(i);
             Assert.assertEquals(id, expectedResults[i][0], result.getRank());
             Assert.assertEquals(id, expectedResults[i][1], result.getEntrantID());
-            Assert.assertEquals(id, expectedResults[i][2], result.getResultItemValue(ResultItem.MATCHES.toString()));
-            Assert.assertEquals(id, expectedResults[i][3], result.getResultItemValue(ResultItem.GAMES.toString()));
-            Assert.assertEquals(id, expectedResults[i][4], result.getResultItemValue(ResultItem.WINS.toString()));
+            Assert.assertEquals(id, expectedResults[i][2], result.getResultItemValueAsInt(ResultItem.MATCHES.toString()));
+            Assert.assertEquals(id, expectedResults[i][3], result.getResultItemValueAsInt(ResultItem.GAMES.toString()));
+            Assert.assertEquals(id, expectedResults[i][4], result.getResultItemValueAsInt(ResultItem.WINS.toString()));
             verifyOptionalResultItem(id, result, ResultItem.FAST_WINS, scoringSystem.scoreFastWins(), expectedResults[i][5]);
             verifyOptionalResultItem(id, result, ResultItem.WIN_BOTH, scoringSystem.scoreWinBoth(), expectedResults[i][6]);
             verifyOptionalResultItem(id, result, ResultItem.WIN_ALL, scoringSystem.scoreWinAll(), expectedResults[i][7]);
-            Assert.assertEquals(id, expectedResults[i][8], result.getResultItemValue(ResultItem.POINTS.toString()));
+            Assert.assertEquals(id, expectedResults[i][8], result.getResultItemValueAsInt(ResultItem.POINTS.toString()));
         }
     }
 
@@ -161,11 +161,11 @@ public class AnalyserUnitTest extends AbstractUnitTest
     {
         if (present)
         {
-            Assert.assertEquals(id, expectedResult, result.getResultItemValue(item.toString()));
+            Assert.assertEquals(id, expectedResult, result.getResultItemValueAsInt(item.toString()));
         }
         else
         {
-            verifyExceptionThrown(() -> result.getResultItemValue(item.toString()), IllegalArgumentException.class, "Unknown result item: " + item);
+            verifyExceptionThrown(() -> result.getResultItemValueAsInt(item.toString()), IllegalArgumentException.class, "Unknown result item: " + item);
         }
     }
 

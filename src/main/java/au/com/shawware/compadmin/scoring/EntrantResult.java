@@ -7,11 +7,11 @@
 
 package au.com.shawware.compadmin.scoring;
 
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.DoubleAdder;
 
-import au.com.shawware.util.MutableInteger;
 import au.com.shawware.util.StringUtil;
 
 /**
@@ -26,10 +26,10 @@ public class EntrantResult
 {
     /** Identifies the competition entrant to whom these results belong. */
     private final int mEntrantID;
-    /** The result item names. */
-    private final List<String> mItemNames;
+    /** The result item specification. */
+    private final ResultSpec mSpec;
     /** The ordered sets of result items. */
-    private final Map<String, MutableInteger> mItems;
+    private final Map<String, Number> mItems;
     /** The current ranking (if assigned) for this entrant. */
     private int mRank;
 
@@ -37,29 +37,32 @@ public class EntrantResult
      * Creates a new, empty result for a competition entrant.
      * 
      * @param entrantID the entrant's ID
-     * @param names the names of the result items
+     * @param spec the result item specification
      * 
      * @throws IllegalArgumentException empty list of names or empty name
      */
-    public EntrantResult(int entrantID, List<String> names)
+    public EntrantResult(int entrantID, ResultSpec spec)
         throws IllegalArgumentException
     {
-        if ((names == null) || (names.size() == 0))
+        if ((spec == null) || (spec.getItemNames().size() == 0))
         {
-            throw new IllegalArgumentException("Empty result item names"); //$NON-NLS-1$
+            throw new IllegalArgumentException("Empty result specification"); //$NON-NLS-1$
         }
 
         mEntrantID = entrantID;
         mRank      = 0;
-        mItemNames = names;
+        mSpec      = spec;
         mItems     = new TreeMap<>();
-        for (String name : names)
+        for (String name : mSpec.getItemNames())
         {
-            if (StringUtil.isEmpty(name))
+            if (mSpec.isInteger(name))
             {
-                throw new IllegalArgumentException("Empty result item"); //$NON-NLS-1$
+                mItems.put(name, new AtomicInteger(0));
             }
-            mItems.put(name, new MutableInteger(0));
+            else
+            {
+                mItems.put(name, new DoubleAdder());
+            }
         }
     }
 
@@ -80,11 +83,11 @@ public class EntrantResult
     }
 
     /**
-     * @return This entrant's result item names.
+     * @return This entrant's result specification.
      */
-    public List<String> getItemNames()
+    public ResultSpec getResultSpecification()
     {
-        return mItemNames;
+        return mSpec;
     }
 
     /**
@@ -98,7 +101,7 @@ public class EntrantResult
     }
 
     /**
-     * Returns the value of the given result item.
+     * Returns the integer value of the given result item.
      * 
      * @param name the result item's name
      * 
@@ -106,14 +109,41 @@ public class EntrantResult
      * 
      * @throws IllegalArgumentException unknown result item
      */
-    public int getResultItemValue(String name)
+    public int getResultItemValueAsInt(String name)
         throws IllegalArgumentException
     {
-        if (!mItems.containsKey(name))
-        {
-            throw new IllegalArgumentException("Unknown result item: " + name); //$NON-NLS-1$
-        }
-        return mItems.get(name).getValue();
+        verifyInteger(name);
+        return getResultItemValue(name).intValue();
+    }
+
+    /**
+     * Returns the floating point value of the given result item.
+     * 
+     * @param name the result item's name
+     * 
+     * @return The result item's value.
+     * 
+     * @throws IllegalArgumentException unknown result item
+     */
+    public double getResultItemValueAsDouble(String name)
+        throws IllegalArgumentException
+    {
+        verifyFloatingPoint(name);
+        return getResultItemValue(name).doubleValue();
+    }
+
+    /**
+     * Returns the internal value of the given result item.
+     * 
+     * @param name the result item's name
+     * 
+     * @return The result item's value.
+     * 
+     * @throws IllegalArgumentException unknown result item
+     */
+    private Number getResultItemValue(String name)
+    {
+        return mItems.get(name);
     }
 
     /**
@@ -123,16 +153,100 @@ public class EntrantResult
      * @param name the result item name
      * @param increment the amount to increment by
      * 
-     * @throws IllegalArgumentException unknown result item name
+     * @throws IllegalArgumentException unknown result item name or non-integer result item
      */
-    public void updateResultItem(String name, int increment)
+    public void incrementResultItem(String name, int increment)
         throws IllegalArgumentException
     {
+        verifyInteger(name);
+        AtomicInteger value = (AtomicInteger)mItems.get(name);
+        value.addAndGet(increment);
+    }
+
+    /**
+     * Increments the given result item by the given amount.
+     * The amount can be negative if desired.
+     * 
+     * @param name the result item name
+     * @param newValue the new value for the result item
+     * 
+     * @throws IllegalArgumentException unknown result item name or non-integer result item
+     */
+    public void setResultItem(String name, double newValue)
+        throws IllegalArgumentException
+    {
+        verifyFloatingPoint(name);
+        DoubleAdder value = (DoubleAdder)mItems.get(name);
+        value.reset();
+        value.add(newValue);
+    }
+
+    /**
+     * Verifies that the given item is an integer result item in this specification.
+     * 
+     * @param name the item name
+     * 
+     * @throws IllegalArgumentException empty item name, item name not present or item not integer
+     */
+    private void verifyInteger(String name)
+        throws IllegalArgumentException
+    {
+        verifyKnown(name);
+        if (!mSpec.isInteger(name))
+        {
+            throw new IllegalArgumentException("Non integer result item: " + name); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Verifies that the given item is a floating point result item in this specification.
+     * 
+     * @param name the item name
+     * 
+     * @throws IllegalArgumentException empty item name, item name not present or item not floating point
+     */
+    private void verifyFloatingPoint(String name)
+        throws IllegalArgumentException
+    {
+        verifyKnown(name);
+        if (!mSpec.isFloatingPoint(name))
+        {
+            throw new IllegalArgumentException("Non floating point result item: " + name); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * Verifies that the given item is already present in this specification.
+     * 
+     * @param name the item name
+     * 
+     * @throws IllegalArgumentException empty item name or item name not present
+     */
+    private void verifyKnown(String name)
+        throws IllegalArgumentException
+    {
+        verifyNotEmpty(name);
         if (!mItems.containsKey(name))
         {
             throw new IllegalArgumentException("Unknown result item: " + name); //$NON-NLS-1$
         }
-        mItems.get(name).incrementBy(increment);
+    }
+
+    /**
+     * Verifies that the given item name is not empty.
+     * 
+     * @param name the item name
+     * 
+     * @throws IllegalArgumentException empty item name
+     */
+    @SuppressWarnings("static-method")
+    private void verifyNotEmpty(String name)
+        throws IllegalArgumentException
+    {
+        if (StringUtil.isEmpty(name))
+        {
+            throw new IllegalArgumentException("Empty result item name"); //$NON-NLS-1$
+        }
     }
 
     @Override
