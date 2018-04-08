@@ -7,8 +7,7 @@
 
 package au.com.shawware.finska.scoring;
 
-import java.util.ArrayList;
-import java.util.List;
+import au.com.shawware.compadmin.scoring.ResultSpec;
 
 /**
  * Enumerate the Finska result items.
@@ -36,10 +35,10 @@ public enum ResultItem
     RUNNING_TOTAL("Total");
 
     /** The items used to order and rank results. */
-    private static final List<String> sComparisonItems;
+    private static final ResultSpec sComparisonSpec;
     static {
-        sComparisonItems = new ArrayList<String>();
-        sComparisonItems.add(ResultItem.POINTS.toString());
+        sComparisonSpec = new ResultSpec();
+        sComparisonSpec.addItem(ResultItem.POINTS.toString());
     }
 
     /** The text to display for this item. */
@@ -58,9 +57,9 @@ public enum ResultItem
     /**
      * @return The items used to order and rank results.
      */
-    public static List<String> getComparisonItems()
+    public static ResultSpec getComparisonSpecification()
     {
-        return sComparisonItems;
+        return sComparisonSpec;
     }
 
     @Override

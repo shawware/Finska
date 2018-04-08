@@ -51,8 +51,8 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
         verifyResultItems(c1, p1, 3, 1,  0,  0,  0,  true, false, false, false);
         verifyResultItems(c1, p1, 3, 1,  2,  0,  0,  true,  true, false, false);
         verifyResultItems(c1, p1, 3, 1,  0,  2,  0,  true, false,  true, false);
-        verifyResultItems(c1, p1, 3, 1,  0,  0,  3,  true, false, false, true);
-        verifyResultItems(c1, p1, 3, 1,  1,  0,  1,  true,  true, false, true);
+        verifyResultItems(c1, p1, 3, 1,  0,  0,  3,  true, false, false,  true);
+        verifyResultItems(c1, p1, 3, 1,  1,  0,  1,  true,  true, false,  true);
 
         verifyExceptionThrown(() -> new ScoringSystem(3, 0, 0, 1, 1),
                 IllegalArgumentException.class, "Win both and win all specified simultaneously");

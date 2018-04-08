@@ -26,11 +26,11 @@ public class TestAssistant extends AbstractLeaderBoardAssistant
      * Constructs a new assistant from the given fixtures.
      * 
      * @param results the pre-calculated results
-     * @param comparisonItems the comparison items to use to compare results
+     * @param comparisonSpec the comparison result item specification to use to compare results
      */
-    public TestAssistant(List<EntrantResult> results, List<String> comparisonItems)
+    public TestAssistant(List<EntrantResult> results, ResultSpec comparisonSpec)
     {
-        super(comparisonItems);
+        super(comparisonSpec);
         mResults = results;
     }
 

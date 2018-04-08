@@ -45,7 +45,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     @Test
     public void basicOutput()
     {
-        final int[][] results = new int[][]
+        final Number[][] results = new Number[][]
         {
             { 1, 9, 5, 20,  5, 16 },
             { 2, 9, 1,  3, -2, 10 },
@@ -57,7 +57,7 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             { 8, 9, 6, 25, 10, 21 },
             { 9, 9, 0,  5, -5,  0 },
         };
-        TestAssistant assistant = new TestAssistant(convertFixture(results), sComparisonItems);
+        TestAssistant assistant = new TestAssistant(convertFixture(results), sComparisonSpec);
         List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
 
         Writer output = new BufferedWriter(new OutputStreamWriter(System.out));

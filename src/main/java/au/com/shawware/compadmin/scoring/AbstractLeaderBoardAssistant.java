@@ -7,10 +7,6 @@
 
 package au.com.shawware.compadmin.scoring;
 
-import java.util.List;
-
-import au.com.shawware.util.StringUtil;
-
 /**
  * Abstracts code that other assistants may wish to re-use by sub-classing.
  *
@@ -18,26 +14,25 @@ import au.com.shawware.util.StringUtil;
  */
 public abstract class AbstractLeaderBoardAssistant implements ILeaderBoardAssistant
 {
-    /** The result items to use when comparing for equality / ranking. */
-    private final List<String> mComparisonItems;
+    /** The result item specification to use when comparing for equality / ranking. */
+    private final ResultSpec mComparisonSpec;
 
     /**
      * Constructs a new assistant using the given result items.
      * The items will be used in the order they are given.
      * 
-     * @param comparisonItems the comparison result items
+     * @param comparisonSpec the comparison result items
      * 
      * @throws IllegalArgumentException empty result items or item
      */
-    public AbstractLeaderBoardAssistant(List<String> comparisonItems)
+    public AbstractLeaderBoardAssistant(ResultSpec comparisonSpec)
         throws IllegalArgumentException
     {
-        if ((comparisonItems == null) || (comparisonItems.size() == 0) ||
-            comparisonItems.stream().filter(StringUtil::isEmpty).findAny().isPresent())
+        if ((comparisonSpec == null) || (comparisonSpec.getItemNames().size() == 0))
         {
-            throw new IllegalArgumentException("Empty comparison items"); //$NON-NLS-1$
+            throw new IllegalArgumentException("Empty comparison item specification"); //$NON-NLS-1$
         }
-        mComparisonItems = comparisonItems;
+        mComparisonSpec = comparisonSpec;
     }
 
     @Override
@@ -45,9 +40,16 @@ public abstract class AbstractLeaderBoardAssistant implements ILeaderBoardAssist
         throws IllegalArgumentException
     {
         int rc = 0;
-        for (String name : mComparisonItems)
+        for (String name : mComparisonSpec.getItemNames())
         {
-            rc = result2.getResultItemValueAsInt(name) - result1.getResultItemValueAsInt(name);
+            if (mComparisonSpec.isInteger(name))
+            {
+                rc = Integer.compare(result2.getResultItemValueAsInt(name), result1.getResultItemValueAsInt(name));
+            }
+            else
+            {
+                rc = Double.compare(result2.getResultItemValueAsDouble(name), result1.getResultItemValueAsDouble(name));
+            }
             if (rc != 0)
             {
                 break;

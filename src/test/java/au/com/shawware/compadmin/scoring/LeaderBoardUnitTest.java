@@ -17,7 +17,7 @@ import org.junit.Test;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "static-method" })
+@SuppressWarnings({ "boxing", "static-method" })
 public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 {
     /**
@@ -26,12 +26,12 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     @Test
     public void testSimpleCase()
     {
-        final int[][] results = new int[][]
+        final Number[][] results = new Number[][]
         {
-            { 1, 3, 0, 1, -2, 1 },
-            { 2, 3, 3, 3,  3, 9 },
-            { 3, 3, 1, 2,  0, 4 },
-            { 4, 3, 1, 1, -1, 3 },
+            { 1, 3, 0, 1, -2.0, 1 },
+            { 2, 3, 3, 3,  3.0, 9 },
+            { 3, 3, 1, 2,  0.0, 4 },
+            { 4, 3, 1, 1, -1.0, 3 },
         };
         final int[][] ranks = new int[][]
         {
@@ -52,17 +52,17 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     @Test
     public void testComplexCase()
     {
-        final int[][] results = new int[][]
+        final Number[][] results = new Number[][]
         {
-            { 1, 9, 5, 20,  5, 16 },
-            { 2, 9, 1,  3, -2, 10 },
-            { 3, 9, 8, 30, 20, 24 },
-            { 4, 9, 2,  3, -1, 10 },
-            { 5, 9, 4, 19,  5, 16 },
-            { 6, 9, 3, 18,  5, 16 },
-            { 7, 9, 7, 25, 10, 21 },
-            { 8, 9, 6, 25, 10, 21 },
-            { 9, 9, 0,  5, -5,  0 },
+            { 1, 9, 5, 20,  5.2, 16 },
+            { 2, 9, 1,  3, -2.0, 10 },
+            { 3, 9, 8, 30, 20.0, 24 },
+            { 4, 9, 2,  3, -1.0, 10 },
+            { 5, 9, 4, 19,  5.2, 16 },
+            { 6, 9, 3, 18,  5.2, 16 },
+            { 7, 9, 7, 25, 10.5, 21 },
+            { 8, 9, 6, 25, 10.5, 21 },
+            { 9, 9, 0,  5, -5.0,  0 },
         };
         final int[][] ranks = new int[][]
         {
@@ -87,13 +87,13 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
      * @param input the input results
      * @param output the expected ranks
      */
-    private void verifyCase(int[][] input, int[][] output)
+    private void verifyCase(Number[][] input, int[][] output)
     {
         Assert.assertNotNull(input);
         Assert.assertNotNull(output);
         Assert.assertEquals(input.length, output.length);
 
-        ILeaderBoardAssistant assistant = new TestAssistant(convertFixture(input), sComparisonItems);
+        ILeaderBoardAssistant assistant = new TestAssistant(convertFixture(input), sComparisonSpec);
         List<EntrantResult> results = assistant.compileOverallResults();
         Assert.assertNotNull(results);
         Assert.assertEquals(input.length, results.size());

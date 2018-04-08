@@ -48,7 +48,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
      */
     public CompetitionAnalyser(Map<Integer, Player> players, Competition competition, ScoringSystem scoringSystem)
     {
-        super(ResultItem.getComparisonItems());
+        super(ResultItem.getComparisonSpecification());
         mPlayers       = players;
         mCompetition   = competition;
         mScoringSystem = scoringSystem;

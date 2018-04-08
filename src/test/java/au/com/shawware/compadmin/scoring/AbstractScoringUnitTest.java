@@ -28,7 +28,7 @@ public class AbstractScoringUnitTest
     /** The full set of result items. */
     protected static ResultSpec sSpec;
     /** The result items to use is comparisons. */
-    protected static List<String> sComparisonItems;
+    protected static ResultSpec sComparisonSpec;
     /** A sample set of players. */
     protected static Map<Integer, Player> sPlayers;
 
@@ -42,13 +42,13 @@ public class AbstractScoringUnitTest
         sSpec.addItem("Games");
         sSpec.addItem("Wins");
         sSpec.addItem("For");
-        sSpec.addItem("GD");
+        sSpec.addItem("G%", false);
         sSpec.addItem("Points");
 
-        sComparisonItems = new ArrayList<>();
-        sComparisonItems.add("Points");
-        sComparisonItems.add("GD");
-        sComparisonItems.add("For");
+        sComparisonSpec = new ResultSpec();
+        sComparisonSpec.addItem("Points");
+        sComparisonSpec.addItem("G%", false);
+        sComparisonSpec.addItem("For");
 
         sPlayers = new HashMap<>();
         for (int i = 1; i <= 10; i++)
@@ -65,17 +65,17 @@ public class AbstractScoringUnitTest
      *
      * @return The corresponding results.
      */
-    protected final List<EntrantResult> convertFixture(int[][] fixture)
+    protected final List<EntrantResult> convertFixture(Number[][] fixture)
     {
         List<EntrantResult> results = new ArrayList<>(fixture.length);
-        for (int[] entrantData : fixture)
+        for (Number[] entrantData : fixture)
         {
-            EntrantResult result = new EntrantResult(entrantData[0], sSpec);
-            result.incrementResultItem("Games",  entrantData[1]);
-            result.incrementResultItem("Wins",   entrantData[2]);
-            result.incrementResultItem("For",    entrantData[3]);
-            result.incrementResultItem("GD",     entrantData[4]);
-            result.incrementResultItem("Points", entrantData[5]);
+            EntrantResult result = new EntrantResult(entrantData[0].intValue(), sSpec);
+            result.incrementResultItem("Games",  entrantData[1].intValue());
+            result.incrementResultItem("Wins",   entrantData[2].intValue());
+            result.incrementResultItem("For",    entrantData[3].intValue());
+            result.setResultItem      ("G%",     entrantData[4].doubleValue());
+            result.incrementResultItem("Points", entrantData[5].intValue());
             results.add(result);
         }
         return results;
