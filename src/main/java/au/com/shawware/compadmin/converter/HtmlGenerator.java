@@ -116,7 +116,7 @@ public class HtmlGenerator
     public void value(double value)
         throws IOException
     {
-        value(String.format("%0.2f", value));
+        value(String.format("%.2f", value));
     }
 
     /**

@@ -129,7 +129,6 @@ public class HtmlConverter implements IConverter
                 {
                     generator.value(result.getResultItemValueAsDouble(name));
                 }
-                generator.value(result.getResultItemValueAsInt(name));
                 generator.closeTag();
             }
  
