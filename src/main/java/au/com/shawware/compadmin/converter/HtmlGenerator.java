@@ -23,6 +23,8 @@ public class HtmlGenerator
 {
     /** The base CSS class prefix to use for all CSS classes. */
     private static final String CSS_CLASS_PREFIX = "sw"; //$NON-NLS-1$
+    /** The base CSS class prefix to use for all CSS classes. */
+    private static final String CSS_CLASS_NAME_SEPARATOR = "-"; //$NON-NLS-1$
     /** The writer to generate HTML to. */
     private final Writer mWriter;
     /** The CSS class prefix to use. */
@@ -39,12 +41,12 @@ public class HtmlGenerator
     public HtmlGenerator(Writer writer, String... cssClassPrefixes)
     {
         // TODO: arg checks
-        StringJoiner sj = new StringJoiner("-");
+        StringJoiner sj = new StringJoiner(CSS_CLASS_NAME_SEPARATOR);
         for (String prefix : cssClassPrefixes) {
             sj.add(prefix);
         }
         mWriter         = writer;
-        mCssClassPrefix = CSS_CLASS_PREFIX + '-' + sj.toString() + '-';
+        mCssClassPrefix = CSS_CLASS_PREFIX + CSS_CLASS_NAME_SEPARATOR + sj.toString() + CSS_CLASS_NAME_SEPARATOR;
         mTagStack       = new ArrayDeque<>();
     }
 
