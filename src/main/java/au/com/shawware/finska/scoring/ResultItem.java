@@ -31,6 +31,8 @@ public enum ResultItem
     WIN_ALL("Win All"),
     /** The total number of points. */
     POINTS("Points"),
+    /** The average number of points per match. */
+    POINTS_PER_MATCH("Pts/Match"),
     /** The running total number of points. */
     RUNNING_TOTAL("Total");
 

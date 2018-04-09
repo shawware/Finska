@@ -43,73 +43,73 @@ public class AnalyserUnitTest extends AbstractUnitTest
 
         // Test the a basic scoring Scoring System - no bonuses of any kind.
         ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0, 0);
-        int[][] expectedResults = new int[][]
+        Number[][] expectedResults = new Number[][]
         {
-            { 1, 1, 6, 12, 7, 0, 0, 0, 35 },
-            { 2, 2, 6, 12, 4, 0, 0, 0, 20 },
-            { 3, 3, 5, 11, 2, 0, 0, 0, 10 },
-            { 3, 5, 2,  5, 2, 0, 0, 0, 10 },
-            { 5, 4, 3,  7, 1, 0, 0, 0,  5 },
+            { 1, 1, 6, 12, 7, 0, 0, 0, 35, 35.0/6.0 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 20, 20.0/6.0 },
+            { 3, 3, 5, 11, 2, 0, 0, 0, 10, 2.0      },
+            { 3, 5, 2,  5, 2, 0, 0, 0, 10, 5.0      },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  5, 5.0/3.0  },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and games.
         scoringSystem = new ScoringSystem(2, 1, 0, 0, 0);
-        expectedResults = new int[][]
+        expectedResults = new Number[][]
         {
-            { 1, 1, 6, 12, 7, 0, 0, 0, 20 },
-            { 2, 2, 6, 12, 4, 0, 0, 0, 14 },
-            { 3, 3, 5, 11, 2, 0, 0, 0,  9 },
-            { 4, 5, 2,  5, 2, 0, 0, 0,  6 },
-            { 5, 4, 3,  7, 1, 0, 0, 0,  5 },
+            { 1, 1, 6, 12, 7, 0, 0, 0, 20, 20.0/6.0 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 14, 14.0/6.0 },
+            { 3, 3, 5, 11, 2, 0, 0, 0,  9, 1.8      },
+            { 4, 5, 2,  5, 2, 0, 0, 0,  6, 3.0      },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  5, 5.0/3.0  },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and fast wins.
         scoringSystem = new ScoringSystem(2, 0, 5, 0, 0);
-        expectedResults = new int[][]
+        expectedResults = new Number[][]
         {
-            { 1, 1, 6, 12, 7, 1, 0, 0, 19 },
-            { 2, 3, 5, 11, 2, 1, 0, 0,  9 },
-            { 3, 2, 6, 12, 4, 0, 0, 0,  8 },
-            { 4, 5, 2,  5, 2, 0, 0, 0,  4 },
-            { 5, 4, 3,  7, 1, 0, 0, 0,  2 },
+            { 1, 1, 6, 12, 7, 1, 0, 0, 19, 19.0/6.0 },
+            { 2, 3, 5, 11, 2, 1, 0, 0,  9, 1.8      },
+            { 3, 2, 6, 12, 4, 0, 0, 0,  8, 8.0/6.0  },
+            { 4, 5, 2,  5, 2, 0, 0, 0,  4, 2.0      },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  2, 2.0/3.0  },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win both.
         scoringSystem = new ScoringSystem(4, 0, 0, 1, 0);
-        expectedResults = new int[][]
+        expectedResults = new Number[][]
         {
-            { 1, 1, 6, 12, 7, 0, 2, 0, 30 },
-            { 2, 2, 6, 12, 4, 0, 0, 0, 16 },
-            { 3, 5, 2,  5, 2, 0, 1, 0,  9 },
-            { 4, 3, 5, 11, 2, 0, 0, 0,  8 },
-            { 5, 4, 3,  7, 1, 0, 0, 0,  4 },
+            { 1, 1, 6, 12, 7, 0, 2, 0, 30, 5.0      },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 16, 16.0/6.0 },
+            { 3, 5, 2,  5, 2, 0, 1, 0,  9, 4.5      },
+            { 4, 3, 5, 11, 2, 0, 0, 0,  8, 1.6      },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  4, 4.0/3.0  },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win alls.
         scoringSystem = new ScoringSystem(4, 0, 0, 0, 1);
-        expectedResults = new int[][]
+        expectedResults = new Number[][]
         {
-            { 1, 1, 6, 12, 7, 0, 0, 1, 29 },
-            { 2, 2, 6, 12, 4, 0, 0, 0, 16 },
-            { 3, 5, 2,  5, 2, 0, 0, 1,  9 },
-            { 4, 3, 5, 11, 2, 0, 0, 0,  8 },
-            { 5, 4, 3,  7, 1, 0, 0, 0,  4 },
+            { 1, 1, 6, 12, 7, 0, 0, 1, 29, 29.0/6.0 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 16, 16.0/6.0 },
+            { 3, 5, 2,  5, 2, 0, 0, 1,  9, 4.5      },
+            { 4, 3, 5, 11, 2, 0, 0, 0,  8, 1.6      },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  4, 4.0/3.0  },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
 
         // Test the Seertech Scoring System
         scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
-        expectedResults = new int[][]
+        expectedResults = new Number[][]
         {
-            { 1, 1, 6, 12, 7, 1, 2, 0, 30 },
-            { 2, 2, 6, 12, 4, 0, 0, 0, 18 },
-            { 3, 3, 5, 11, 2, 1, 0, 0, 12 },
-            { 4, 5, 2,  5, 2, 0, 1, 0,  9 },
-            { 5, 4, 3,  7, 1, 0, 0, 0,  6 },
+            { 1, 1, 6, 12, 7, 1, 2, 0, 30, 5.0 },
+            { 2, 2, 6, 12, 4, 0, 0, 0, 18, 3.0 },
+            { 3, 3, 5, 11, 2, 1, 0, 0, 12, 2.4 },
+            { 4, 5, 2,  5, 2, 0, 1, 0,  9, 4.5 },
+            { 5, 4, 3,  7, 1, 0, 0, 0,  6, 2.0 },
         };
         verifyAlgorithm(competition, players, scoringSystem, expectedResults);
     }
@@ -123,7 +123,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
      * @param scoringSystem the scoring system
      * @param expectedResults the expected results
      */
-    private void verifyAlgorithm(Competition competition, Map<Integer, Player> players, ScoringSystem scoringSystem, int[][] expectedResults)
+    private void verifyAlgorithm(Competition competition, Map<Integer, Player> players, ScoringSystem scoringSystem, Number[][] expectedResults)
     {
         ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
         List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
@@ -135,15 +135,16 @@ public class AnalyserUnitTest extends AbstractUnitTest
         {
             String id = "Index: " + i;
             EntrantResult result = leaderBoard.get(i);
-            Assert.assertEquals(id, expectedResults[i][0], result.getRank());
-            Assert.assertEquals(id, expectedResults[i][1], result.getEntrantID());
-            Assert.assertEquals(id, expectedResults[i][2], result.getResultItemValueAsInt(ResultItem.MATCHES.toString()));
-            Assert.assertEquals(id, expectedResults[i][3], result.getResultItemValueAsInt(ResultItem.GAMES.toString()));
-            Assert.assertEquals(id, expectedResults[i][4], result.getResultItemValueAsInt(ResultItem.WINS.toString()));
-            verifyOptionalResultItem(id, result, ResultItem.FAST_WINS, scoringSystem.scoreFastWins(), expectedResults[i][5]);
-            verifyOptionalResultItem(id, result, ResultItem.WIN_BOTH, scoringSystem.scoreWinBoth(), expectedResults[i][6]);
-            verifyOptionalResultItem(id, result, ResultItem.WIN_ALL, scoringSystem.scoreWinAll(), expectedResults[i][7]);
-            Assert.assertEquals(id, expectedResults[i][8], result.getResultItemValueAsInt(ResultItem.POINTS.toString()));
+            Assert.assertEquals(id, expectedResults[i][0].intValue(), result.getRank());
+            Assert.assertEquals(id, expectedResults[i][1].intValue(), result.getEntrantID());
+            Assert.assertEquals(id, expectedResults[i][2].intValue(), result.getResultItemValueAsInt(ResultItem.MATCHES.toString()));
+            Assert.assertEquals(id, expectedResults[i][3].intValue(), result.getResultItemValueAsInt(ResultItem.GAMES.toString()));
+            Assert.assertEquals(id, expectedResults[i][4].intValue(), result.getResultItemValueAsInt(ResultItem.WINS.toString()));
+            verifyOptionalResultItem(id, result, ResultItem.FAST_WINS, scoringSystem.scoreFastWins(), expectedResults[i][5].intValue());
+            verifyOptionalResultItem(id, result, ResultItem.WIN_BOTH, scoringSystem.scoreWinBoth(), expectedResults[i][6].intValue());
+            verifyOptionalResultItem(id, result, ResultItem.WIN_ALL, scoringSystem.scoreWinAll(), expectedResults[i][7].intValue());
+            Assert.assertEquals(id, expectedResults[i][8].intValue(), result.getResultItemValueAsInt(ResultItem.POINTS.toString()));
+            Assert.assertEquals(id, expectedResults[i][9].doubleValue(), result.getResultItemValueAsDouble(ResultItem.POINTS_PER_MATCH.toString()), 0.0001);
         }
     }
 

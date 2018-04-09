@@ -70,6 +70,18 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             Match match = mCompetition.getMatch(matchID);
             processMatch(results, match);
         }
+
+        for (Integer playerID : mPlayers.keySet())
+        {
+            EntrantResult result = results.get(playerID);
+            double matches = result.getResultItemValueAsInt(ResultItem.MATCHES.toString());
+            if (matches > 0.0)
+            {
+                result.setResultItem(ResultItem.POINTS_PER_MATCH.toString(),
+                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / matches);
+            }
+        }
+
         return results.values().stream().collect(Collectors.toList());
     }
 
@@ -220,6 +232,10 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         if (runningTotal)
         {
             spec.addItem(ResultItem.RUNNING_TOTAL.toString());
+        }
+        else
+        {
+            spec.addItem(ResultItem.POINTS_PER_MATCH.toString(), false);
         }
 
         return spec;
