@@ -78,7 +78,7 @@ public class HtmlConverter implements IConverter
 
         generator.openTag("table", "table");
 
-        generator.openTag("thead");
+        generator.openTag("thead", "table-head");
         generator.openTag("tr", "row");
 
         if (displayRank)
@@ -102,7 +102,7 @@ public class HtmlConverter implements IConverter
         generator.closeTag();
         generator.closeTag();
 
-        generator.openTag("tbody");
+        generator.openTag("tbody", "table-body");
         for (EntrantResult result : results)
         {
             generator.openTag("tr", "row");
