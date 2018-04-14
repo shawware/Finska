@@ -18,15 +18,11 @@ import java.util.Map;
 import au.com.shawware.compadmin.converter.HtmlConverter;
 import au.com.shawware.compadmin.converter.IConverter;
 import au.com.shawware.compadmin.scoring.EntrantResult;
-import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
-import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
-import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.CompetitionLoader;
-import au.com.shawware.finska.persistence.PersistenceException;
 import au.com.shawware.finska.persistence.PersistenceFactory;
-import au.com.shawware.finska.scoring.CompetitionAnalyser;
 import au.com.shawware.finska.scoring.ScoringSystem;
+import au.com.shawware.finska.service.ResultsService;
 
 /**
  * Simple Finska program to generate output from specified competition data.
@@ -35,8 +31,10 @@ import au.com.shawware.finska.scoring.ScoringSystem;
  */
 public class Finska
 {
-    /** The data directory that holds competition data. */
-    private final String mDataDir;
+    /** The competition data source. */
+    private final CompetitionLoader mLoader;
+    /** The results service to use. */
+    private final ResultsService mService;
     /** The directory to store output in. */
     private final String mOutputDir;
 
@@ -48,7 +46,8 @@ public class Finska
      */
     private Finska(String dataDir, String outputDir)
     {
-        mDataDir   = dataDir;
+        mLoader    = CompetitionLoader.getLoader(PersistenceFactory.getFactory(dataDir));
+        mService   = new ResultsService(mLoader, new ScoringSystem(3, 1, 1, 1, 0));
         mOutputDir = outputDir;
     }
 
@@ -78,22 +77,17 @@ public class Finska
         int status = 0;
         try
         {
-            CompetitionLoader loader = CompetitionLoader.getLoader(PersistenceFactory.getFactory(mDataDir));
-            Map<Integer, Player> players = loader.getPlayers();
-            Map<Integer, Competition> comps = loader.getCompetitions();
-            if (comps.size() > 0)
+            Map<Integer, Player> players = mService.getPlayers();
+            List<EntrantResult> leaderBoard = mService.getLeaderBoard();
+            if ((leaderBoard.size() > 0) && (players.size() > 0))
             {
-                Competition competition = comps.get(1);
-                ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
-                ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
-                List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
                 Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(mOutputDir + "/leaderboard.html")));
                 IConverter converter = new HtmlConverter("finska");
                 converter.convertOverallResults(players, leaderBoard, output);
                 output.close();
             }
         }
-        catch (PersistenceException | IOException e)
+        catch (IOException e)
         {
             System.err.println(e.getMessage());
             e.printStackTrace(System.err);

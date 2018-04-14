@@ -4,8 +4,8 @@
  */
 
 /**
- * Scoring calculations for Finska.
+ * Business services for Finska, eg. results and tables calculations.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-package au.com.shawware.finska.scoring;
+package au.com.shawware.finska.services;
