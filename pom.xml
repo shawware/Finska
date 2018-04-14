@@ -2,11 +2,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <artifactId>finska</artifactId>
-  <version>0.2</version>
+  <artifactId>sw-finska-core</artifactId>
+  <version>0.2.2</version>
   <packaging>jar</packaging>
-  <name>Shawware Finska</name>
-  <description>A simple program for recording Finska match results.</description>
+  <name>Shawware Finska Core</name>
+  <description>Core framework for maintaining Finska match results.</description>
   <url>https://github.com/shawware/Finska</url>
 
   <parent>
@@ -39,4 +39,8 @@
       <version>2.9.4</version>
     </dependency>
   </dependencies>
+  <organization>
+  	<name>shawware</name>
+  	<url>http://www.shawware.com.au</url>
+  </organization>
 </project>
