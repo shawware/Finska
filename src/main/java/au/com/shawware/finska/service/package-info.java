@@ -8,4 +8,4 @@
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-package au.com.shawware.finska.services;
+package au.com.shawware.finska.service;
