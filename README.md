@@ -14,6 +14,7 @@ Packages
 --------
 
 <pre>
+au.com.shawware.finska.service
 au.com.shawware.finska.scoring
 au.com.shawware.finska.persistence
 au.com.shawware.finska.entity
