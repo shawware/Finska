@@ -98,4 +98,23 @@ public class ResultsService
         }
         return players;
     }
+
+    /**
+     * Retrieve the player data for the specified player.
+     * 
+     * @param id the player's ID
+     *
+     * @return The player.
+     */
+    public Player getPlayer(int id)
+    {
+        Map<Integer, Player> players = getPlayers();
+        if (!players.containsKey(id))
+        {
+            String msg = "Player does not exist: " + id; //$NON-NLS-1$
+            LOG.error(msg); 
+            throw new IllegalArgumentException(msg);
+        }
+        return players.get(id);
+    }
 }
