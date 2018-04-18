@@ -19,6 +19,7 @@ import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.finska.entity.Competition;
+import au.com.shawware.finska.entity.Match;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.CompetitionLoader;
 import au.com.shawware.finska.persistence.PersistenceException;
@@ -77,6 +78,82 @@ public class ResultsService
             LOG.error("Error generating leaderboard", e); //$NON-NLS-1$
         }
         return leaderBoard;
+    }
+
+    /**
+     * Retrieve the results and the running for each round.
+     * 
+     * @return The results after each round in time sequence.
+     */
+    public List<List<EntrantResult>> getRoundResults()
+    {
+        List<List<EntrantResult>> roundResults = new ArrayList<>();
+        try
+        {
+            Map<Integer, Player> players = mLoader.getPlayers();
+            Map<Integer, Competition> comps = mLoader.getCompetitions();
+            if (comps.size() > 0)
+            {
+                Competition competition = comps.get(1);
+                ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, mScoringSystem);
+                roundResults = assistant.compileRoundResults();
+            }
+        }
+        catch (PersistenceException e)
+        {
+            LOG.error("Error generating round results", e); //$NON-NLS-1$
+        }
+        return roundResults;
+    }
+
+    /**
+     * Retrieves the current competition.
+     * 
+     * @return The current competition or null if there is none.
+     */
+    public Competition getCompetition()
+    {
+        Competition competition = null;
+        try
+        {
+            Map<Integer, Competition> comps = mLoader.getCompetitions();
+            if (comps.size() > 0)
+            {
+                competition = comps.get(1);
+            }
+        }
+        catch (PersistenceException e)
+        {
+            LOG.error("Error retrieving matches", e); //$NON-NLS-1$
+        }
+        return competition;
+    }
+
+    /**
+     * Retrieves the matches for the current competition.
+     * 
+     * @return The list of matches in time order.
+     */
+    public List<Match> getMatches()
+    {
+        List<Match> matches = new ArrayList<>();
+        try
+        {
+            Map<Integer, Competition> comps = mLoader.getCompetitions();
+            if (comps.size() > 0)
+            {
+                Competition competition = comps.get(1);
+                for (Integer id : competition.getMatchIds())
+                {
+                    matches.add(competition.getMatch(id));
+                }
+            }
+        }
+        catch (PersistenceException e)
+        {
+            LOG.error("Error retrieving matches", e); //$NON-NLS-1$
+        }
+        return matches;
     }
 
     /**
