@@ -24,10 +24,10 @@ import au.com.shawware.finska.entity.Player;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class CompetitionLoader
+public class EntityLoader implements IEntityLoader
 {
     /* The singleton instances. */
-    private static Map<String, CompetitionLoader> sLoaders = new HashMap<>();
+    private static Map<String, EntityLoader> sLoaders = new HashMap<>();
 
     /** The competition store. */
     private final IEntityStore<Competition> mCompetitionStore;
@@ -43,7 +43,7 @@ public class CompetitionLoader
      * 
      * @param factory the persistence factory to use for obtaining stores
      */
-    private CompetitionLoader(PersistenceFactory factory)
+    private EntityLoader(PersistenceFactory factory)
     {
         mCompetitionStore = factory.getStore(Competition.class);
         mMatchStore       = factory.getStore(Match.class);
@@ -57,26 +57,33 @@ public class CompetitionLoader
      * 
      * @return The loader.
      */
-    public static synchronized final CompetitionLoader getLoader(PersistenceFactory factory)
+    public static synchronized final EntityLoader getLoader(PersistenceFactory factory)
     {
         if (!sLoaders.containsKey(factory.getRoot()))
         {
-            sLoaders.put(factory.getRoot(), new CompetitionLoader(factory));
+            sLoaders.put(factory.getRoot(), new EntityLoader(factory));
         }
         return sLoaders.get(factory.getRoot());
     }
 
-    /**
-     * Loads all the players.
-     * 
-     * @return The players.
-     * 
-     * @throws PersistenceException error loading players
-     */
+    @Override
     public Map<Integer, Player> getPlayers()
         throws PersistenceException
     {
         return mPlayerStore.getAll();
+    }
+
+    @Override
+    @SuppressWarnings("boxing")
+    public Competition getCompetition(int id)
+        throws PersistenceException
+    {
+        Map<Integer, Competition> competitions = getCompetitions();
+        if (!competitions.containsKey(id))
+        {
+            throw new PersistenceException("Competition does not exist: " + id); //$NON-NLS-1$
+        }
+        return competitions.get(id);
     }
 
     /**
@@ -86,7 +93,7 @@ public class CompetitionLoader
      * 
      * @throws PersistenceException error loading data
      */
-    public Map<Integer, Competition> getCompetitions()
+    /*package*/ Map<Integer, Competition> getCompetitions()
         throws PersistenceException
     {
         Map<Integer, Player> players = getPlayers();
@@ -114,8 +121,8 @@ public class CompetitionLoader
      */
     @SuppressWarnings("static-method")
     private <Container extends AbstractEntity, Dependent extends AbstractEntity>
-                void loadDependentEntities(Map<Integer, Container> containers, Map<Integer, Dependent> dependents,
-                                           Function<Container, Set<Integer>> getIdsFor, BiConsumer<Container, Dependent> addTo)
+        void loadDependentEntities(Map<Integer, Container> containers, Map<Integer, Dependent> dependents,
+                                   Function<Container, Set<Integer>> getIdsFor, BiConsumer<Container, Dependent> addTo)
         throws PersistenceException
     {
         for (Container container : containers.values())

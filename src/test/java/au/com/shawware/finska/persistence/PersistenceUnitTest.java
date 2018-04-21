@@ -104,10 +104,10 @@ public class PersistenceUnitTest
         c1.addMatch(m1);
         verifyBasicStorage(competitionStore, c1);
 
-        Map<Integer, Player> allPlayers = CompetitionLoader.getLoader(factory).getPlayers();
+        Map<Integer, Player> allPlayers = EntityLoader.getLoader(factory).getPlayers();
         verifyEntityMap(allPlayers, p1);
 
-        Map<Integer, Competition> allComps = CompetitionLoader.getLoader(factory).getCompetitions();
+        Map<Integer, Competition> allComps = EntityLoader.getLoader(factory).getCompetitions();
         verifyEntityMap(allComps, c1);
 
         Competition c2 = allComps.get(c1.getId());

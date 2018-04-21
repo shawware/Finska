@@ -19,7 +19,8 @@ import au.com.shawware.compadmin.converter.HtmlConverter;
 import au.com.shawware.compadmin.converter.IConverter;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.finska.persistence.CompetitionLoader;
+import au.com.shawware.finska.persistence.EntityLoader;
+import au.com.shawware.finska.persistence.IEntityLoader;
 import au.com.shawware.finska.persistence.PersistenceFactory;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.finska.service.ResultsService;
@@ -32,7 +33,7 @@ import au.com.shawware.finska.service.ResultsService;
 public class Finska
 {
     /** The competition data source. */
-    private final CompetitionLoader mLoader;
+    private final IEntityLoader mLoader;
     /** The results service to use. */
     private final ResultsService mService;
     /** The directory to store output in. */
@@ -46,7 +47,7 @@ public class Finska
      */
     private Finska(String dataDir, String outputDir)
     {
-        mLoader    = CompetitionLoader.getLoader(PersistenceFactory.getFactory(dataDir));
+        mLoader    = EntityLoader.getLoader(PersistenceFactory.getFactory(dataDir));
         mService   = new ResultsService(mLoader, new ScoringSystem(3, 1, 1, 1, 0));
         mOutputDir = outputDir;
     }

@@ -20,16 +20,15 @@ import org.junit.Test;
 
 import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
-import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.compadmin.scoring.TestAssistant;
-import au.com.shawware.finska.entity.Competition;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.finska.persistence.CompetitionLoader;
+import au.com.shawware.finska.persistence.EntityLoader;
+import au.com.shawware.finska.persistence.IEntityLoader;
 import au.com.shawware.finska.persistence.PersistenceException;
 import au.com.shawware.finska.persistence.PersistenceFactory;
-import au.com.shawware.finska.scoring.CompetitionAnalyser;
 import au.com.shawware.finska.scoring.ScoringSystem;
+import au.com.shawware.finska.service.ResultsService;
 
 /**
  * Exercise and verify HTML output.
@@ -73,10 +72,12 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            CompetitionLoader loader = CompetitionLoader.getLoader(PersistenceFactory.getFactory("./data"));
-            Map<Integer, Player> players = loader.getPlayers();
-            ILeaderBoardAssistant assistant = buildAssistant(loader, players);
-            List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
+            IEntityLoader loader = EntityLoader.getLoader(PersistenceFactory.getFactory("./data"));
+            ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
+            ResultsService service = new ResultsService(loader, scoringSystem);
+            service.initialise();
+            Map<Integer, Player> players = service.getPlayers();
+            List<EntrantResult> leaderBoard = service.getLeaderBoard();
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/leaderboard.html")));
             IConverter converter = new HtmlConverter("finska");
             outputLeaderboard(players, leaderBoard, converter, output);
@@ -98,13 +99,14 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            CompetitionLoader loader = CompetitionLoader.getLoader(PersistenceFactory.getFactory("./data"));
-            Map<Integer, Player> players = loader.getPlayers();
-            ILeaderBoardAssistant assistant = buildAssistant(loader, players);
-            List<List<EntrantResult>> roundResults = assistant.compileRoundResults();
+            IEntityLoader loader = EntityLoader.getLoader(PersistenceFactory.getFactory("./data"));
+            ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
+            ResultsService service = new ResultsService(loader, scoringSystem);
+            service.initialise();
+            List<List<EntrantResult>> roundResults = service.getRoundResults();
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/rounds.html")));
             IConverter converter = new HtmlConverter("finska");
-            converter.convertRoundResults(players, roundResults, output);
+            converter.convertRoundResults(service.getPlayers(), roundResults, output);
             output.close();
         }
         catch (PersistenceException | IOException e)
@@ -113,25 +115,6 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             e.printStackTrace(System.err);
             Assert.fail("Unexpected error");
         }
-    }
-
-    /**
-     * Builds a leader board assistant from the given players and data.
-     * 
-     * @param loader the loader to source the competition from
-     * @param players the players in the competition
-     * 
-     * @return The built assistant.
-     * 
-     * @throws PersistenceException error loading data
-     */
-    private ILeaderBoardAssistant buildAssistant(CompetitionLoader loader, Map<Integer, Player> players)
-        throws PersistenceException
-    {
-        Map<Integer, Competition> comps = loader.getCompetitions();
-        Competition competition = comps.get(1);
-        ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
-        return new CompetitionAnalyser(players, competition, scoringSystem);
     }
 
     /**
