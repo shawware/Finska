@@ -8,7 +8,12 @@
 package au.com.shawware.compadmin.scoring;
 
 import java.util.List;
+import java.util.Map;
 
+import au.com.shawware.compadmin.entity.TestCompetition;
+import au.com.shawware.compadmin.entity.TestEntrant;
+import au.com.shawware.compadmin.entity.TestMatch;
+import au.com.shawware.compadmin.entity.TestRound;
 import au.com.shawware.util.StringUtil;
 
 /**
@@ -17,7 +22,7 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class TestAssistant extends AbstractLeaderBoardAssistant
+public class TestAssistant extends AbstractLeaderBoardAssistant<TestCompetition, TestRound, TestMatch, TestEntrant>
 {
     /** The result items to use. */
     private final List<EntrantResult> mResults;
@@ -26,11 +31,14 @@ public class TestAssistant extends AbstractLeaderBoardAssistant
      * Constructs a new assistant from the given fixtures.
      * 
      * @param results the pre-calculated results
-     * @param comparisonSpec the comparison result item specification to use to compare results
+     * @param competition the test competition
+     * @param entrants the test competition's entrants
+     * @param comparisonSpec the comparison specification
      */
-    public TestAssistant(List<EntrantResult> results, ResultSpec comparisonSpec)
+    public TestAssistant(List<EntrantResult> results, TestCompetition competition,
+                        Map<Integer, TestEntrant> entrants, ResultSpec comparisonSpec)
     {
-        super(comparisonSpec);
+        super(competition, entrants, comparisonSpec);
         mResults = results;
     }
 
@@ -44,6 +52,25 @@ public class TestAssistant extends AbstractLeaderBoardAssistant
     public List<EntrantResult> compileOverallResults(int rounds)
     {
         return null;
+    }
+
+    @Override
+    protected ResultSpec createResultSpecification()
+    {
+        return null;
+    }
+
+    @Override
+    protected void postCompile(EntrantResult result)
+    {
+        // Do nothing.
+    }
+
+    @Override
+    protected void processRound(Map<Integer, EntrantResult> results,
+            TestRound round)
+    {
+        // Do nothing
     }
 
     @Override

@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import au.com.shawware.compadmin.scoring.AbstractLeaderBoardAssistant;
 import au.com.shawware.compadmin.scoring.EntrantResult;
@@ -30,12 +29,10 @@ import au.com.shawware.util.MutableInteger;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings("boxing")
-public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
+public class CompetitionAnalyser extends AbstractLeaderBoardAssistant<FinskaCompetition, FinskaRound, FinskaMatch, Player>
 {
     /** The entrants in the competition. */
     private final Map<Integer, Player> mPlayers;
-    /** The competition being analysed. */
-    private final FinskaCompetition mCompetition;
     /** The scoring system in use. */
     private final ScoringSystem mScoringSystem;
 
@@ -48,60 +45,26 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
      */
     public CompetitionAnalyser(Map<Integer, Player> players, FinskaCompetition competition, ScoringSystem scoringSystem)
     {
-        super(ResultItem.getComparisonSpecification());
+        super(competition, players, ResultItem.getComparisonSpecification());
         mPlayers       = players;
-        mCompetition   = competition;
         mScoringSystem = scoringSystem;
     }
 
     @Override
-    public List<EntrantResult> compileOverallResults()
+    protected ResultSpec createResultSpecification()
     {
-        return compileOverallResults(mCompetition.getRoundIds().size());
+        return determineResultItems(mScoringSystem, false);
     }
 
     @Override
-    public List<EntrantResult> compileOverallResults(int rounds)
+    protected void postCompile(EntrantResult result)
     {
-        Set<Integer> roundIDs = mCompetition.getRoundIds();
-        if ((rounds <= 0) || (rounds > roundIDs.size()))
+        double roundsPlayed = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
+        if (roundsPlayed > 0.0)
         {
-            throw new IllegalArgumentException("Invalid number of rounds: " + rounds); //$NON-NLS-1$
+            result.setResultItem(ResultItem.POINTS_PER_ROUND.toString(),
+                    result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / roundsPlayed);
         }
-
-        ResultSpec spec = determineResultItems(mScoringSystem, false);
-
-        Map<Integer, EntrantResult> results = new HashMap<>();
-        for (Integer playerID : mPlayers.keySet())
-        {
-            results.put(playerID, new EntrantResult(playerID, spec));
-        }
-
-        // Process each round until we reach the limit;
-        int i = 1;
-        for (Integer roundID : roundIDs)
-        {
-            if (i > rounds)
-            {
-                break;
-            }
-            FinskaRound round = mCompetition.getRound(roundID);
-            processRound(results, round);
-            i++;
-        }
-
-        for (Integer playerID : mPlayers.keySet())
-        {
-            EntrantResult result = results.get(playerID);
-            double roundsPlayed = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
-            if (roundsPlayed > 0.0)
-            {
-                result.setResultItem(ResultItem.POINTS_PER_ROUND.toString(),
-                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / roundsPlayed);
-            }
-        }
-
-        return results.values().stream().collect(Collectors.toList());
     }
 
     @Override
@@ -143,14 +106,8 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         return results;
     }
 
-    /**
-     * Process the given round. That is, evaluate each match and update
-     * the results for the entrants accordingly.
-     * 
-     * @param results the players' results so far
-     * @param round the round to process
-     */
-    private void processRound(Map<Integer, EntrantResult> results, FinskaRound round)
+    @Override
+    protected void processRound(Map<Integer, EntrantResult> results, FinskaRound round)
     {
         for (Integer playerID : round.getPlayersIds())
         {

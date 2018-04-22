@@ -7,6 +7,7 @@
 
 package au.com.shawware.compadmin.scoring;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.Map;
 
 import org.junit.BeforeClass;
 
-import au.com.shawware.finska.entity.Player;
+import au.com.shawware.compadmin.entity.TestCompetition;
+import au.com.shawware.compadmin.entity.TestEntrant;
 
 /**
  * Common code for scoring unit tests. Primarily establish a simple
@@ -29,8 +31,10 @@ public class AbstractScoringUnitTest
     protected static ResultSpec sSpec;
     /** The result items to use is comparisons. */
     protected static ResultSpec sComparisonSpec;
-    /** A sample set of players. */
-    protected static Map<Integer, Player> sPlayers;
+    /** A sample competition. */
+    protected static TestCompetition sCompetition;
+    /** A sample set of entrants. */
+    protected static Map<Integer, TestEntrant> sEntrants;
 
     /**
      * Set up test fixtures.
@@ -50,11 +54,13 @@ public class AbstractScoringUnitTest
         sComparisonSpec.addItem("M%", false);
         sComparisonSpec.addItem("For");
 
-        sPlayers = new HashMap<>();
+        sCompetition = new TestCompetition(1, "Test", LocalDate.of(2018, 3, 9));
+
+        sEntrants = new HashMap<>();
         for (int i = 1; i <= 10; i++)
         {
-            Player p = new Player(i, "P" + String.format("%02d", i));
-            sPlayers.put(p.getId(), p);
+            TestEntrant e = new TestEntrant(i, "E" + String.format("%02d", i));
+            sEntrants.put(e.getId(), e);
         }
     }
 

@@ -18,6 +18,7 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
@@ -56,12 +57,12 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             { 8, 9, 6, 25, 10, 21 },
             { 9, 9, 0,  5, -5,  0 },
         };
-        TestAssistant assistant = new TestAssistant(convertFixture(results), sComparisonSpec);
+        TestAssistant assistant = new TestAssistant(convertFixture(results), sCompetition, sEntrants, sComparisonSpec);
         List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
 
         Writer output = new BufferedWriter(new OutputStreamWriter(System.out));
         IConverter converter = new HtmlConverter("finska");
-        outputLeaderboard(sPlayers, leaderBoard, converter, output);
+        outputLeaderboard(sEntrants, leaderBoard, converter, output);
     }
 
     /**
@@ -120,16 +121,16 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     /**
      * Outputs the given leader board data using the given converter to the given output.
      * 
-     * @param players the player data
+     * @param entrants the entrant data
      * @param leaderBoard the leader board
      * @param converter the converter to use
      * @param output where to send the output
      */
-    private void outputLeaderboard(Map<Integer, Player> players, List<EntrantResult> leaderBoard, IConverter converter, Writer output)
+    private <EntrantType extends Entrant> void outputLeaderboard(Map<Integer, EntrantType> entrants, List<EntrantResult> leaderBoard, IConverter converter, Writer output)
     {
         try
         {
-            converter.convertOverallResults(players, leaderBoard, output);
+            converter.convertOverallResults(entrants, leaderBoard, output);
             output.flush();
         }
         catch (IOException | RuntimeException e)

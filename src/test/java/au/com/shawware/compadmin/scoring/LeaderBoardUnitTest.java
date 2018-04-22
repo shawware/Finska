@@ -94,7 +94,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         Assert.assertNotNull(output);
         Assert.assertEquals(input.length, output.length);
 
-        ILeaderBoardAssistant assistant = new TestAssistant(convertFixture(input), sComparisonSpec);
+        ILeaderBoardAssistant assistant = new TestAssistant(convertFixture(input), sCompetition, sEntrants, sComparisonSpec);
         List<EntrantResult> results = assistant.compileOverallResults();
         Assert.assertNotNull(results);
         Assert.assertEquals(input.length, results.size());
