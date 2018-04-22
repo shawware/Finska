@@ -39,15 +39,15 @@ public class AbstractScoringUnitTest
     public static void setUp()
     {
         sSpec = new ResultSpec();
-        sSpec.addItem("Games");
+        sSpec.addItem("Matches");
         sSpec.addItem("Wins");
         sSpec.addItem("For");
-        sSpec.addItem("G%", false);
+        sSpec.addItem("M%", false);
         sSpec.addItem("Points");
 
         sComparisonSpec = new ResultSpec();
         sComparisonSpec.addItem("Points");
-        sComparisonSpec.addItem("G%", false);
+        sComparisonSpec.addItem("M%", false);
         sComparisonSpec.addItem("For");
 
         sPlayers = new HashMap<>();
@@ -71,11 +71,11 @@ public class AbstractScoringUnitTest
         for (Number[] entrantData : fixture)
         {
             EntrantResult result = new EntrantResult(entrantData[0].intValue(), sSpec);
-            result.incrementResultItem("Games",  entrantData[1].intValue());
-            result.incrementResultItem("Wins",   entrantData[2].intValue());
-            result.incrementResultItem("For",    entrantData[3].intValue());
-            result.setResultItem      ("G%",     entrantData[4].doubleValue());
-            result.incrementResultItem("Points", entrantData[5].intValue());
+            result.incrementResultItem("Matches", entrantData[1].intValue());
+            result.incrementResultItem("Wins",    entrantData[2].intValue());
+            result.incrementResultItem("For",     entrantData[3].intValue());
+            result.setResultItem      ("M%",      entrantData[4].doubleValue());
+            result.incrementResultItem("Points",  entrantData[5].intValue());
             results.add(result);
         }
         return results;
