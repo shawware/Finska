@@ -41,6 +41,12 @@ public class TestAssistant extends AbstractLeaderBoardAssistant
     }
 
     @Override
+    public List<EntrantResult> compileOverallResults(int rounds)
+    {
+        return null;
+    }
+
+    @Override
     public List<List<EntrantResult>> compileRoundResults()
     {
         return null;

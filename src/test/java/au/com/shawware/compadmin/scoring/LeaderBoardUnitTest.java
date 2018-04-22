@@ -13,7 +13,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Exercise and verify the leaderboard business logic.
+ * Exercise and verify the leaderboard generator business logic.
+ * Note: this is limited to the sorting and ranking logic.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */

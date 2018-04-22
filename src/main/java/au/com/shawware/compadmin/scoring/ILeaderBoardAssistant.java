@@ -26,6 +26,17 @@ public interface ILeaderBoardAssistant extends Comparator<EntrantResult>
     List<EntrantResult> compileOverallResults();
 
     /**
+     * Compile the overall results for all entrants for the first N rounds.
+     *
+     * @param rounds the number of rounds
+     *
+     * @return The set of results for all entrants.
+     *
+     * @throws IllegalArgumentException invalid number of rounds 
+     */
+    List<EntrantResult> compileOverallResults(int rounds);
+
+    /**
      * Compile the results for all entrants for each round.
      * 
      * @return The set of results for all entrants by round.

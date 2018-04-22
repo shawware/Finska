@@ -57,6 +57,18 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     @Override
     public List<EntrantResult> compileOverallResults()
     {
+        return compileOverallResults(mCompetition.getRoundIds().size());
+    }
+
+    @Override
+    public List<EntrantResult> compileOverallResults(int rounds)
+    {
+        Set<Integer> roundIDs = mCompetition.getRoundIds();
+        if ((rounds <= 0) || (rounds > roundIDs.size()))
+        {
+            throw new IllegalArgumentException("Invalid number of rounds: " + rounds); //$NON-NLS-1$
+        }
+
         ResultSpec spec = determineResultItems(mScoringSystem, false);
 
         Map<Integer, EntrantResult> results = new HashMap<>();
@@ -65,20 +77,27 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             results.put(playerID, new EntrantResult(playerID, spec));
         }
 
-        for (Integer roundID : mCompetition.getRoundIds())
+        // Process each round until we reach the limit;
+        int i = 1;
+        for (Integer roundID : roundIDs)
         {
+            if (i > rounds)
+            {
+                break;
+            }
             FinskaRound round = mCompetition.getRound(roundID);
             processRound(results, round);
+            i++;
         }
 
         for (Integer playerID : mPlayers.keySet())
         {
             EntrantResult result = results.get(playerID);
-            double rounds = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
-            if (rounds > 0.0)
+            double roundsPlayed = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
+            if (roundsPlayed > 0.0)
             {
                 result.setResultItem(ResultItem.POINTS_PER_ROUND.toString(),
-                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / rounds);
+                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / roundsPlayed);
             }
         }
 
