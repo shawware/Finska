@@ -7,6 +7,7 @@
 
 package au.com.shawware.finska.entity;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,18 +16,16 @@ import java.util.Set;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import au.com.shawware.compadmin.entity.AbstractEntity;
+import au.com.shawware.compadmin.entity.Match;
 import au.com.shawware.util.StringUtil;
 
 /**
- * Models a single game of Finska.
+ * Models a single match of Finska.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class Game extends AbstractEntity
+public class FinskaMatch extends Match
 {
-    /** The game number. */
-    private final int mNumber;
     /** The winning players' IDs. */
     private Set<Integer> mWinnerIds;
     /** The winning players. */
@@ -35,37 +34,31 @@ public class Game extends AbstractEntity
     private Set<Integer> mFastWinnerIds;
 
     /**
-     * Constructs a new game.
+     * Constructs a new match.
      *
-     * @param id the game's ID
-     * @param number the game's number (within a match)
+     * @param id the match's ID
+     * @param number the match's number (within a match)
+     * @param matchDate the match's date
      */
-    public Game(@JsonProperty("id") int id,
-                @JsonProperty("number") int number)
+    public FinskaMatch(@JsonProperty("id") int id,
+                       @JsonProperty("number") int number,
+                       @JsonProperty("matchDate") LocalDate matchDate)
     {
-        super(id);
-        mNumber         = number;
+        super(id, number, matchDate);
         mWinnerIds      = new HashSet<>();
         mWinners        = new HashMap<>();
         mFastWinnerIds  = new HashSet<>();
     }
 
     /**
-     * Constructs a new game.
+     * Constructs a new match.
      *
-     * @param number the game's number
+     * @param number the match's number
+     * @param matchDate the match's date
      */
-    public Game(int number)
+    public FinskaMatch(int number, LocalDate matchDate)
     {
-        this(DEFAULT_ID, number);
-    }
-
-    /**
-     * @return The game's number.
-     */
-    public int getNumber()
-    {
-        return mNumber;
+        this(DEFAULT_ID, number, matchDate);
     }
 
     /**
@@ -106,7 +99,7 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * Retrieve the given player from this game.
+     * Retrieve the given player from this match.
      * 
      * @param id the player's ID
      * 
@@ -121,13 +114,13 @@ public class Game extends AbstractEntity
     {
         if (!mWinners.containsKey(id))
         {
-            throw new IllegalArgumentException("Player " + id + " is not present in this game"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("Player " + id + " is not present in this match"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mWinners.get(id);
     }
 
     /**
-     * @return Whether this game has a winner yet.
+     * @return Whether this match has a winner yet.
      */
     @JsonIgnore
     public boolean hasWinner()
@@ -136,7 +129,7 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * @return This game's winning players' IDs.
+     * @return This match's winning players' IDs.
      */
     public Set<Integer> getWinnerIds()
     {
@@ -144,7 +137,7 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * Sets this game's winning players' IDs.
+     * Sets this match's winning players' IDs.
      * 
      * @param winnerIds the winning players' IDs
      */
@@ -156,7 +149,7 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * Whether the given player ID won the game in 5 tosses.
+     * Whether the given player ID won the match in 5 tosses.
      * 
      * @param winnerId the player ID to test
      * 
@@ -178,7 +171,7 @@ public class Game extends AbstractEntity
     }
 
     /**
-     * Specifies whether this game was won in 5 tosses.
+     * Specifies whether this match was won in 5 tosses.
      * 
      * @param fastWinnerIds the new setting
      */
@@ -193,6 +186,6 @@ public class Game extends AbstractEntity
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mNumber, mWinnerIds, mFastWinnerIds);
+        return StringUtil.toString(getId(), getNumber(), getMatchDate(), mWinnerIds, mFastWinnerIds);
     }
 }

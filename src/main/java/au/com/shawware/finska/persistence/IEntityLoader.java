@@ -9,7 +9,7 @@ package au.com.shawware.finska.persistence;
 
 import java.util.Map;
 
-import au.com.shawware.finska.entity.Competition;
+import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.Player;
 
 /**
@@ -28,7 +28,7 @@ public interface IEntityLoader
      * 
      * @throws PersistenceException error loading competition
      */
-    Competition getCompetition(int id)
+    FinskaCompetition getCompetition(int id)
         throws PersistenceException;
 
     /**

@@ -20,6 +20,8 @@ import au.com.shawware.util.StringUtil;
  */
 public class PersistenceFactory
 {
+    /** Class name prefix to ignore. */
+    private static final String PREFIX = "Finska"; //$NON-NLS-1$
     /** The singleton instance. */
     private static Map<String, PersistenceFactory> sFactories = new HashMap<>();
     /** The root directory for entity sub-directories. */
@@ -74,7 +76,17 @@ public class PersistenceFactory
     public <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz)
     {
         String name = clazz.getSimpleName();
+        if (name.startsWith(PREFIX))
+        {
+            name = name.substring(PREFIX.length());
+        }
         String directory = mRoot + '/' + name.toLowerCase();
         return new EntityDiskStore<EntityType>(directory, name, name.substring(0, 1), clazz);
+    }
+
+    @Override
+    public String toString()
+    {
+        return StringUtil.toString(mRoot, sFactories);
     }
 }

@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
-import au.com.shawware.finska.entity.Competition;
-import au.com.shawware.finska.entity.Match;
+import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.IEntityLoader;
 import au.com.shawware.finska.persistence.PersistenceException;
@@ -42,7 +42,7 @@ public class ResultsService
 
     // Items based on others, created during initialisation.
     /** The competition we are processing. */
-    private Competition mCompetition;
+    private FinskaCompetition mCompetition;
     /** The players in the competitions. */
     private Map<Integer, Player> mPlayers;
     /** The leader board assistant for the competition, players and scoring system. */
@@ -100,24 +100,24 @@ public class ResultsService
      * 
      * @return The current competition or null if there is none.
      */
-    public Competition getCompetition()
+    public FinskaCompetition getCompetition()
     {
         return mCompetition;
     }
 
     /**
-     * Retrieves the matches for the current competition.
+     * Retrieves the rounds for the current competition.
      * 
-     * @return The list of matches in time order.
+     * @return The list of rounds in time order.
      */
-    public List<Match> getMatches()
+    public List<FinskaRound> getRounds()
     {
-        List<Match> matches = new ArrayList<>();
-        for (Integer id : mCompetition.getMatchIds())
+        List<FinskaRound> rounds = new ArrayList<>();
+        for (Integer id : mCompetition.getRoundIds())
         {
-            matches.add(mCompetition.getMatch(id));
+            rounds.add(mCompetition.getRound(id));
         }
-        return matches;
+        return rounds;
     }
 
     /**

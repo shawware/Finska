@@ -14,9 +14,11 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 import au.com.shawware.compadmin.entity.AbstractEntity;
-import au.com.shawware.finska.entity.Competition;
-import au.com.shawware.finska.entity.Game;
-import au.com.shawware.finska.entity.Match;
+import au.com.shawware.compadmin.entity.Competition;
+import au.com.shawware.compadmin.entity.Round;
+import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaMatch;
+import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 
 /**
@@ -30,11 +32,11 @@ public class EntityLoader implements IEntityLoader
     private static Map<String, EntityLoader> sLoaders = new HashMap<>();
 
     /** The competition store. */
-    private final IEntityStore<Competition> mCompetitionStore;
+    private final IEntityStore<FinskaCompetition> mCompetitionStore;
+    /** The round store. */
+    private final IEntityStore<FinskaRound> mRoundStore;
     /** The match store. */
-    private final IEntityStore<Match> mMatchStore;
-    /** The game store. */
-    private final IEntityStore<Game> mGameStore;
+    private final IEntityStore<FinskaMatch> mMatchStore;
     /** The player store. */
     private final IEntityStore<Player> mPlayerStore;
 
@@ -45,9 +47,9 @@ public class EntityLoader implements IEntityLoader
      */
     private EntityLoader(PersistenceFactory factory)
     {
-        mCompetitionStore = factory.getStore(Competition.class);
-        mMatchStore       = factory.getStore(Match.class);
-        mGameStore        = factory.getStore(Game.class);
+        mCompetitionStore = factory.getStore(FinskaCompetition.class);
+        mRoundStore       = factory.getStore(FinskaRound.class);
+        mMatchStore       = factory.getStore(FinskaMatch.class);
         mPlayerStore      = factory.getStore(Player.class);
     }
 
@@ -75,10 +77,10 @@ public class EntityLoader implements IEntityLoader
 
     @Override
     @SuppressWarnings("boxing")
-    public Competition getCompetition(int id)
+    public FinskaCompetition getCompetition(int id)
         throws PersistenceException
     {
-        Map<Integer, Competition> competitions = getCompetitions();
+        Map<Integer, FinskaCompetition> competitions = getCompetitions();
         if (!competitions.containsKey(id))
         {
             throw new PersistenceException("Competition does not exist: " + id); //$NON-NLS-1$
@@ -89,22 +91,22 @@ public class EntityLoader implements IEntityLoader
     /**
      * Loads all the competitions and any dependent entities.
      * 
-     * @return The competitions, matches and games.
+     * @return The competitions, rounds and matches.
      * 
      * @throws PersistenceException error loading data
      */
-    /*package*/ Map<Integer, Competition> getCompetitions()
+    /*package*/ Map<Integer, FinskaCompetition> getCompetitions()
         throws PersistenceException
     {
         Map<Integer, Player> players = getPlayers();
-        Map<Integer, Game> games = mGameStore.getAll();
-        Map<Integer, Match> matches = mMatchStore.getAll();
-        Map<Integer, Competition> competitions = mCompetitionStore.getAll();
+        Map<Integer, FinskaMatch> matches = mMatchStore.getAll();
+        Map<Integer, FinskaRound> rounds = mRoundStore.getAll();
+        Map<Integer, FinskaCompetition> competitions = mCompetitionStore.getAll();
 
-        loadDependentEntities(competitions, matches, Competition::getMatchIds, Competition::addMatch);
-        loadDependentEntities(matches, games, Match::getGameIds, Match::addGame);
-        loadDependentEntities(matches, players, Match::getPlayersIds, Match::addPlayer);
-        loadDependentEntities(games, players, Game::getWinnerIds, Game::addWinner);
+        loadDependentEntities(competitions, rounds, Competition::getRoundIds, Competition::addRound);
+        loadDependentEntities(rounds, matches, Round::getMatchIds, Round::addMatch);
+        loadDependentEntities(rounds, players, FinskaRound::getPlayersIds, FinskaRound::addPlayer);
+        loadDependentEntities(matches, players, FinskaMatch::getWinnerIds, FinskaMatch::addWinner);
 
         return competitions;
     }

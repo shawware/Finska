@@ -17,9 +17,9 @@ import org.junit.Test;
 
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
-import au.com.shawware.finska.entity.Competition;
-import au.com.shawware.finska.entity.Game;
-import au.com.shawware.finska.entity.Match;
+import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaMatch;
+import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.util.test.AbstractUnitTest;
 
@@ -39,13 +39,13 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
     {
         // Setup a very basic competition with enough data to ensure one result item.
         Player p1 = new Player(1, "David");
-        Game g1 = new Game(1, 1);
-        g1.addWinner(p1);
-        Match m1 = new Match(1, 1, LocalDate.of(2018, 3, 9));
-        m1.addPlayer(p1);
-        m1.addGame(g1);
-        Competition c1 = new Competition(1, "C1", LocalDate.of(2018, 3, 10));
-        c1.addMatch(m1);
+        FinskaRound r1 = new FinskaRound(1, 1, LocalDate.of(2018, 3, 9));
+        FinskaMatch m1 = new FinskaMatch(1, 1, r1.getRoundDate());
+        m1.addWinner(p1);
+        r1.addPlayer(p1);
+        r1.addMatch(m1);
+        FinskaCompetition c1 = new FinskaCompetition(1, "C1", LocalDate.of(2018, 3, 10));
+        c1.addRound(r1);
 
         verifyResultItems(c1, p1, 3, 0, -1,  0, -7, false, false, false, false);
         verifyResultItems(c1, p1, 3, 1,  0,  0,  0,  true, false, false, false);
@@ -74,7 +74,7 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
      * @param expectScoreWinBoth whether scoring for win both is expected
      * @param expectScoreWinAll whether scoring for win all is expected
      */
-    private void verifyResultItems(Competition competition, Player player,
+    private void verifyResultItems(FinskaCompetition competition, Player player,
             int win, int play, int fast, int both, int all,
             boolean expectScoreForPlaying, boolean expectScoreFastWins,
             boolean expectScoreWinBoth, boolean expectScoreWinAll)
@@ -97,7 +97,7 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
         EntrantResult result = results.get(0);
 
         // Verify the result items that are always present
-        result.getResultItemValueAsInt(ResultItem.GAMES.toString());
+        result.getResultItemValueAsInt(ResultItem.MATCHES.toString());
         result.getResultItemValueAsInt(ResultItem.WINS.toString());
         result.getResultItemValueAsInt(ResultItem.POINTS.toString());
         // Verify the result items whose presence depends on the scoring system

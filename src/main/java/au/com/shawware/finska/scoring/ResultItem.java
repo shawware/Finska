@@ -17,22 +17,22 @@ import au.com.shawware.compadmin.scoring.ResultSpec;
 @SuppressWarnings("nls")
 public enum ResultItem
 {
+    /** The total number of rounds played. */
+    ROUNDS("Rounds"),
     /** The total number of matches played. */
     MATCHES("Matches"),
-    /** The total number of games played. */
-    GAMES("Games"),
     /** The total number of wins. */
     WINS("Wins"),
     /** The total name of "fast" wins, ie. 5 tosses. */
     FAST_WINS("Fast Wins"),
-    /** The total number of times the first two games in a match were won. */
+    /** The total number of times the first two matches in a round were won. */
     WIN_BOTH("Win Both"),
-    /** The total number of times all games in a match were won. */
+    /** The total number of times all matches in a round were won. */
     WIN_ALL("Win All"),
     /** The total number of points. */
     POINTS("Points"),
-    /** The average number of points per match. */
-    POINTS_PER_MATCH("Pts/Match"),
+    /** The average number of points per round. */
+    POINTS_PER_ROUND("Pts/Round"),
     /** The running total number of points. */
     RUNNING_TOTAL("Total");
 

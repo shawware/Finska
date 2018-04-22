@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 import au.com.shawware.compadmin.scoring.AbstractLeaderBoardAssistant;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.ResultSpec;
-import au.com.shawware.finska.entity.Competition;
-import au.com.shawware.finska.entity.Game;
-import au.com.shawware.finska.entity.Match;
+import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaMatch;
+import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.util.MutableInteger;
 
@@ -35,7 +35,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     /** The entrants in the competition. */
     private final Map<Integer, Player> mPlayers;
     /** The competition being analysed. */
-    private final Competition mCompetition;
+    private final FinskaCompetition mCompetition;
     /** The scoring system in use. */
     private final ScoringSystem mScoringSystem;
 
@@ -46,7 +46,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
      * @param competition the competition to analyse
      * @param scoringSystem the scoring system to use
      */
-    public CompetitionAnalyser(Map<Integer, Player> players, Competition competition, ScoringSystem scoringSystem)
+    public CompetitionAnalyser(Map<Integer, Player> players, FinskaCompetition competition, ScoringSystem scoringSystem)
     {
         super(ResultItem.getComparisonSpecification());
         mPlayers       = players;
@@ -65,20 +65,20 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             results.put(playerID, new EntrantResult(playerID, spec));
         }
 
-        for (Integer matchID : mCompetition.getMatchIds())
+        for (Integer roundID : mCompetition.getRoundIds())
         {
-            Match match = mCompetition.getMatch(matchID);
-            processMatch(results, match);
+            FinskaRound round = mCompetition.getRound(roundID);
+            processRound(results, round);
         }
 
         for (Integer playerID : mPlayers.keySet())
         {
             EntrantResult result = results.get(playerID);
-            double matches = result.getResultItemValueAsInt(ResultItem.MATCHES.toString());
-            if (matches > 0.0)
+            double rounds = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
+            if (rounds > 0.0)
             {
-                result.setResultItem(ResultItem.POINTS_PER_MATCH.toString(),
-                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / matches);
+                result.setResultItem(ResultItem.POINTS_PER_ROUND.toString(),
+                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / rounds);
             }
         }
 
@@ -89,8 +89,8 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     public List<List<EntrantResult>> compileRoundResults()
     {
         ResultSpec spec = determineResultItems(mScoringSystem, true);
-        Set<Integer> matchIds = mCompetition.getMatchIds();
-        List<List<EntrantResult>> results = new ArrayList<>(matchIds.size());
+        Set<Integer> roundIds = mCompetition.getRoundIds();
+        List<List<EntrantResult>> results = new ArrayList<>(roundIds.size());
 
         Map<Integer, MutableInteger> runningTotals = new HashMap<>(mPlayers.size());
         for (Integer playerID : mPlayers.keySet())
@@ -98,7 +98,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
             runningTotals.put(playerID, new MutableInteger(0));
         }
 
-        for (Integer matchID : matchIds)
+        for (Integer roundID : roundIds)
         {
             Map<Integer, EntrantResult> roundResults = new HashMap<>(mPlayers.size());
             for (Integer playerID : mPlayers.keySet())
@@ -106,8 +106,8 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
                 roundResults.put(playerID, new EntrantResult(playerID, spec));
             }
 
-            Match match = mCompetition.getMatch(matchID);
-            processMatch(roundResults, match);
+            FinskaRound round = mCompetition.getRound(roundID);
+            processRound(roundResults, round);
 
             List<EntrantResult> roundResult = new ArrayList<>(mPlayers.size());
             for (Integer playerID : mPlayers.keySet())
@@ -125,52 +125,52 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     }
 
     /**
-     * Process the given match. That is, evaluate each game and update
+     * Process the given round. That is, evaluate each match and update
      * the results for the entrants accordingly.
      * 
      * @param results the players' results so far
-     * @param match the match to process
+     * @param round the round to process
      */
-    private void processMatch(Map<Integer, EntrantResult> results, Match match)
+    private void processRound(Map<Integer, EntrantResult> results, FinskaRound round)
     {
-        for (Integer playerID : match.getPlayersIds())
+        for (Integer playerID : round.getPlayersIds())
         {
             EntrantResult result = results.get(playerID);
-            result.incrementResultItem(ResultItem.MATCHES.toString(), 1);
-            result.incrementResultItem(ResultItem.GAMES.toString(), match.getGameIds().size());
+            result.incrementResultItem(ResultItem.ROUNDS.toString(), 1);
+            result.incrementResultItem(ResultItem.MATCHES.toString(), round.getMatchIds().size());
             if (mScoringSystem.scorePointsForPlaying())
             {
                 result.incrementResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
             }
         }
-        Set<Integer> gameIDs     = match.getGameIds();
-        boolean recordWinBoth    = (mScoringSystem.scoreWinBoth() && (gameIDs.size() > 1));
-        boolean recordWinAll     = (mScoringSystem.scoreWinAll() && (gameIDs.size() > 1));
+        Set<Integer> matchIDs    = round.getMatchIds();
+        boolean recordWinBoth    = (mScoringSystem.scoreWinBoth() && (matchIDs.size() > 1));
+        boolean recordWinAll     = (mScoringSystem.scoreWinAll() && (matchIDs.size() > 1));
         boolean sameWinner       = true;
-        int gameCount            = 0;
+        int matchCount           = 0;
         Set<Integer> lastWinners = new HashSet<>();
-        for (Integer gameID : gameIDs)
+        for (Integer matchID : matchIDs)
         {
-            Game game = match.getGame(gameID);
-            if (!game.hasWinner())
+            FinskaMatch match = round.getMatch(matchID);
+            if (!match.hasWinner())
             {
-                continue; // Skip games that have not been played yet.
+                continue; // Skip matches that have not been played yet.
             }
-            gameCount++;
-            Set<Integer> winnerIds = game.getWinnerIds();
+            matchCount++;
+            Set<Integer> winnerIds = match.getWinnerIds();
             for (Integer winnerId : winnerIds)
             {
                 EntrantResult result = results.get(winnerId);
                 result.incrementResultItem(ResultItem.WINS.toString(), 1);
                 result.incrementResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
-                if (mScoringSystem.scoreFastWins() && game.isFastWinner(winnerId))
+                if (mScoringSystem.scoreFastWins() && match.isFastWinner(winnerId))
                 {
                     result.incrementResultItem(ResultItem.FAST_WINS.toString(), 1);
                     result.incrementResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());
                 }
             }
             // Track "win both" and "win all"
-            if ((recordWinBoth && sameWinner && gameCount <= 2) ||
+            if ((recordWinBoth && sameWinner && matchCount <= 2) ||
                 (recordWinAll && sameWinner))
             {
                 if (lastWinners.size() == 0)
@@ -213,8 +213,8 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
     {
         ResultSpec spec = new ResultSpec();
 
+        spec.addItem(ResultItem.ROUNDS.toString());
         spec.addItem(ResultItem.MATCHES.toString());
-        spec.addItem(ResultItem.GAMES.toString());
         spec.addItem(ResultItem.WINS.toString());
         if (system.scoreFastWins())
         {
@@ -235,7 +235,7 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant
         }
         else
         {
-            spec.addItem(ResultItem.POINTS_PER_MATCH.toString(), false);
+            spec.addItem(ResultItem.POINTS_PER_ROUND.toString(), false);
         }
 
         return spec;

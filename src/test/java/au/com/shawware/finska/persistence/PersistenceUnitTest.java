@@ -20,9 +20,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import au.com.shawware.compadmin.entity.AbstractEntity;
-import au.com.shawware.finska.entity.Competition;
-import au.com.shawware.finska.entity.Game;
-import au.com.shawware.finska.entity.Match;
+import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaMatch;
+import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 
 /**
@@ -35,10 +35,10 @@ public class PersistenceUnitTest
 {
     /** Test root directory for persisted entities. */
     private static final String PERSISTENCE_ROOT = "/tmp/finska";
-    /** Persisted game sub-directory. */
-    private static final String GAME_DIR   = "game";
     /** Persisted match sub-directory. */
     private static final String MATCH_DIR  = "match";
+    /** Persisted round sub-directory. */
+    private static final String ROUND_DIR  = "round";
     /** Persisted player sub-directory. */
     private static final String PLAYER_DIR = "player";
     /** Persisted competition sub-directory. */
@@ -57,7 +57,7 @@ public class PersistenceUnitTest
         Files.createDirectories(root);
         Files.createDirectory(root.resolve(PLAYER_DIR));
         Files.createDirectory(root.resolve(COMP_DIR));
-        Files.createDirectory(root.resolve(GAME_DIR));
+        Files.createDirectory(root.resolve(ROUND_DIR));
         Files.createDirectory(root.resolve(MATCH_DIR));
     }
 
@@ -84,38 +84,38 @@ public class PersistenceUnitTest
     {
         PersistenceFactory factory = PersistenceFactory.getFactory(PERSISTENCE_ROOT);
         IEntityStore<Player> playerStore = factory.getStore(Player.class);
-        IEntityStore<Competition> competitionStore = factory.getStore(Competition.class);
-        IEntityStore<Match> matchStore = factory.getStore(Match.class);
-        IEntityStore<Game> gameStore = factory.getStore(Game.class);
+        IEntityStore<FinskaCompetition> competitionStore = factory.getStore(FinskaCompetition.class);
+        IEntityStore<FinskaRound> roundStore = factory.getStore(FinskaRound.class);
+        IEntityStore<FinskaMatch> matchStore = factory.getStore(FinskaMatch.class);
 
         Player p1 = new Player("David");
         verifyBasicStorage(playerStore, p1);
 
-        Game g1 = new Game(1);
-        g1.addWinner(p1, true);
-        verifyBasicStorage(gameStore, g1);
-
-        Match m1 = new Match(1, LocalDate.of(2018, 3, 10));
-        m1.addPlayer(p1);
-        m1.addGame(g1);
+        FinskaRound r1 = new FinskaRound(1, LocalDate.of(2018, 3, 10));
+        FinskaMatch m1 = new FinskaMatch(1, r1.getRoundDate());
+        m1.addWinner(p1, true);
         verifyBasicStorage(matchStore, m1);
 
-        Competition c1 = new Competition("C1", LocalDate.of(2018, 3, 9));
-        c1.addMatch(m1);
+        r1.addPlayer(p1);
+        r1.addMatch(m1);
+        verifyBasicStorage(roundStore, r1);
+
+        FinskaCompetition c1 = new FinskaCompetition("C1", LocalDate.of(2018, 3, 9));
+        c1.addRound(r1);
         verifyBasicStorage(competitionStore, c1);
 
         Map<Integer, Player> allPlayers = EntityLoader.getLoader(factory).getPlayers();
         verifyEntityMap(allPlayers, p1);
 
-        Map<Integer, Competition> allComps = EntityLoader.getLoader(factory).getCompetitions();
+        Map<Integer, FinskaCompetition> allComps = EntityLoader.getLoader(factory).getCompetitions();
         verifyEntityMap(allComps, c1);
 
-        Competition c2 = allComps.get(c1.getId());
-        Match m2 = c2.getMatch(m1.getId());
+        FinskaCompetition c2 = allComps.get(c1.getId());
+        FinskaRound r2 = c2.getRound(r1.getId());
+        Assert.assertEquals(r1.toString(), r2.toString());
+        FinskaMatch m2 = r2.getMatch(m1.getId());
         Assert.assertEquals(m1.toString(), m2.toString());
-        Game g2 = m2.getGame(g1.getId());
-        Assert.assertEquals(g1.toString(), g2.toString());
-        Player p2 = m2.getPlayer(p1.getId());
+        Player p2 = r2.getPlayer(p1.getId());
         Assert.assertEquals(p1.toString(), p2.toString());
     }
 

@@ -18,21 +18,21 @@ public class ScoringSystem
 {
     /** The number of points for a win. */
     private final int mPointsForWin;
-    /** Whether to score points for playing a match. */
+    /** Whether to score points for playing a round. */
     private final boolean mScorePlaying;
-    /** The number of points for playing a match. */
+    /** The number of points for playing a round. */
     private final int mPointsForPlaying;
-    /** Whether to score fast wins in games. */
+    /** Whether to score fast wins in matches. */
     private final boolean mScoreFastWins;
-    /** The number of points for a fast win in a game. */
+    /** The number of points for a fast win in a match. */
     private final int mPointsForFastWin;
     /** Whether to score win both. */
     private final boolean mScoreWinBoth;
-    /** The number of points for the first two games in a match. */
+    /** The number of points for the first two matches in a round. */
     private final int mPointsForWinBoth;
     /** Whether to score win all. */
     private final boolean mScoreWinAll;
-    /** The number of points for winning all games in a match. */
+    /** The number of points for winning all matches in a round. */
     private final int mPointsForWinAll;
 
     /**
@@ -41,10 +41,10 @@ public class ScoringSystem
      * Note: you cannot specify win both and win all simultaneously.
      * 
      * @param win the number of points for a win
-     * @param play if &gt;0, then score these points for playing a match
-     * @param fast if &gt;0, then score these points for a fast win in a game
-     * @param both if &gt;0 then score these points for winning the first two games in match
-     * @param all if &gt;0, then score these points for winning all games in a match
+     * @param play if &gt;0, then score these points for playing a round
+     * @param fast if &gt;0, then score these points for a fast win in a match
+     * @param both if &gt;0 then score these points for winning the first two matches in a round
+     * @param all if &gt;0, then score these points for winning all matches in a round
      * 
      * @throws IllegalArgumentException win both and win all specified simultaneously
      */
@@ -115,7 +115,7 @@ public class ScoringSystem
     }
 
     /**
-     * @return The number of points for playing a match.
+     * @return The number of points for playing a round.
      */
     public int pointsForPlaying()
     {
@@ -123,7 +123,7 @@ public class ScoringSystem
     }
 
     /**
-     * @return Whether to score fast wins in a game.
+     * @return Whether to score fast wins in a match.
      */
     public boolean scoreFastWins()
     {
@@ -139,7 +139,7 @@ public class ScoringSystem
     }
 
     /**
-     * @return Whether to score winning the first two games in a match.
+     * @return Whether to score winning the first two matches in a round.
      */
     public boolean scoreWinBoth()
     {
@@ -147,7 +147,7 @@ public class ScoringSystem
     }
 
     /**
-     * @return The number of points for winning the first two games in a match.
+     * @return The number of points for winning the first two matches in a round.
      */
     public int pointsForWinBoth()
     {
@@ -155,7 +155,7 @@ public class ScoringSystem
     }
 
     /**
-     * @return Whether to score winning all games in a match.
+     * @return Whether to score winning all matches in a round.
      */
     public boolean scoreWinAll()
     {
@@ -163,7 +163,7 @@ public class ScoringSystem
     }
 
     /**
-     * @return The number of points for winning all games in a match.
+     * @return The number of points for winning all matches in a round.
      */
     public int pointsForWinAll()
     {
