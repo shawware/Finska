@@ -55,7 +55,7 @@ public class TestAssistant extends AbstractLeaderBoardAssistant<TestCompetition,
     }
 
     @Override
-    protected ResultSpec createResultSpecification()
+    protected ResultSpec createResultSpecification(boolean includeRunningTotal)
     {
         return null;
     }
@@ -74,7 +74,13 @@ public class TestAssistant extends AbstractLeaderBoardAssistant<TestCompetition,
     }
 
     @Override
-    public List<List<EntrantResult>> compileRoundResults()
+    protected String getPointsItemName()
+    {
+        return null;
+    }
+
+    @Override
+    protected String getRunningTotalItemName()
     {
         return null;
     }

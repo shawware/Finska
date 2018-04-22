@@ -7,6 +7,7 @@
 
 package au.com.shawware.compadmin.scoring;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import au.com.shawware.compadmin.entity.Competition;
 import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.entity.Match;
 import au.com.shawware.compadmin.entity.Round;
+import au.com.shawware.util.MutableInteger;
 
 /**
  * Abstracts code that other assistants may wish to re-use by sub-classing.
@@ -86,7 +88,7 @@ public abstract class AbstractLeaderBoardAssistant<
             throw new IllegalArgumentException("Invalid number of rounds: " + rounds); //$NON-NLS-1$
         }
 
-        ResultSpec spec = createResultSpecification();
+        ResultSpec spec = createResultSpecification(false);
 
         Map<Integer, EntrantResult> results = new HashMap<>();
         for (Integer entrantID : mEntrants.keySet())
@@ -117,18 +119,77 @@ public abstract class AbstractLeaderBoardAssistant<
     }
 
     /**
-     * Create the result specification for the overall result compilation.
-     * 
-     * @return The result specification.
-     */
-    protected abstract ResultSpec createResultSpecification();
-
-    /**
      * Update an entrant's result after the overall compilation is complete.
      * 
      * @param result the result to update
      */
     protected abstract void postCompile(EntrantResult result);
+
+    @Override
+    @SuppressWarnings("boxing")
+    public List<List<EntrantResult>> compileRoundResults()
+    {
+        ResultSpec spec = createResultSpecification(true);
+        String pointsItemName = getPointsItemName();
+        String runningTotalItemName = getRunningTotalItemName();
+
+        Set<Integer> roundIds = mCompetition.getRoundIds();
+        List<List<EntrantResult>> results = new ArrayList<>(roundIds.size());
+
+        Map<Integer, MutableInteger> runningTotals = new HashMap<>(mEntrants.size());
+        for (Integer entrantID : mEntrants.keySet())
+        {
+            runningTotals.put(entrantID, new MutableInteger(0));
+        }
+
+        for (Integer roundID : roundIds)
+        {
+            Map<Integer, EntrantResult> roundResults = new HashMap<>(mEntrants.size());
+            for (Integer entrantID : mEntrants.keySet())
+            {
+                roundResults.put(entrantID, new EntrantResult(entrantID, spec));
+            }
+
+            RoundType round = mCompetition.getRound(roundID);
+            processRound(roundResults, round);
+
+            List<EntrantResult> roundResult = new ArrayList<>(mEntrants.size());
+            for (Integer entrantID : mEntrants.keySet())
+            {
+                EntrantResult entrantResult = roundResults.get(entrantID);
+                MutableInteger runningTotal = runningTotals.get(entrantID);
+                runningTotal.incrementBy(entrantResult.getResultItemValueAsInt(pointsItemName));
+                entrantResult.incrementResultItem(runningTotalItemName, runningTotal.getValue());
+                roundResult.add(entrantResult);
+            }
+            results.add(roundResult);
+        }
+
+        return results;
+    }
+
+    /**
+     * Gets the name of the result item that represents points per round.
+     * 
+     * @return The name of the points item.
+     */
+    protected abstract String getPointsItemName();
+
+    /**
+     * Gets the name of the result item that represents the running total of points.
+     * 
+     * @return The name of the running total item.
+     */
+    protected abstract String getRunningTotalItemName();
+
+    /**
+     * Create the result specification for the overall result compilation.
+     *
+     * @param includeRunningTotal whether to include a running total in the result specification
+     * 
+     * @return The result specification.
+     */
+    protected abstract ResultSpec createResultSpecification(boolean includeRunningTotal);
 
     /**
      * Process the given round. That is, evaluate each match and update

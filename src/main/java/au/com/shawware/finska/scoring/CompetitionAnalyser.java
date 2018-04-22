@@ -7,10 +7,7 @@
 
 package au.com.shawware.finska.scoring;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +18,6 @@ import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.util.MutableInteger;
 
 /**
  * Analyses competitions to produce artifacts such as leader boards.
@@ -31,8 +27,6 @@ import au.com.shawware.util.MutableInteger;
 @SuppressWarnings("boxing")
 public class CompetitionAnalyser extends AbstractLeaderBoardAssistant<FinskaCompetition, FinskaRound, FinskaMatch, Player>
 {
-    /** The entrants in the competition. */
-    private final Map<Integer, Player> mPlayers;
     /** The scoring system in use. */
     private final ScoringSystem mScoringSystem;
 
@@ -46,14 +40,40 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant<FinskaComp
     public CompetitionAnalyser(Map<Integer, Player> players, FinskaCompetition competition, ScoringSystem scoringSystem)
     {
         super(competition, players, ResultItem.getComparisonSpecification());
-        mPlayers       = players;
         mScoringSystem = scoringSystem;
     }
 
     @Override
-    protected ResultSpec createResultSpecification()
+    protected ResultSpec createResultSpecification(boolean includeRunningTotal)
     {
-        return determineResultItems(mScoringSystem, false);
+        ResultSpec spec = new ResultSpec();
+
+        spec.addItem(ResultItem.ROUNDS.toString());
+        spec.addItem(ResultItem.MATCHES.toString());
+        spec.addItem(ResultItem.WINS.toString());
+        if (mScoringSystem.scoreFastWins())
+        {
+            spec.addItem(ResultItem.FAST_WINS.toString());
+        }
+        if (mScoringSystem.scoreWinBoth())
+        {
+            spec.addItem(ResultItem.WIN_BOTH.toString());
+        }
+        if (mScoringSystem.scoreWinAll())
+        {
+            spec.addItem(ResultItem.WIN_ALL.toString());
+        }
+        spec.addItem(ResultItem.POINTS.toString());
+        if (includeRunningTotal)
+        {
+            spec.addItem(ResultItem.RUNNING_TOTAL.toString());
+        }
+        else
+        {
+            spec.addItem(ResultItem.POINTS_PER_ROUND.toString(), false);
+        }
+
+        return spec;
     }
 
     @Override
@@ -68,42 +88,15 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant<FinskaComp
     }
 
     @Override
-    public List<List<EntrantResult>> compileRoundResults()
+    protected String getPointsItemName()
     {
-        ResultSpec spec = determineResultItems(mScoringSystem, true);
-        Set<Integer> roundIds = mCompetition.getRoundIds();
-        List<List<EntrantResult>> results = new ArrayList<>(roundIds.size());
+        return ResultItem.POINTS.toString();
+    }
 
-        Map<Integer, MutableInteger> runningTotals = new HashMap<>(mPlayers.size());
-        for (Integer playerID : mPlayers.keySet())
-        {
-            runningTotals.put(playerID, new MutableInteger(0));
-        }
-
-        for (Integer roundID : roundIds)
-        {
-            Map<Integer, EntrantResult> roundResults = new HashMap<>(mPlayers.size());
-            for (Integer playerID : mPlayers.keySet())
-            {
-                roundResults.put(playerID, new EntrantResult(playerID, spec));
-            }
-
-            FinskaRound round = mCompetition.getRound(roundID);
-            processRound(roundResults, round);
-
-            List<EntrantResult> roundResult = new ArrayList<>(mPlayers.size());
-            for (Integer playerID : mPlayers.keySet())
-            {
-                EntrantResult playerResult = roundResults.get(playerID);
-                MutableInteger runningTotal = runningTotals.get(playerID);
-                runningTotal.incrementBy(playerResult.getResultItemValueAsInt(ResultItem.POINTS.toString()));
-                playerResult.incrementResultItem(ResultItem.RUNNING_TOTAL.toString(), runningTotal.getValue());
-                roundResult.add(playerResult);
-            }
-            results.add(roundResult);
-        }
-
-        return results;
+    @Override
+    protected String getRunningTotalItemName()
+    {
+        return ResultItem.RUNNING_TOTAL.toString();
     }
 
     @Override
@@ -174,46 +167,5 @@ public class CompetitionAnalyser extends AbstractLeaderBoardAssistant<FinskaComp
                 result.incrementResultItem(ResultItem.POINTS.toString(), winPoints);
             }
         }
-    }
-
-    /**
-     * Calculates the result specification to use in calculations based on the scoring system.
-     * 
-     * @param system the scoring system to use
-     * @param runningTotal whether to include a running total (for multi-table outputs)
-     * 
-     * @return The result items.
-     */
-    @SuppressWarnings("static-method")
-    private ResultSpec determineResultItems(ScoringSystem system, boolean runningTotal)
-    {
-        ResultSpec spec = new ResultSpec();
-
-        spec.addItem(ResultItem.ROUNDS.toString());
-        spec.addItem(ResultItem.MATCHES.toString());
-        spec.addItem(ResultItem.WINS.toString());
-        if (system.scoreFastWins())
-        {
-            spec.addItem(ResultItem.FAST_WINS.toString());
-        }
-        if (system.scoreWinBoth())
-        {
-            spec.addItem(ResultItem.WIN_BOTH.toString());
-        }
-        if (system.scoreWinAll())
-        {
-            spec.addItem(ResultItem.WIN_ALL.toString());
-        }
-        spec.addItem(ResultItem.POINTS.toString());
-        if (runningTotal)
-        {
-            spec.addItem(ResultItem.RUNNING_TOTAL.toString());
-        }
-        else
-        {
-            spec.addItem(ResultItem.POINTS_PER_ROUND.toString(), false);
-        }
-
-        return spec;
     }
 }
