@@ -80,7 +80,7 @@ public abstract class AbstractLeaderBoardAssistant<
 
     @Override
     @SuppressWarnings("boxing")
-    public List<EntrantResult> compileOverallResults(int rounds)
+    public final List<EntrantResult> compileOverallResults(int rounds)
     {
         Set<Integer> roundIDs = mCompetition.getRoundIds();
         if ((rounds <= 0) || (rounds > roundIDs.size()))
@@ -123,11 +123,14 @@ public abstract class AbstractLeaderBoardAssistant<
      * 
      * @param result the result to update
      */
-    protected abstract void postCompile(EntrantResult result);
+    protected void postCompile(EntrantResult result)
+    {
+        // Default is to do nothing. Sub-classes can over-ride.
+    }
 
     @Override
     @SuppressWarnings("boxing")
-    public List<List<EntrantResult>> compileRoundResults()
+    public final List<List<EntrantResult>> compileRoundResults()
     {
         ResultSpec spec = createResultSpecification(true);
         String pointsItemName = getPointsItemName();

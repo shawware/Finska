@@ -49,21 +49,9 @@ public class TestAssistant extends AbstractLeaderBoardAssistant<TestCompetition,
     }
 
     @Override
-    public List<EntrantResult> compileOverallResults(int rounds)
-    {
-        return null;
-    }
-
-    @Override
     protected ResultSpec createResultSpecification(boolean includeRunningTotal)
     {
         return null;
-    }
-
-    @Override
-    protected void postCompile(EntrantResult result)
-    {
-        // Do nothing.
     }
 
     @Override
