@@ -7,10 +7,14 @@
 
 package au.com.shawware.compadmin.scoring;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import au.com.shawware.compadmin.entity.TestEntrant;
 
 /**
  * Exercise and verify the leaderboard generator business logic.
@@ -18,7 +22,7 @@ import org.junit.Test;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "boxing", "static-method" })
+@SuppressWarnings({ "boxing", "static-method", "nls" })
 public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 {
     /**
@@ -121,5 +125,19 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             Assert.assertEquals(expectedRanks[i][0], result.getEntrantID());
             Assert.assertEquals(expectedRanks[i][1], result.getRank());
         }
+    }
+
+    /**
+     * Test the error handling in the constructor of the abstract assistant.
+     */
+    @Test
+    public void testErrorHandling()
+    {
+        Map<Integer, TestEntrant> emptyEntrants = new HashMap<>();
+
+        verifyExceptionThrown(() -> new TestAssistant(null, null, null, null), IllegalArgumentException.class, "Empty competition");
+        verifyExceptionThrown(() -> new TestAssistant(null, sCompetition, null, null), IllegalArgumentException.class, "Empty entrants");
+        verifyExceptionThrown(() -> new TestAssistant(null, sCompetition, emptyEntrants, null), IllegalArgumentException.class, "Empty entrants");
+        verifyExceptionThrown(() -> new TestAssistant(null, sCompetition, sEntrants, null), IllegalArgumentException.class, "Empty comparison item specification");
     }
 }

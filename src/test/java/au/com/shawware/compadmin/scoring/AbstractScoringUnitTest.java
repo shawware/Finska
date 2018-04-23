@@ -17,6 +17,7 @@ import org.junit.BeforeClass;
 
 import au.com.shawware.compadmin.entity.TestCompetition;
 import au.com.shawware.compadmin.entity.TestEntrant;
+import au.com.shawware.util.test.AbstractUnitTest;
 
 /**
  * Common code for scoring unit tests. Primarily establish a simple
@@ -25,7 +26,7 @@ import au.com.shawware.compadmin.entity.TestEntrant;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({ "nls", "static-method", "boxing" })
-public class AbstractScoringUnitTest
+public class AbstractScoringUnitTest extends AbstractUnitTest
 {
     /** The full set of result items. */
     protected static ResultSpec sSpec;
