@@ -8,15 +8,15 @@
 package au.com.shawware.compadmin.scoring;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.BeforeClass;
 
 import au.com.shawware.compadmin.entity.TestCompetition;
 import au.com.shawware.compadmin.entity.TestEntrant;
+import au.com.shawware.compadmin.entity.TestMatch;
+import au.com.shawware.compadmin.entity.TestRound;
 import au.com.shawware.util.test.AbstractUnitTest;
 
 /**
@@ -28,14 +28,14 @@ import au.com.shawware.util.test.AbstractUnitTest;
 @SuppressWarnings({ "nls", "static-method", "boxing" })
 public class AbstractScoringUnitTest extends AbstractUnitTest
 {
-    /** The full set of result items. */
-    protected static ResultSpec sSpec;
     /** The result items to use is comparisons. */
     protected static ResultSpec sComparisonSpec;
     /** A sample competition. */
     protected static TestCompetition sCompetition;
     /** A sample set of entrants. */
     protected static Map<Integer, TestEntrant> sEntrants;
+    /** The full set of result items. */
+    protected static ResultSpec sSpec;
 
     /**
      * Set up test fixtures.
@@ -44,21 +44,25 @@ public class AbstractScoringUnitTest extends AbstractUnitTest
     public static void setUp()
     {
         sSpec = new ResultSpec();
-        sSpec.addItem("Matches");
-        sSpec.addItem("Wins");
-        sSpec.addItem("For");
-        sSpec.addItem("M%", false);
-        sSpec.addItem("Points");
+        sSpec.addItem(TestResultItems.MATCHES);
+        sSpec.addItem(TestResultItems.WINS);
+        sSpec.addItem(TestResultItems.DRAWS);
+        sSpec.addItem(TestResultItems.LOSSES);
+        sSpec.addItem(TestResultItems.FOR);
+        sSpec.addItem(TestResultItems.AGAINST);
+        sSpec.addItem(TestResultItems.GOAL_DIFF);
+        sSpec.addItem(TestResultItems.GOAL_PERC, false);
+        sSpec.addItem(TestResultItems.POINTS);
 
         sComparisonSpec = new ResultSpec();
-        sComparisonSpec.addItem("Points");
-        sComparisonSpec.addItem("M%", false);
-        sComparisonSpec.addItem("For");
+        sComparisonSpec.addItem(TestResultItems.POINTS);
+        sComparisonSpec.addItem(TestResultItems.GOAL_DIFF);
+        sComparisonSpec.addItem(TestResultItems.FOR);
 
         sCompetition = new TestCompetition(1, "Test", LocalDate.of(2018, 3, 9));
 
         sEntrants = new HashMap<>();
-        for (int i = 1; i <= 10; i++)
+        for (int i = 1; i <= 6; i++)
         {
             TestEntrant e = new TestEntrant(i, "E" + String.format("%02d", i));
             sEntrants.put(e.getId(), e);
@@ -66,25 +70,28 @@ public class AbstractScoringUnitTest extends AbstractUnitTest
     }
 
     /**
-     * Converts a test fixture to a set of results.
+     * Build a competition from the specified slice of the given match data.
      * 
-     * @param fixture the test fixture to convert
+     * @param games the match data
+     * @param start the start of the slice (inclusive)
+     * @param end the end of the slice (exclusive)
      *
-     * @return The corresponding results.
+     * @return The corresponding competition.
      */
-    protected final List<EntrantResult> convertFixture(Number[][] fixture)
+    protected final TestCompetition generateCompetition(int[][] games, int start, int end)
     {
-        List<EntrantResult> results = new ArrayList<>(fixture.length);
-        for (Number[] entrantData : fixture)
+        TestCompetition competition = new TestCompetition(1, "Test", LocalDate.of(2018, 3, 9));
+        TestRound round = null;
+        for (int i = start; i < end; i++)
         {
-            EntrantResult result = new EntrantResult(entrantData[0].intValue(), sSpec);
-            result.incrementResultItem("Matches", entrantData[1].intValue());
-            result.incrementResultItem("Wins",    entrantData[2].intValue());
-            result.incrementResultItem("For",     entrantData[3].intValue());
-            result.setResultItem      ("M%",      entrantData[4].doubleValue());
-            result.incrementResultItem("Points",  entrantData[5].intValue());
-            results.add(result);
+            if ((round == null) || (games[i][0] != games[i-1][0]))
+            {
+                round = new TestRound(games[i][0], games[i][0], competition.getStartDate());
+                competition.addRound(round);
+            }
+            TestMatch match = new TestMatch(i + 1, i + 1, competition.getStartDate(), games[i][1], games[i][2], games[i][3], games[i][4]);
+            round.addMatch(match);
         }
-        return results;
+        return competition;
     }
 }

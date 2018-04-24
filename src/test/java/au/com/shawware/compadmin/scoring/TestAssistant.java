@@ -7,14 +7,12 @@
 
 package au.com.shawware.compadmin.scoring;
 
-import java.util.List;
 import java.util.Map;
 
 import au.com.shawware.compadmin.entity.TestCompetition;
 import au.com.shawware.compadmin.entity.TestEntrant;
 import au.com.shawware.compadmin.entity.TestMatch;
 import au.com.shawware.compadmin.entity.TestRound;
-import au.com.shawware.util.StringUtil;
 
 /**
  * A test assistant that accepts a set of pre-calculated results and
@@ -24,58 +22,115 @@ import au.com.shawware.util.StringUtil;
  */
 public class TestAssistant extends AbstractLeaderBoardAssistant<TestCompetition, TestRound, TestMatch, TestEntrant>
 {
-    /** The result items to use. */
-    private final List<EntrantResult> mResults;
-
     /**
-     * Constructs a new assistant from the given fixtures.
+     * Constructs a new assistant for the given competition.
      * 
-     * @param results the pre-calculated results
      * @param competition the test competition
-     * @param entrants the test competition's entrants
-     * @param comparisonSpec the comparison specification
      */
-    public TestAssistant(List<EntrantResult> results, TestCompetition competition,
-                        Map<Integer, TestEntrant> entrants, ResultSpec comparisonSpec)
+    public TestAssistant(TestCompetition competition)
     {
-        super(competition, entrants, comparisonSpec);
-        mResults = results;
+        this(competition, AbstractScoringUnitTest.sEntrants, AbstractScoringUnitTest.sComparisonSpec);
     }
 
-    @Override
-    public List<EntrantResult> compileOverallResults()
+    /**
+     * Constructs a new assistant for the given items.
+     * Primarily used to test the constructor error checking logic.
+     * 
+     * @param competition the test competition
+     * @param entrants the competition entrants
+     * @param comparisonSpec the comparison specification
+     */
+    public TestAssistant(TestCompetition competition, Map<Integer, TestEntrant> entrants, ResultSpec comparisonSpec)
     {
-        return mResults;
+        super(competition, entrants, comparisonSpec);
     }
 
     @Override
     protected ResultSpec createResultSpecification(boolean includeRunningTotal)
     {
-        return null;
+        ResultSpec result;
+        if (includeRunningTotal)
+        {
+            result = new ResultSpec();
+            ResultSpec original = AbstractScoringUnitTest.sSpec;
+            for (String name : original.getItemNames())
+            {
+                result.addItem(name, original.isInteger(name));
+            }
+            result.addItem(TestResultItems.POINTS);
+        }
+        else
+        {
+            result = AbstractScoringUnitTest.sSpec;
+        }
+        return result;
     }
 
     @Override
-    protected void processRound(Map<Integer, EntrantResult> results,
-            TestRound round)
+    @SuppressWarnings("boxing")
+    protected void processRound(Map<Integer, EntrantResult> results, TestRound round)
     {
-        // Do nothing
+        for (Integer matchID : round.getMatchIds())
+        {
+            TestMatch match = round.getMatch(matchID);
+            EntrantResult result1 = results.get(match.getTeam1());
+            EntrantResult result2 = results.get(match.getTeam2());
+
+            int goalDifference = match.getScore1() - match.getScore2();
+
+            result1.incrementResultItem(TestResultItems.MATCHES, 1);
+            result2.incrementResultItem(TestResultItems.MATCHES, 1);
+
+            result1.incrementResultItem(TestResultItems.FOR, match.getScore1());
+            result1.incrementResultItem(TestResultItems.AGAINST, match.getScore2());
+            result1.incrementResultItem(TestResultItems.GOAL_DIFF, goalDifference);
+ 
+            result2.incrementResultItem(TestResultItems.FOR, match.getScore2());
+            result2.incrementResultItem(TestResultItems.AGAINST, match.getScore1());
+            result2.incrementResultItem(TestResultItems.GOAL_DIFF, -goalDifference);
+
+            if (goalDifference > 0)
+            {
+                result1.incrementResultItem(TestResultItems.POINTS, 3);
+                result1.incrementResultItem(TestResultItems.WINS, 1);
+                result2.incrementResultItem(TestResultItems.LOSSES, 1);
+            }
+            else if (goalDifference < 0)
+            {
+                result1.incrementResultItem(TestResultItems.LOSSES, 1);
+                result2.incrementResultItem(TestResultItems.WINS, 1);
+                result2.incrementResultItem(TestResultItems.POINTS, 3);
+            }
+            else
+            {
+                result1.incrementResultItem(TestResultItems.POINTS, 1);
+                result1.incrementResultItem(TestResultItems.DRAWS, 1);
+                result2.incrementResultItem(TestResultItems.DRAWS, 1);
+                result2.incrementResultItem(TestResultItems.POINTS, 1);
+            }
+        }
+    }
+
+    @Override
+    protected void postCompile(EntrantResult result)
+    {
+        double against = result.getResultItemValueAsInt(TestResultItems.AGAINST);
+        if (against > 0.0)
+        {
+            result.setResultItem(TestResultItems.GOAL_PERC,
+                    result.getResultItemValueAsInt(TestResultItems.FOR) / against);
+        }
     }
 
     @Override
     protected String getPointsItemName()
     {
-        return null;
+        return TestResultItems.POINTS;
     }
 
     @Override
     protected String getRunningTotalItemName()
     {
-        return null;
-    }
-
-    @Override
-    public String toString()
-    {
-        return StringUtil.toString(mResults);
+        return TestResultItems.TOTAL;
     }
 }

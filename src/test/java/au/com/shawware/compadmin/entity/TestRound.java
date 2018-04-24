@@ -10,7 +10,7 @@ package au.com.shawware.compadmin.entity;
 import java.time.LocalDate;
 
 /**
- * Models a test round.
+ * Models a test round of test matches.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */

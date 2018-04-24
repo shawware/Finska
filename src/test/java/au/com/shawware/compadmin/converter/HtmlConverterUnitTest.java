@@ -21,8 +21,6 @@ import org.junit.Test;
 import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
-import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
-import au.com.shawware.compadmin.scoring.TestAssistant;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.EntityLoader;
 import au.com.shawware.finska.persistence.IEntityLoader;
@@ -36,35 +34,9 @@ import au.com.shawware.finska.service.ResultsService;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({ "nls", "boxing", "static-method" })
+@SuppressWarnings({ "nls", "static-method" })
 public class HtmlConverterUnitTest extends AbstractScoringUnitTest
 {
-    /**
-     * Generates some HTML output for a set of results.
-     */
-    @Test
-    public void basicOutput()
-    {
-        final Number[][] results = new Number[][]
-        {
-            { 1, 9, 5, 20,  5, 16 },
-            { 2, 9, 1,  3, -2, 10 },
-            { 3, 9, 8, 30, 20, 24 },
-            { 4, 9, 2,  3, -1, 10 },
-            { 5, 9, 4, 19,  5, 16 },
-            { 6, 9, 3, 18,  5, 16 },
-            { 7, 9, 7, 25, 10, 21 },
-            { 8, 9, 6, 25, 10, 21 },
-            { 9, 9, 0,  5, -5,  0 },
-        };
-        TestAssistant assistant = new TestAssistant(convertFixture(results), sCompetition, sEntrants, sComparisonSpec);
-        List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
-
-        Writer output = new BufferedWriter(new OutputStreamWriter(System.out));
-        IConverter converter = new HtmlConverter("finska");
-        outputLeaderboard(sEntrants, leaderBoard, converter, output);
-    }
-
     /**
      * Generates HTML from a set of persisted entities.
      */

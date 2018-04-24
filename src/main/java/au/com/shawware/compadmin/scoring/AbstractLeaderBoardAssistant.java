@@ -19,6 +19,7 @@ import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.entity.Match;
 import au.com.shawware.compadmin.entity.Round;
 import au.com.shawware.util.MutableInteger;
+import au.com.shawware.util.StringUtil;
 
 /**
  * Abstracts code that other assistants may wish to re-use by sub-classing.
@@ -37,7 +38,7 @@ public abstract class AbstractLeaderBoardAssistant<
         EntrantType extends Entrant> implements ILeaderBoardAssistant
 {
     /** The competition being analysed. */
-    protected final CompetitionType mCompetition;
+    private final CompetitionType mCompetition;
     /** The competition entrants. */
     private final Map<Integer, EntrantType> mEntrants;
     /** The result item specification to use when comparing for equality / ranking. */
@@ -73,7 +74,7 @@ public abstract class AbstractLeaderBoardAssistant<
     }
 
     @Override
-    public List<EntrantResult> compileOverallResults()
+    public final List<EntrantResult> compileOverallResults()
     {
         return compileOverallResults(mCompetition.getRoundIds().size());
     }
@@ -224,5 +225,11 @@ public abstract class AbstractLeaderBoardAssistant<
             }
         }
         return rc;
+    }
+
+    @Override
+    public String toString()
+    {
+        return StringUtil.toString(mCompetition, mEntrants, mComparisonSpec);
     }
 }
