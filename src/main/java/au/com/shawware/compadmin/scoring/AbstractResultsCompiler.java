@@ -76,7 +76,31 @@ public abstract class AbstractResultsCompiler<
     @Override
     public final List<EntrantResult> compileCurrentResults()
     {
-        return compileResults(mCompetition.numberOfRounds());
+        List<EntrantResult> results;
+        if (mCompetition.numberOfRounds() == 0)
+        {
+            results = new ArrayList<>();
+        }
+        else
+        {
+            results = compileResults(mCompetition.numberOfRounds());
+        }
+        return results;
+    }
+
+    @Override
+    public final List<EntrantResult> compilePreviousResults()
+    {
+        List<EntrantResult> results;
+        if (mCompetition.numberOfRounds() <= 1)
+        {
+            results = new ArrayList<>();
+        }
+        else
+        {
+            results = compileResults(mCompetition.numberOfRounds() - 1);
+        }
+        return results;
     }
 
     @Override

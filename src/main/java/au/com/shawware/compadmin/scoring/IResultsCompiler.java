@@ -20,10 +20,20 @@ public interface IResultsCompiler extends Comparator<EntrantResult>
 {
     /**
      * Compile the current (overall) results for all entrants.
+     * This represents all rounds of the current competition.
      * 
      * @return The set of results for all entrants.
      */
     List<EntrantResult> compileCurrentResults();
+
+    /**
+     * Compile the previous results for all entrants.
+     * This represents all but one rounds of the current competition.
+     * If this is no rounds, then an empty result is returned.
+     * 
+     * @return The set of results for all entrants.
+     */
+    List<EntrantResult> compilePreviousResults();
 
     /**
      * Compile the results for all entrants for the first N rounds.

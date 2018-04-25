@@ -143,13 +143,23 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
         verifyResults(actualResults, expectedResults, true, false);
 
+       if (rounds == 1)
+       {
+           actualResults = compiler.compilePreviousResults();
+           Assert.assertNotNull(actualResults);
+           Assert.assertEquals(0, actualResults.size());
+       }
        if (rounds > 1)
        {
+           actualResults = compiler.compilePreviousResults();
+           verifyResults(actualResults, expectedResults2, false, false);
            actualResults = compiler.compileResults(rounds - 1);
            verifyResults(actualResults, expectedResults2, false, false);
        }
        if (rounds > 2)
        {
+           actualResults = compiler.compilePreviousResults();
+           verifyResults(actualResults, expectedResults2, false, false);
            actualResults = compiler.compileResults(rounds - 2);
            verifyResults(actualResults, expectedResults3, false, false);
        }
@@ -252,7 +262,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     }
 
     /**
-     * Test the error handling in the constructor of the abstract compiler.
+     * Test the error handling in the methods of the abstract compiler.
      */
     @Test
     public void testErrorHandling()
@@ -263,5 +273,18 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyExceptionThrown(() -> new TestCompiler(sCompetition, null, null), IllegalArgumentException.class, "Empty entrants");
         verifyExceptionThrown(() -> new TestCompiler(sCompetition, emptyEntrants, null), IllegalArgumentException.class, "Empty entrants");
         verifyExceptionThrown(() -> new TestCompiler(sCompetition, sEntrants, null), IllegalArgumentException.class, "Empty comparison item specification");
+
+        IResultsCompiler compiler = new TestCompiler(sCompetition);
+        List<EntrantResult> results = compiler.compileCurrentResults();
+        Assert.assertNotNull(results);
+        Assert.assertEquals(0, results.size());
+
+        results = compiler.compilePreviousResults();
+        Assert.assertNotNull(results);
+        Assert.assertEquals(0, results.size());
+
+        verifyExceptionThrown(() -> compiler.compileResults(-1), IllegalArgumentException.class, "Invalid number of rounds: -1");
+        verifyExceptionThrown(() -> compiler.compileResults(0), IllegalArgumentException.class, "Invalid number of rounds: 0");
+        verifyExceptionThrown(() -> compiler.compileResults(1), IllegalArgumentException.class, "Invalid number of rounds: 1");
     }
 }
