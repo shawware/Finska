@@ -22,7 +22,7 @@ import au.com.shawware.util.MutableInteger;
 import au.com.shawware.util.StringUtil;
 
 /**
- * Abstracts code that other assistants may wish to re-use by sub-classing.
+ * Abstracts code that other results compilers may wish to re-use by sub-classing.
  * 
  * @param <CompetitionType> the competition type
  * @param <RoundType> the round type
@@ -31,11 +31,11 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class AbstractLeaderBoardAssistant<
+public abstract class AbstractResultsCompiler<
         CompetitionType extends Competition<RoundType, MatchType>,
         RoundType extends Round<MatchType>,
         MatchType extends Match,
-        EntrantType extends Entrant> implements ILeaderBoardAssistant
+        EntrantType extends Entrant> implements IResultsCompiler
 {
     /** The competition being analysed. */
     private final CompetitionType mCompetition;
@@ -45,7 +45,7 @@ public abstract class AbstractLeaderBoardAssistant<
     private final ResultSpec mComparisonSpec;
 
     /**
-     * Constructs a new assistant using the given competition and result specification.
+     * Constructs a new compiler using the given competition and result specification.
      * 
      * @param competition the competition to analyse
      * @param entrants the competition entrants
@@ -53,7 +53,7 @@ public abstract class AbstractLeaderBoardAssistant<
      * 
      * @throws IllegalArgumentException empty competition or comparison specification
      */
-    public AbstractLeaderBoardAssistant(CompetitionType competition, Map<Integer, EntrantType> entrants, ResultSpec comparisonSpec)
+    public AbstractResultsCompiler(CompetitionType competition, Map<Integer, EntrantType> entrants, ResultSpec comparisonSpec)
         throws IllegalArgumentException
     {
         if (competition == null)

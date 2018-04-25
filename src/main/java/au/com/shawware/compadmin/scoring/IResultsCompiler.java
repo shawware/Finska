@@ -11,12 +11,12 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Specifies what a competition must provide to help create a leader board.
- * This can be individual rounds or the combination of same.
+ * Specifies the results compilation API. This can be used directly
+ * or to generate a leader board.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public interface ILeaderBoardAssistant extends Comparator<EntrantResult>
+public interface IResultsCompiler extends Comparator<EntrantResult>
 {
     /**
      * Compile the overall results for all entrants.

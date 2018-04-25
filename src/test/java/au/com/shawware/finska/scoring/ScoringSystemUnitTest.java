@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.shawware.compadmin.scoring.EntrantResult;
-import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
+import au.com.shawware.compadmin.scoring.IResultsCompiler;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
@@ -88,9 +88,9 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
                 expectScoreForPlaying, expectScoreFastWins,
                 expectScoreWinBoth, expectScoreWinAll);
 
-        ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
+        IResultsCompiler compiler = new CompetitionAnalyser(players, competition, scoringSystem);
 
-        List<EntrantResult> results = assistant.compileOverallResults();
+        List<EntrantResult> results = compiler.compileOverallResults();
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 

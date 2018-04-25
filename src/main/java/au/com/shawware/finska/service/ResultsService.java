@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import au.com.shawware.compadmin.scoring.EntrantResult;
-import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
+import au.com.shawware.compadmin.scoring.IResultsCompiler;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaRound;
@@ -45,8 +45,8 @@ public class ResultsService
     private FinskaCompetition mCompetition;
     /** The players in the competitions. */
     private Map<Integer, Player> mPlayers;
-    /** The leader board assistant for the competition, players and scoring system. */
-    private ILeaderBoardAssistant mAssistant;
+    /** The results compiler for the competition, players and scoring system. */
+    private IResultsCompiler mCompiler;
 
     /**
      * Constructs a new service.
@@ -70,7 +70,7 @@ public class ResultsService
     {
         mPlayers = mLoader.getPlayers();
         mCompetition = mLoader.getCompetition(1); // TODO: inject ID?
-        mAssistant = new CompetitionAnalyser(mPlayers, mCompetition, mScoringSystem);
+        mCompiler = new CompetitionAnalyser(mPlayers, mCompetition, mScoringSystem);
     }
 
     /**
@@ -82,7 +82,7 @@ public class ResultsService
      */
     public List<EntrantResult> getLeaderBoard()
     {
-        return LeaderBoardGenerator.generateLeaderBoard(mAssistant);
+        return LeaderBoardGenerator.generateLeaderBoard(mCompiler);
     }
 
     /**
@@ -92,7 +92,7 @@ public class ResultsService
      */
     public List<List<EntrantResult>> getRoundResults()
     {
-        return mAssistant.compileRoundResults();
+        return mCompiler.compileRoundResults();
     }
 
     /**

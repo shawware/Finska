@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import au.com.shawware.compadmin.scoring.AbstractLeaderBoardAssistant;
+import au.com.shawware.compadmin.scoring.AbstractResultsCompiler;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.ResultSpec;
 import au.com.shawware.finska.entity.FinskaCompetition;
@@ -25,7 +25,7 @@ import au.com.shawware.finska.entity.Player;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings("boxing")
-public class CompetitionAnalyser extends AbstractLeaderBoardAssistant<FinskaCompetition, FinskaRound, FinskaMatch, Player>
+public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetition, FinskaRound, FinskaMatch, Player>
 {
     /** The scoring system in use. */
     private final ScoringSystem mScoringSystem;

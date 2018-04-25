@@ -15,32 +15,32 @@ import au.com.shawware.compadmin.entity.TestMatch;
 import au.com.shawware.compadmin.entity.TestRound;
 
 /**
- * A test assistant that accepts a set of pre-calculated results and
+ * A test compiler that accepts a set of pre-calculated results and
  * comparison items.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class TestAssistant extends AbstractLeaderBoardAssistant<TestCompetition, TestRound, TestMatch, TestEntrant>
+public class TestCompiler extends AbstractResultsCompiler<TestCompetition, TestRound, TestMatch, TestEntrant>
 {
     /**
-     * Constructs a new assistant for the given competition.
+     * Constructs a new compiler for the given competition.
      * 
      * @param competition the test competition
      */
-    public TestAssistant(TestCompetition competition)
+    public TestCompiler(TestCompetition competition)
     {
         this(competition, AbstractScoringUnitTest.sEntrants, AbstractScoringUnitTest.sComparisonSpec);
     }
 
     /**
-     * Constructs a new assistant for the given items.
+     * Constructs a new compiler for the given items.
      * Primarily used to test the constructor error checking logic.
      * 
      * @param competition the test competition
      * @param entrants the competition entrants
      * @param comparisonSpec the comparison specification
      */
-    public TestAssistant(TestCompetition competition, Map<Integer, TestEntrant> entrants, ResultSpec comparisonSpec)
+    public TestCompiler(TestCompetition competition, Map<Integer, TestEntrant> entrants, ResultSpec comparisonSpec)
     {
         super(competition, entrants, comparisonSpec);
     }

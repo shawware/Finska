@@ -27,7 +27,7 @@ import au.com.shawware.compadmin.entity.TestEntrant;
 public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 {
     /**
-     * Test the algorithms in {@link AbstractLeaderBoardAssistant}.
+     * Test the algorithms in {@link AbstractResultsCompiler}.
      */
     @Test
     public void testLeaderBoardAlgorithm()
@@ -44,6 +44,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 3, 1, 6, 1, 1 },
             { 3, 2, 3, 3, 1 },
             { 3, 4, 5, 1, 1 },
+            { 4, 4, 5, 1, 1 },
         };
 
         TestCompetition competition;
@@ -113,7 +114,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 6, 3, 3, 1, 0, 2, 2, 4, -2,     0.5, 3 },
         };
         verifyLeaderBoardAlgorithm(competition, results);
-}
+    }
 
     /**
      * Verify the leaderboard generated from the given competition.
@@ -123,8 +124,8 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
      */
     private void verifyLeaderBoardAlgorithm(TestCompetition competition, Number[][] expectedResults)
     {
-        ILeaderBoardAssistant assistant = new TestAssistant(competition);
-        List<EntrantResult> actualResults = LeaderBoardGenerator.generateLeaderBoard(assistant);
+        IResultsCompiler compiler = new TestCompiler(competition);
+        List<EntrantResult> actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
 
         Assert.assertNotNull(actualResults);
         Assert.assertNotNull(expectedResults);
@@ -149,16 +150,16 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     }
 
     /**
-     * Test the error handling in the constructor of the abstract assistant.
+     * Test the error handling in the constructor of the abstract compiler.
      */
     @Test
     public void testErrorHandling()
     {
         Map<Integer, TestEntrant> emptyEntrants = new HashMap<>();
 
-        verifyExceptionThrown(() -> new TestAssistant(null, null, null), IllegalArgumentException.class, "Empty competition");
-        verifyExceptionThrown(() -> new TestAssistant(sCompetition, null, null), IllegalArgumentException.class, "Empty entrants");
-        verifyExceptionThrown(() -> new TestAssistant(sCompetition, emptyEntrants, null), IllegalArgumentException.class, "Empty entrants");
-        verifyExceptionThrown(() -> new TestAssistant(sCompetition, sEntrants, null), IllegalArgumentException.class, "Empty comparison item specification");
+        verifyExceptionThrown(() -> new TestCompiler(null, null, null), IllegalArgumentException.class, "Empty competition");
+        verifyExceptionThrown(() -> new TestCompiler(sCompetition, null, null), IllegalArgumentException.class, "Empty entrants");
+        verifyExceptionThrown(() -> new TestCompiler(sCompetition, emptyEntrants, null), IllegalArgumentException.class, "Empty entrants");
+        verifyExceptionThrown(() -> new TestCompiler(sCompetition, sEntrants, null), IllegalArgumentException.class, "Empty comparison item specification");
     }
 }

@@ -16,7 +16,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.shawware.compadmin.scoring.EntrantResult;
-import au.com.shawware.compadmin.scoring.ILeaderBoardAssistant;
+import au.com.shawware.compadmin.scoring.IResultsCompiler;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
@@ -125,8 +125,8 @@ public class AnalyserUnitTest extends AbstractUnitTest
      */
     private void verifyAlgorithm(FinskaCompetition competition, Map<Integer, Player> players, ScoringSystem scoringSystem, Number[][] expectedResults)
     {
-        ILeaderBoardAssistant assistant = new CompetitionAnalyser(players, competition, scoringSystem);
-        List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(assistant);
+        IResultsCompiler compiler = new CompetitionAnalyser(players, competition, scoringSystem);
+        List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(compiler);
 
         Assert.assertNotNull(leaderBoard);
         Assert.assertEquals(expectedResults.length, leaderBoard.size());

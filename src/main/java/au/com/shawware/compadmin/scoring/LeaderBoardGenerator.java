@@ -11,26 +11,26 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * Generates a leader board based using the given assistant.
+ * Generates a leader board based using the given results compiler.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 public class LeaderBoardGenerator
 {
     /**
-     * Generates a leaderboard using the given assistant.
+     * Generates a leaderboard using the given compiler.
      * 
-     * @param assistant the assistant to use
+     * @param compiler the results compiler to use
      * 
      * @return The sorted, ranked leader board.
      */
-    public static List<EntrantResult> generateLeaderBoard(ILeaderBoardAssistant assistant)
+    public static List<EntrantResult> generateLeaderBoard(IResultsCompiler compiler)
     {
-        List<EntrantResult> results = assistant.compileOverallResults();
+        List<EntrantResult> results = compiler.compileOverallResults();
 
-        results.sort(assistant);
+        results.sort(compiler);
 
-        rankResults(results, assistant);
+        rankResults(results, compiler);
 
         /*
          * If two (or more) teams have the same rank, we sort them by entrant ID
