@@ -122,11 +122,11 @@ public class EntrantResult
         int rc;
         if (mSpec.isInteger(name))
         {
-            rc = Integer.compare(this.getResultItemValueAsInt(name), that.getResultItemValueAsInt(name));
+            rc = Integer.compare(that.getResultItemValueAsInt(name), this.getResultItemValueAsInt(name));
         }
         else
         {
-            rc = Double.compare(this.getResultItemValueAsDouble(name), that.getResultItemValueAsDouble(name));
+            rc = Double.compare(that.getResultItemValueAsDouble(name), this.getResultItemValueAsDouble(name));
         }
         return rc;
     }
