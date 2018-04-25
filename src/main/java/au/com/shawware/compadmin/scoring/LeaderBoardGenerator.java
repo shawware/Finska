@@ -7,7 +7,6 @@
 
 package au.com.shawware.compadmin.scoring;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,9 +28,23 @@ public class LeaderBoardGenerator
     {
         List<EntrantResult> results = assistant.compileOverallResults();
 
-        Collections.sort(results, assistant);
+        results.sort(assistant);
 
         rankResults(results, assistant);
+
+        /*
+         * If two (or more) teams have the same rank, we sort them by entrant ID
+         * in ascending order. This is purely so the sort order is deterministic.
+         * This will help with testing amongst other things. 
+         */
+        results.sort((EntrantResult result1, EntrantResult result2) -> {
+            int rc = Integer.compare(result1.getRank(), result2.getRank());
+            if (rc == 0)
+            {
+                rc = Integer.compare(result1.getEntrantID(), result2.getEntrantID());
+            }
+            return rc;
+        });
 
         return results;
     }
