@@ -211,14 +211,7 @@ public abstract class AbstractResultsCompiler<
         int rc = 0;
         for (String name : mComparisonSpec.getItemNames())
         {
-            if (mComparisonSpec.isInteger(name))
-            {
-                rc = Integer.compare(result2.getResultItemValueAsInt(name), result1.getResultItemValueAsInt(name));
-            }
-            else
-            {
-                rc = Double.compare(result2.getResultItemValueAsDouble(name), result1.getResultItemValueAsDouble(name));
-            }
+            rc = result1.compare(result2, name);
             if (rc != 0)
             {
                 break;

@@ -7,6 +7,7 @@
 
 package au.com.shawware.compadmin.scoring;
 
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -98,6 +99,36 @@ public class EntrantResult
     public void setRank(int rank)
     {
         mRank = rank;
+    }
+
+    /**
+     * Compare this result with the given result for the given item.
+     * 
+     * @param that the other result
+     * @param name the item name
+     *
+     * @return An integer as per {@link Comparator#compare(Object, Object)}.
+     */
+    public int compare(EntrantResult that, String name)
+    {
+        if (that == null)
+        {
+            throw new IllegalArgumentException("Null result"); //$NON-NLS-1$
+        }
+        if (this.mSpec.isInteger(name) != that.mSpec.isInteger(name))
+        {
+            throw new IllegalArgumentException("Mismtached types for: " + name); //$NON-NLS-1$
+        }
+        int rc;
+        if (mSpec.isInteger(name))
+        {
+            rc = Integer.compare(this.getResultItemValueAsInt(name), that.getResultItemValueAsInt(name));
+        }
+        else
+        {
+            rc = Double.compare(this.getResultItemValueAsDouble(name), that.getResultItemValueAsDouble(name));
+        }
+        return rc;
     }
 
     /**
