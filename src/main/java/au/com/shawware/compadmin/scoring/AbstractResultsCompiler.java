@@ -76,29 +76,33 @@ public abstract class AbstractResultsCompiler<
     @Override
     public final List<EntrantResult> compileCurrentResults()
     {
-        List<EntrantResult> results;
-        if (mCompetition.numberOfRounds() == 0)
-        {
-            results = new ArrayList<>();
-        }
-        else
-        {
-            results = compileResults(mCompetition.numberOfRounds());
-        }
-        return results;
+        return compileResultsFor(mCompetition.numberOfRounds());
     }
 
     @Override
     public final List<EntrantResult> compilePreviousResults()
     {
+        return compileResultsFor(mCompetition.numberOfRounds() - 1);
+    }
+
+    /**
+     * Compile the results for the given number of rounds. If there
+     * are no such rounds, return an empty result.
+     * 
+     * @param rounds the number of rounds
+     *
+     * @return The corresponding results.
+     */
+    private List<EntrantResult> compileResultsFor(int rounds)
+    {
         List<EntrantResult> results;
-        if (mCompetition.numberOfRounds() <= 1)
+        if (rounds <= 0)
         {
             results = new ArrayList<>();
         }
         else
         {
-            results = compileResults(mCompetition.numberOfRounds() - 1);
+            results = compileResults(rounds);
         }
         return results;
     }
