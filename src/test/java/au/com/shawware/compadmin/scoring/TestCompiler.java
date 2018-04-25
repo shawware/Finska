@@ -57,7 +57,7 @@ public class TestCompiler extends AbstractResultsCompiler<TestCompetition, TestR
             {
                 result.addItem(name, original.isInteger(name));
             }
-            result.addItem(TestResultItems.POINTS);
+            result.addItem(TestResultItems.TOTAL);
         }
         else
         {
