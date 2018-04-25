@@ -9,6 +9,8 @@ package au.com.shawware.compadmin.entity;
 
 import java.time.LocalDate;
 
+import au.com.shawware.util.StringUtil;
+
 /**
  * Models a test match.
  *
@@ -76,5 +78,12 @@ public class TestMatch extends Match
     public int getScore2()
     {
         return mScore2;
+    }
+
+    @Override
+    @SuppressWarnings("boxing")
+    public String toString()
+    {
+        return StringUtil.toString(getId(), getNumber(), getMatchDate(), mTeam1, mTeam2, mScore1, mScore2);
     }
 }

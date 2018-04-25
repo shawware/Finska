@@ -92,18 +92,23 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     @Test
     public void testLeaderBoardAlgorithm()
     {
+        // Test fixture with all rounds and matches.
         final int[][] games = new int[][]
         {
             { 1, 1, 2, 2, 1 },
             { 1, 3, 4, 1, 0 },
             { 1, 5, 6, 3, 2 },
-            { 2, 1, 2, 2, 1 },
-            { 2, 3, 4, 1, 0 },
-            { 2, 5, 6, 3, 2 },
+            { 2, 1, 4, 1, 2 },
+            { 2, 2, 5, 3, 2 },
+            { 2, 3, 6, 0, 1 },
         };
 
-        TestCompetition competition = generateCompetition(games, 0, 3);
-        final Number[][] results = new Number[][]
+        TestCompetition competition;
+        Number[][] results;
+
+        // Test Round 1 only.
+        competition = generateCompetition(games, 0, 3);
+        results = new Number[][]
         {
             { 1, 5, 1, 1, 0, 0, 3, 2,  1,     1.5, 3 },
             { 2, 1, 1, 1, 0, 0, 2, 1,  1,     2.0, 3 },
@@ -111,6 +116,34 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 4, 6, 1, 0, 0, 1, 2, 3, -1, 2.0/3.0, 0 },
             { 5, 2, 1, 0, 0, 1, 1, 2, -1,     0.5, 0 },
             { 6, 4, 1, 0, 0, 1, 0, 1, -1,     0.0, 0 },
+        };
+
+        verifyLeaderBoardAlgorithm(competition, results);
+
+        // Test Round 2 only.
+        competition = generateCompetition(games, 3, 6);
+        results = new Number[][]
+        {
+            { 1, 2, 1, 1, 0, 0, 3, 2,  1,     1.5, 3 },
+            { 2, 4, 1, 1, 0, 0, 2, 1,  1,     2.0, 3 },
+            { 3, 6, 1, 1, 0, 0, 1, 0,  1,     0.0, 3 },
+            { 4, 5, 1, 0, 0, 1, 2, 3, -1, 2.0/3.0, 0 },
+            { 5, 1, 1, 0, 0, 1, 1, 2, -1,     0.5, 0 },
+            { 6, 3, 1, 0, 0, 1, 0, 1, -1,     0.0, 0 },
+        };
+
+        verifyLeaderBoardAlgorithm(competition, results);
+
+        // Test Rounds 1 and 2 together.
+        competition = generateCompetition(games, 0, 6);
+        results = new Number[][]
+        {
+            { 1, 5, 2, 1, 0, 1, 5, 5,  0,     1.0, 3 },
+            { 2, 2, 2, 1, 0, 1, 4, 4,  0,     1.0, 3 },
+            { 3, 1, 2, 1, 0, 1, 3, 3,  0,     1.0, 3 },
+            { 3, 6, 2, 1, 0, 1, 3, 3,  0,     1.0, 3 },
+            { 5, 4, 2, 1, 0, 1, 2, 2,  0,     1.0, 3 },
+            { 6, 3, 2, 1, 0, 1, 1, 1,  0,     1.0, 3 },
         };
 
         verifyLeaderBoardAlgorithm(competition, results);
