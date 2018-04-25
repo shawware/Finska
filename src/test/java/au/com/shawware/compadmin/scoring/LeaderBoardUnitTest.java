@@ -61,7 +61,9 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 2, 1, 0, 0, 1, 1, 2, -1,     0.5, 0 },
             { 6, 4, 1, 0, 0, 1, 0, 1, -1,     0.0, 0 },
         };
-        verifyLeaderBoardAlgorithm(competition, results);
+        verifyLeaderBoardAlgorithm(competition, 1, results, null, null);
+
+        Number[][] round1Results = results; // Preserve for later.
 
         // Test Round 2 only.
         competition = generateCompetition(games, 3, 6);
@@ -74,7 +76,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 1, 1, 0, 0, 1, 1, 2, -1,     0.5, 0 },
             { 6, 3, 1, 0, 0, 1, 0, 1, -1,     0.0, 0 },
         };
-        verifyLeaderBoardAlgorithm(competition, results);
+        verifyLeaderBoardAlgorithm(competition, 1, results, null, null);
 
         // Test Round 3 only.
         competition = generateCompetition(games, 6, 9);
@@ -87,7 +89,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 2, 6, 1, 0, 1, 0, 1, 1,  0,     1.0, 1 },
             { 6, 3, 1, 0, 0, 1, 1, 3, -2, 1.0/3.0, 0 },
         };
-        verifyLeaderBoardAlgorithm(competition, results);
+        verifyLeaderBoardAlgorithm(competition, 1, results, null, null);
 
         // Test Rounds 1 and 2 together.
         competition = generateCompetition(games, 0, 6);
@@ -100,7 +102,9 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 4, 2, 1, 0, 1, 2, 2,  0,     1.0, 3 },
             { 6, 3, 2, 1, 0, 1, 1, 1,  0,     1.0, 3 },
         };
-        verifyLeaderBoardAlgorithm(competition, results);
+        verifyLeaderBoardAlgorithm(competition, 2, results, round1Results, null);
+
+        Number[][] round2Results = results; // Preserve for later.
 
         // Test Rounds 1, 2 and 3 together.
         competition = generateCompetition(games, 0, 9);
@@ -113,20 +117,44 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 4, 3, 1, 1, 1, 3, 3,  0,     1.0, 4 },
             { 6, 3, 3, 1, 0, 2, 2, 4, -2,     0.5, 3 },
         };
-        verifyLeaderBoardAlgorithm(competition, results);
+        verifyLeaderBoardAlgorithm(competition, 3, results, round2Results, round1Results);
     }
 
     /**
-     * Verify the leaderboard generated from the given competition.
+     * Verify the overall results generated from the given competition.
      * 
      * @param competition the competition being tested
-     * @param expectedResults the expected results
+     * @param rounds the number of rounds of expected results
+     * @param expectedResults the full set of expected results
+     * @param expectedResults2 the set of results for one fewer round
+     * @param expectedResults3 the set of results for two fewer rounds
      */
-    private void verifyLeaderBoardAlgorithm(TestCompetition competition, Number[][] expectedResults)
+    private void verifyLeaderBoardAlgorithm(TestCompetition competition, int rounds,
+        Number[][] expectedResults, Number[][] expectedResults2, Number[][] expectedResults3)
     {
+        List<EntrantResult> actualResults;
+
         IResultsCompiler compiler = new TestCompiler(competition);
-        List<EntrantResult> actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
+
+        actualResults = compiler.compileOverallResults();
+        verifyResults(actualResults, expectedResults, false);
+
+        actualResults = compiler.compileOverallResults(rounds);
+        verifyResults(actualResults, expectedResults, false);
+
+        actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
         verifyResults(actualResults, expectedResults, true);
+
+       if (rounds > 1)
+       {
+           actualResults = compiler.compileOverallResults(rounds - 1);
+           verifyResults(actualResults, expectedResults2, false);
+       }
+       if (rounds > 2)
+       {
+           actualResults = compiler.compileOverallResults(rounds - 2);
+           verifyResults(actualResults, expectedResults3, false);
+       }
     }
 
     /**
