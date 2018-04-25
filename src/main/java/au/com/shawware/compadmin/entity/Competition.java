@@ -111,6 +111,14 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     }
 
     /**
+     * @return The number of rounds in this competition so far.
+     */
+    public int numberOfRounds()
+    {
+        return mRoundIds.size();
+    }
+
+    /**
      * Retrieve the given round from this competition.
      * 
      * @param id the round's ID

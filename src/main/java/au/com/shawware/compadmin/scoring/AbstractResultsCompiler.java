@@ -74,14 +74,14 @@ public abstract class AbstractResultsCompiler<
     }
 
     @Override
-    public final List<EntrantResult> compileOverallResults()
+    public final List<EntrantResult> compileCurrentResults()
     {
-        return compileOverallResults(mCompetition.getRoundIds().size());
+        return compileResults(mCompetition.numberOfRounds());
     }
 
     @Override
     @SuppressWarnings("boxing")
-    public final List<EntrantResult> compileOverallResults(int rounds)
+    public final List<EntrantResult> compileResults(int rounds)
     {
         Set<Integer> roundIDs = mCompetition.getRoundIds();
         if ((rounds <= 0) || (rounds > roundIDs.size()))

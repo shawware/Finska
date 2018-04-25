@@ -134,10 +134,10 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 
         IResultsCompiler compiler = new TestCompiler(competition);
 
-        actualResults = compiler.compileOverallResults();
+        actualResults = compiler.compileCurrentResults();
         verifyResults(actualResults, expectedResults, false, false);
 
-        actualResults = compiler.compileOverallResults(rounds);
+        actualResults = compiler.compileResults(rounds);
         verifyResults(actualResults, expectedResults, false, false);
 
         actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
@@ -145,12 +145,12 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 
        if (rounds > 1)
        {
-           actualResults = compiler.compileOverallResults(rounds - 1);
+           actualResults = compiler.compileResults(rounds - 1);
            verifyResults(actualResults, expectedResults2, false, false);
        }
        if (rounds > 2)
        {
-           actualResults = compiler.compileOverallResults(rounds - 2);
+           actualResults = compiler.compileResults(rounds - 2);
            verifyResults(actualResults, expectedResults3, false, false);
        }
     }

@@ -19,14 +19,14 @@ import java.util.List;
 public interface IResultsCompiler extends Comparator<EntrantResult>
 {
     /**
-     * Compile the overall results for all entrants.
+     * Compile the current (overall) results for all entrants.
      * 
      * @return The set of results for all entrants.
      */
-    List<EntrantResult> compileOverallResults();
+    List<EntrantResult> compileCurrentResults();
 
     /**
-     * Compile the overall results for all entrants for the first N rounds.
+     * Compile the results for all entrants for the first N rounds.
      *
      * @param rounds the number of rounds
      *
@@ -34,7 +34,7 @@ public interface IResultsCompiler extends Comparator<EntrantResult>
      *
      * @throws IllegalArgumentException invalid number of rounds 
      */
-    List<EntrantResult> compileOverallResults(int rounds);
+    List<EntrantResult> compileResults(int rounds);
 
     /**
      * Compile the results for all entrants for each round.

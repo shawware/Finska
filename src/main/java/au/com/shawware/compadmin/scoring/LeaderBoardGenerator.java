@@ -26,7 +26,7 @@ public class LeaderBoardGenerator
      */
     public static List<EntrantResult> generateLeaderBoard(IResultsCompiler compiler)
     {
-        List<EntrantResult> results = compiler.compileOverallResults();
+        List<EntrantResult> results = compiler.compileCurrentResults();
 
         results.sort(compiler);
 

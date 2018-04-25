@@ -33,7 +33,7 @@ import au.com.shawware.util.test.AbstractUnitTest;
 public class AnalyserUnitTest extends AbstractUnitTest
 {
     /**
-     * Test the {@link CompetitionAnalyser#compileOverallResults()} algorithm.
+     * Test the {@link CompetitionAnalyser#compileCurrentResults()} algorithm.
      */
     @Test
     public void testAlgorithm()
@@ -115,7 +115,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
     }
 
     /**
-     * Verify the {@link CompetitionAnalyser#compileOverallResults()} algorithm
+     * Verify the {@link CompetitionAnalyser#compileCurrentResults()} algorithm
      * for the given competition and scoring system.
      * 
      * @param competition the competition

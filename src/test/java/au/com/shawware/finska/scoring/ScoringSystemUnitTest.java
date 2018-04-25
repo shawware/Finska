@@ -90,7 +90,7 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
 
         IResultsCompiler compiler = new CompetitionAnalyser(players, competition, scoringSystem);
 
-        List<EntrantResult> results = compiler.compileOverallResults();
+        List<EntrantResult> results = compiler.compileCurrentResults();
         Assert.assertNotNull(results);
         Assert.assertEquals(1, results.size());
 
