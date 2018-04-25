@@ -41,6 +41,9 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 2, 1, 4, 1, 2 },
             { 2, 2, 5, 3, 2 },
             { 2, 3, 6, 0, 1 },
+            { 3, 1, 6, 1, 1 },
+            { 3, 2, 3, 3, 1 },
+            { 3, 4, 5, 1, 1 },
         };
 
         TestCompetition competition;
@@ -57,7 +60,6 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 2, 1, 0, 0, 1, 1, 2, -1,     0.5, 0 },
             { 6, 4, 1, 0, 0, 1, 0, 1, -1,     0.0, 0 },
         };
-
         verifyLeaderBoardAlgorithm(competition, results);
 
         // Test Round 2 only.
@@ -71,7 +73,19 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 1, 1, 0, 0, 1, 1, 2, -1,     0.5, 0 },
             { 6, 3, 1, 0, 0, 1, 0, 1, -1,     0.0, 0 },
         };
+        verifyLeaderBoardAlgorithm(competition, results);
 
+        // Test Round 3 only.
+        competition = generateCompetition(games, 6, 9);
+        results = new Number[][]
+        {
+            { 1, 2, 1, 1, 0, 0, 3, 1,  2,     3.0, 3 },
+            { 2, 1, 1, 0, 1, 0, 1, 1,  0,     1.0, 1 },
+            { 2, 4, 1, 0, 1, 0, 1, 1,  0,     1.0, 1 },
+            { 2, 5, 1, 0, 1, 0, 1, 1,  0,     1.0, 1 },
+            { 2, 6, 1, 0, 1, 0, 1, 1,  0,     1.0, 1 },
+            { 6, 3, 1, 0, 0, 1, 1, 3, -2, 1.0/3.0, 0 },
+        };
         verifyLeaderBoardAlgorithm(competition, results);
 
         // Test Rounds 1 and 2 together.
@@ -85,9 +99,21 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             { 5, 4, 2, 1, 0, 1, 2, 2,  0,     1.0, 3 },
             { 6, 3, 2, 1, 0, 1, 1, 1,  0,     1.0, 3 },
         };
-
         verifyLeaderBoardAlgorithm(competition, results);
-    }
+
+        // Test Rounds 1, 2 and 3 together.
+        competition = generateCompetition(games, 0, 9);
+        results = new Number[][]
+        {
+            { 1, 2, 3, 2, 0, 1, 7, 5,  2,     1.4, 6 },
+            { 2, 5, 3, 1, 1, 1, 6, 6,  0,     1.0, 4 },
+            { 3, 1, 3, 1, 1, 1, 4, 4,  0,     1.0, 4 },
+            { 3, 6, 3, 1, 1, 1, 4, 4,  0,     1.0, 4 },
+            { 5, 4, 3, 1, 1, 1, 3, 3,  0,     1.0, 4 },
+            { 6, 3, 3, 1, 0, 2, 2, 4, -2,     0.5, 3 },
+        };
+        verifyLeaderBoardAlgorithm(competition, results);
+}
 
     /**
      * Verify the leaderboard generated from the given competition.
