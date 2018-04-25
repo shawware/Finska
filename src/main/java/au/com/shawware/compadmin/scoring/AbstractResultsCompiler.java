@@ -164,6 +164,7 @@ public abstract class AbstractResultsCompiler<
                 MutableInteger runningTotal = runningTotals.get(entrantID);
                 runningTotal.incrementBy(entrantResult.getResultItemValueAsInt(pointsItemName));
                 entrantResult.incrementResultItem(runningTotalItemName, runningTotal.getValue());
+                postCompile(entrantResult);
                 roundResult.add(entrantResult);
             }
             results.add(roundResult);
