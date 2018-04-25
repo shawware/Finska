@@ -30,7 +30,7 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class Round<MatchType extends Match> extends AbstractEntity
+public abstract class Round<MatchType extends Match> extends AbstractEntity
 {
     /** The round's number (as opposed to ID). */
     private final int mNumber;

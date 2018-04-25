@@ -22,7 +22,7 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class Match extends AbstractEntity
+public abstract class Match extends AbstractEntity
 {
     /** The match's number (as opposed to ID). */
     private final int mNumber;

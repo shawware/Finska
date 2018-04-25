@@ -17,7 +17,7 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class Entrant extends AbstractEntity
+public abstract class Entrant extends AbstractEntity
 {
     /** The entrant's name. */
     private final String mName;

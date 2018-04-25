@@ -30,7 +30,7 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class Competition<RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity
+public abstract class Competition<RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity
 {
     /** The competition's name. */
     private final String mName;
