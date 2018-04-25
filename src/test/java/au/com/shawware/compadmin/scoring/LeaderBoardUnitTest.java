@@ -126,26 +126,74 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     {
         IResultsCompiler compiler = new TestCompiler(competition);
         List<EntrantResult> actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
+        verifyResults(actualResults, expectedResults, true);
+    }
 
+    /**
+     * Verify the actual and expected results are equivalent.
+     * The expected results have been ranked. The actual results may or
+     * may not be ranked, depending on whether they have only been compiled
+     * or whether they have been ranked. If the former, they will be ordered
+     * by entrant ID. If the latter, by rank (obviously).
+     * 
+     * @param actualResults the actual results
+     * @param expectedResults the expected results
+     * @param ranked whether the actual results have been ranked
+     */
+    private void verifyResults(List<EntrantResult> actualResults, Number[][] expectedResults, boolean ranked)
+    {
         Assert.assertNotNull(actualResults);
         Assert.assertNotNull(expectedResults);
         Assert.assertEquals(expectedResults.length, actualResults.size());
 
-        for (int i = 0; i < expectedResults.length; i++)
+        Map<Integer, Integer> map = new HashMap<>();
+        if (!ranked)
+        {
+            // Build a map of where to find the expected result for each actual result.
+            for (EntrantResult actualResult : actualResults)
+            {
+                boolean found = false;
+                for (int i = 0; i < expectedResults.length; i++)
+                {
+                    if (actualResult.getEntrantID() == expectedResults[i][1].intValue())
+                    {
+                        map.put(actualResult.getEntrantID(), i);
+                        found = true;
+                    }
+                }
+                Assert.assertTrue(found);
+            }
+        }
+
+        for (int i = 0; i < actualResults.size(); i++)
         {
             String id = "Index: " + i;
             EntrantResult actualResult = actualResults.get(i);
-            Assert.assertEquals(id, expectedResults[i][ 0].intValue(),    actualResult.getRank());
-            Assert.assertEquals(id, expectedResults[i][ 1].intValue(),    actualResult.getEntrantID());
-            Assert.assertEquals(id, expectedResults[i][ 2].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.MATCHES));
-            Assert.assertEquals(id, expectedResults[i][ 3].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.WINS));
-            Assert.assertEquals(id, expectedResults[i][ 4].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.DRAWS));
-            Assert.assertEquals(id, expectedResults[i][ 5].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.LOSSES));
-            Assert.assertEquals(id, expectedResults[i][ 6].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.FOR));
-            Assert.assertEquals(id, expectedResults[i][ 7].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.AGAINST));
-            Assert.assertEquals(id, expectedResults[i][ 8].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.GOAL_DIFF));
-            Assert.assertEquals(id, expectedResults[i][ 9].doubleValue(), actualResult.getResultItemValueAsDouble(TestResultItems.GOAL_PERC), 0.0001);
-            Assert.assertEquals(id, expectedResults[i][10].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.POINTS));
+
+            int index, expectedRank;
+            if (ranked)
+            {
+                index = i;
+                expectedRank = expectedResults[i][0].intValue();
+            }
+            else
+            {
+                index = map.get(actualResult.getEntrantID());
+                expectedRank = 0;
+            }
+            Number[] expectedResult = expectedResults[index];
+
+            Assert.assertEquals(id, expectedRank,                     actualResult.getRank());
+            Assert.assertEquals(id, expectedResult[ 1].intValue(),    actualResult.getEntrantID());
+            Assert.assertEquals(id, expectedResult[ 2].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.MATCHES));
+            Assert.assertEquals(id, expectedResult[ 3].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.WINS));
+            Assert.assertEquals(id, expectedResult[ 4].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.DRAWS));
+            Assert.assertEquals(id, expectedResult[ 5].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.LOSSES));
+            Assert.assertEquals(id, expectedResult[ 6].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.FOR));
+            Assert.assertEquals(id, expectedResult[ 7].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.AGAINST));
+            Assert.assertEquals(id, expectedResult[ 8].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.GOAL_DIFF));
+            Assert.assertEquals(id, expectedResult[ 9].doubleValue(), actualResult.getResultItemValueAsDouble(TestResultItems.GOAL_PERC), 0.0001);
+            Assert.assertEquals(id, expectedResult[10].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.POINTS));
         }
     }
 
