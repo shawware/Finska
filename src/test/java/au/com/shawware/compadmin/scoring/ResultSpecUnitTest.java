@@ -32,16 +32,25 @@ public class ResultSpecUnitTest extends AbstractUnitTest
 
         spec.addItem("alpha");
         Assert.assertEquals(1, spec.getItemNames().size());
+        Assert.assertEquals(true, spec.hasItem("alpha"));
+        Assert.assertEquals(false, spec.hasItem("beta"));
+        Assert.assertEquals(false, spec.hasItem("gamma"));
         Assert.assertEquals(true, spec.isInteger("alpha"));
         Assert.assertEquals(false, spec.isFloatingPoint("alpha"));
 
         spec.addItem("gamma", false);
         Assert.assertEquals(2, spec.getItemNames().size());
+        Assert.assertEquals(true, spec.hasItem("alpha"));
+        Assert.assertEquals(false, spec.hasItem("beta"));
+        Assert.assertEquals(true, spec.hasItem("gamma"));
         Assert.assertEquals(false, spec.isInteger("gamma"));
         Assert.assertEquals(true, spec.isFloatingPoint("gamma"));
 
         spec.addItem("beta", true);
         Assert.assertEquals(3, spec.getItemNames().size());
+        Assert.assertEquals(true, spec.hasItem("alpha"));
+        Assert.assertEquals(true, spec.hasItem("beta"));
+        Assert.assertEquals(true, spec.hasItem("gamma"));
         Assert.assertEquals(true, spec.isInteger("beta"));
         Assert.assertEquals(false, spec.isFloatingPoint("beta"));
 
@@ -61,6 +70,9 @@ public class ResultSpecUnitTest extends AbstractUnitTest
     public void testValidation()
     {
         ResultSpec spec = new ResultSpec();
+
+        verifyExceptionThrown(() -> spec.hasItem(null),         IllegalArgumentException.class, "Empty item name");
+        verifyExceptionThrown(() -> spec.hasItem(""),           IllegalArgumentException.class, "Empty item name");
 
         verifyExceptionThrown(() -> spec.isInteger(null),       IllegalArgumentException.class, "Empty item name");
         verifyExceptionThrown(() -> spec.isInteger(""),         IllegalArgumentException.class, "Empty item name");

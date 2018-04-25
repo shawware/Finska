@@ -60,6 +60,19 @@ public class ResultSpec
     }
 
     /**
+     * Whether this specification has the given item.
+     * 
+     * @param name the item name
+     *
+     * @return Whether this specification has the given item.
+     */
+    public boolean hasItem(String name)
+    {
+        verifyNotEmpty(name);
+        return mSpec.containsKey(name);
+    }
+
+    /**
      * @return The set of items names in the order they were added.
      */
     public Set<String> getItemNames()
