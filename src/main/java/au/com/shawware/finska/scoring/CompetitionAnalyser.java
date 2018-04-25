@@ -79,11 +79,14 @@ public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetiti
     @Override
     protected void postCompile(EntrantResult result)
     {
-        double roundsPlayed = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
-        if (roundsPlayed > 0.0)
+        if (result.getResultSpecification().hasItem(ResultItem.POINTS_PER_ROUND.toString()))
         {
-            result.setResultItem(ResultItem.POINTS_PER_ROUND.toString(),
-                    result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / roundsPlayed);
+            double roundsPlayed = result.getResultItemValueAsInt(ResultItem.ROUNDS.toString());
+            if (roundsPlayed > 0.0)
+            {
+                result.setResultItem(ResultItem.POINTS_PER_ROUND.toString(),
+                        result.getResultItemValueAsInt(ResultItem.POINTS.toString()) / roundsPlayed);
+            }
         }
     }
 
