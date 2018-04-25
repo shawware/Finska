@@ -8,7 +8,9 @@
 package au.com.shawware.compadmin.scoring;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generates a leader board based using the given results compiler.
@@ -26,27 +28,37 @@ public class LeaderBoardGenerator
      */
     public static List<EntrantResult> generateLeaderBoard(IResultsCompiler compiler)
     {
-        List<EntrantResult> results = compiler.compileCurrentResults();
+        List<EntrantResult> currentResults = compiler.compileCurrentResults();
 
-        results.sort(compiler);
+        if (currentResults.size() > 0)
+        {
+            currentResults.sort(compiler);
 
-        rankResults(results, compiler);
+            rankResults(currentResults, compiler);
 
-        /*
-         * If two (or more) teams have the same rank, we sort them by entrant ID
-         * in ascending order. This is purely so the sort order is deterministic.
-         * This will help with testing amongst other things. 
-         */
-        results.sort((EntrantResult result1, EntrantResult result2) -> {
-            int rc = Integer.compare(result1.getRank(), result2.getRank());
-            if (rc == 0)
+            /*
+             * If two (or more) teams have the same rank, we sort them by entrant ID
+             * in ascending order. This is purely so the sort order is deterministic.
+             * This will help with testing amongst other things. 
+             */
+            currentResults.sort((EntrantResult result1, EntrantResult result2) -> {
+                int rc = Integer.compare(result1.getRank(), result2.getRank());
+                if (rc == 0)
+                {
+                    rc = Integer.compare(result1.getEntrantID(), result2.getEntrantID());
+                }
+                return rc;
+            });
+
+            List<EntrantResult> previousResults = compiler.compilePreviousResults();
+            if (previousResults.size() > 0)
             {
-                rc = Integer.compare(result1.getEntrantID(), result2.getEntrantID());
+                previousResults.sort(compiler);
+                rankResults(previousResults, compiler);
+                addPreviousRank(currentResults, previousResults);
             }
-            return rc;
-        });
-
-        return results;
+        }
+        return currentResults;
     }
 
     /**
@@ -72,5 +84,22 @@ public class LeaderBoardGenerator
             result.setRank(rank);
             previousResult = result;
         }
+    }
+
+    /**
+     * Adds the previous rank to the current results.
+     * 
+     * @param currentResults the current results (sorted and ranked)
+     * @param previousResults the previous results (sorted and ranked)
+     */
+    @SuppressWarnings("boxing")
+    private static void addPreviousRank(List<EntrantResult> currentResults, List<EntrantResult> previousResults)
+    {
+        Map<Integer, EntrantResult> previousResultsMap = new HashMap<>();
+        previousResults.forEach(previousResult -> previousResultsMap.put(previousResult.getEntrantID(), previousResult));
+        currentResults.forEach(currentResult -> {
+            EntrantResult previousResult = previousResultsMap.get(currentResult.getEntrantID());
+            currentResult.setPreviousRank(previousResult.getRank());
+        });
     }
 }

@@ -72,24 +72,24 @@ public class AbstractScoringUnitTest extends AbstractUnitTest
     /**
      * Build a competition from the specified slice of the given match data.
      * 
-     * @param games the match data
+     * @param matches the match data
      * @param start the start of the slice (inclusive)
      * @param end the end of the slice (exclusive)
      *
      * @return The corresponding competition.
      */
-    protected final TestCompetition generateCompetition(int[][] games, int start, int end)
+    protected final TestCompetition generateCompetition(int[][] matches, int start, int end)
     {
         TestCompetition competition = new TestCompetition(1, "Test", LocalDate.of(2018, 3, 9));
         TestRound round = null;
         for (int i = start; i < end; i++)
         {
-            if ((round == null) || (games[i][0] != games[i-1][0]))
+            if ((round == null) || (matches[i][0] != matches[i-1][0]))
             {
-                round = new TestRound(games[i][0], games[i][0], competition.getStartDate());
+                round = new TestRound(matches[i][0], matches[i][0], competition.getStartDate());
                 competition.addRound(round);
             }
-            TestMatch match = new TestMatch(i + 1, i + 1, competition.getStartDate(), games[i][1], games[i][2], games[i][3], games[i][4]);
+            TestMatch match = new TestMatch(i + 1, i + 1, competition.getStartDate(), matches[i][1], matches[i][2], matches[i][3], matches[i][4]);
             round.addMatch(match);
         }
         return competition;

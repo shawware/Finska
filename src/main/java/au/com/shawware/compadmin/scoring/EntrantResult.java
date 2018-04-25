@@ -33,6 +33,8 @@ public class EntrantResult
     private final Map<String, Number> mItems;
     /** The current ranking (if assigned) for this entrant. */
     private int mRank;
+    /** The previous ranking (if assigned) for this entrant. */
+    private int mPreviousRank;
 
     /**
      * Creates a new, empty result for a competition entrant.
@@ -76,19 +78,19 @@ public class EntrantResult
     }
 
     /**
-     * @return This entrant's current rank.
-     */
-    public int getRank()
-    {
-        return mRank;
-    }
-
-    /**
      * @return This entrant's result specification.
      */
     public ResultSpec getResultSpecification()
     {
         return mSpec;
+    }
+
+    /**
+     * @return This entrant's current rank.
+     */
+    public int getRank()
+    {
+        return mRank;
     }
 
     /**
@@ -99,6 +101,32 @@ public class EntrantResult
     public void setRank(int rank)
     {
         mRank = rank;
+    }
+
+    /**
+     * @return This entrant's previous rank.
+     */
+    public int getPreviousRank()
+    {
+        return mPreviousRank;
+    }
+
+    /**
+     * Sets this entrant's previous rank.
+     * 
+     * @param rank the new rank
+     */
+    public void setPreviousRank(int rank)
+    {
+        mPreviousRank = rank;
+    }
+
+    /**
+     * @return This entrant's change in rank.
+     */
+    public int getRankDelta()
+    {
+        return mPreviousRank - mRank;
     }
 
     /**

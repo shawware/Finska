@@ -33,8 +33,11 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     @Test
     public void testLeaderBoardAlgorithm()
     {
-        // Test fixture with all rounds and matches.
-        final int[][] games = new int[][]
+        /*
+         * Test fixture with all rounds and matches.
+         * Format: round# and match args.
+         */
+        final int[][] matches = new int[][]
         {
             { 1, 1, 2, 2, 1 },
             { 1, 3, 4, 1, 0 },
@@ -50,8 +53,15 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 
         TestCompetition competition;
 
+        /*
+         * Result format: rank, entrant ID, results for items.
+         * If (#rounds == 1), there is one additional column
+         * with the running total. If (#rounds > 1), there are
+         * two additional columns with the previous rank and
+         * the rank delta.
+         */
         // Test Round 1 only.
-        competition = generateCompetition(games, 0, 3);
+        competition = generateCompetition(matches, 0, 3);
         Number[][] round1Results = new Number[][]
         {
             { 1, 5, 1, 1, 0, 0, 3, 2,  1,     1.5, 3, 3 },
@@ -64,7 +74,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 1, round1Results, null, null);
 
         // Test Round 2 only.
-        competition = generateCompetition(games, 3, 6);
+        competition = generateCompetition(matches, 3, 6);
         Number[][] round2Results = new Number[][]
         {
             { 1, 2, 1, 1, 0, 0, 3, 2,  1,     1.5, 3, 3 },
@@ -77,7 +87,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 1, round2Results, null, null);
 
         // Test Round 3 only.
-        competition = generateCompetition(games, 6, 9);
+        competition = generateCompetition(matches, 6, 9);
         Number[][] round3Results = new Number[][]
         {
             { 1, 2, 1, 1, 0, 0, 3, 1,  2,     3.0, 3, 6 },
@@ -90,28 +100,28 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 1, round3Results, null, null);
 
         // Test Rounds 1 and 2 together.
-        competition = generateCompetition(games, 0, 6);
+        competition = generateCompetition(matches, 0, 6);
         Number[][] rounds1and2Results = new Number[][]
         {
-            { 1, 5, 2, 1, 0, 1, 5, 5,  0,     1.0, 3 },
-            { 2, 2, 2, 1, 0, 1, 4, 4,  0,     1.0, 3 },
-            { 3, 1, 2, 1, 0, 1, 3, 3,  0,     1.0, 3 },
-            { 3, 6, 2, 1, 0, 1, 3, 3,  0,     1.0, 3 },
-            { 5, 4, 2, 1, 0, 1, 2, 2,  0,     1.0, 3 },
-            { 6, 3, 2, 1, 0, 1, 1, 1,  0,     1.0, 3 },
+            { 1, 5, 2, 1, 0, 1, 5, 5,  0,     1.0, 3, 1,  0 },
+            { 2, 2, 2, 1, 0, 1, 4, 4,  0,     1.0, 3, 5,  3 },
+            { 3, 1, 2, 1, 0, 1, 3, 3,  0,     1.0, 3, 2, -1 },
+            { 3, 6, 2, 1, 0, 1, 3, 3,  0,     1.0, 3, 4,  1 },
+            { 5, 4, 2, 1, 0, 1, 2, 2,  0,     1.0, 3, 6,  1 },
+            { 6, 3, 2, 1, 0, 1, 1, 1,  0,     1.0, 3, 3, -3 },
         };
         verifyLeaderBoardAlgorithm(competition, 2, rounds1and2Results, round1Results, null);
 
         // Test Rounds 1, 2 and 3 together.
-        competition = generateCompetition(games, 0, 9);
+        competition = generateCompetition(matches, 0, 9);
         Number[][] rounds1to3results = new Number[][]
         {
-            { 1, 2, 3, 2, 0, 1, 7, 5,  2,     1.4, 6 },
-            { 2, 5, 3, 1, 1, 1, 6, 6,  0,     1.0, 4 },
-            { 3, 1, 3, 1, 1, 1, 4, 4,  0,     1.0, 4 },
-            { 3, 6, 3, 1, 1, 1, 4, 4,  0,     1.0, 4 },
-            { 5, 4, 3, 1, 1, 1, 3, 3,  0,     1.0, 4 },
-            { 6, 3, 3, 1, 0, 2, 2, 4, -2,     0.5, 3 },
+            { 1, 2, 3, 2, 0, 1, 7, 5,  2,     1.4, 6, 2,  1 },
+            { 2, 5, 3, 1, 1, 1, 6, 6,  0,     1.0, 4, 1, -1 },
+            { 3, 1, 3, 1, 1, 1, 4, 4,  0,     1.0, 4, 3,  0 },
+            { 3, 6, 3, 1, 1, 1, 4, 4,  0,     1.0, 4, 3,  0 },
+            { 5, 4, 3, 1, 1, 1, 3, 3,  0,     1.0, 4, 5,  0 },
+            { 6, 3, 3, 1, 0, 2, 2, 4, -2,     0.5, 3, 6,  0 },
         };
         verifyLeaderBoardAlgorithm(competition, 3, rounds1to3results, rounds1and2Results, round1Results);
 
@@ -135,13 +145,13 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         IResultsCompiler compiler = new TestCompiler(competition);
 
         actualResults = compiler.compileCurrentResults();
-        verifyResults(actualResults, expectedResults, false, false);
+        verifyResults(actualResults, expectedResults, false, false, false);
 
         actualResults = compiler.compileResults(rounds);
-        verifyResults(actualResults, expectedResults, false, false);
+        verifyResults(actualResults, expectedResults, false, false, false);
 
         actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
-        verifyResults(actualResults, expectedResults, true, false);
+        verifyResults(actualResults, expectedResults, true, (rounds > 1), false);
 
        if (rounds == 1)
        {
@@ -152,16 +162,16 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
        if (rounds > 1)
        {
            actualResults = compiler.compilePreviousResults();
-           verifyResults(actualResults, expectedResults2, false, false);
+           verifyResults(actualResults, expectedResults2, false, false, false);
            actualResults = compiler.compileResults(rounds - 1);
-           verifyResults(actualResults, expectedResults2, false, false);
+           verifyResults(actualResults, expectedResults2, false, false, false);
        }
        if (rounds > 2)
        {
            actualResults = compiler.compilePreviousResults();
-           verifyResults(actualResults, expectedResults2, false, false);
+           verifyResults(actualResults, expectedResults2, false, false, false);
            actualResults = compiler.compileResults(rounds - 2);
-           verifyResults(actualResults, expectedResults3, false, false);
+           verifyResults(actualResults, expectedResults3, false, false, false);
        }
     }
 
@@ -183,9 +193,9 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         Assert.assertNotNull(actualResults);
         Assert.assertEquals(3, actualResults.size());
 
-        verifyResults(actualResults.get(0), round1Results, false, true);
-        verifyResults(actualResults.get(1), round2Results, false, true);
-        verifyResults(actualResults.get(2), round3Results, false, true);
+        verifyResults(actualResults.get(0), round1Results, false, false, true);
+        verifyResults(actualResults.get(1), round2Results, false, false, true);
+        verifyResults(actualResults.get(2), round3Results, false, false, true);
     }
 
     /**
@@ -198,9 +208,11 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
      * @param actualResults the actual results
      * @param expectedResults the expected results
      * @param ranked whether the actual results have been ranked
+     * @param hasPreviousRank whether the actual results have a previos rank
      * @param hasTotal whether the results contain a running total
      */
-    private void verifyResults(List<EntrantResult> actualResults, Number[][] expectedResults, boolean ranked, boolean hasTotal)
+    private void verifyResults(List<EntrantResult> actualResults, Number[][] expectedResults,
+                               boolean ranked, boolean hasPreviousRank, boolean hasTotal)
     {
         Assert.assertNotNull(actualResults);
         Assert.assertNotNull(expectedResults);
@@ -256,7 +268,13 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
             Assert.assertEquals(id, expectedResult[10].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.POINTS));
             if (hasTotal)
             {
-                Assert.assertEquals(id, expectedResult[11].intValue(),    actualResult.getResultItemValueAsInt(TestResultItems.TOTAL));
+                Assert.assertEquals(id, expectedResult[11].intValue(), actualResult.getResultItemValueAsInt(TestResultItems.TOTAL));
+                Assert.assertEquals(0, actualResult.getPreviousRank());
+            }
+            if (hasPreviousRank)
+            {
+                Assert.assertEquals(id, expectedResult[11].intValue(), actualResult.getPreviousRank());
+                Assert.assertEquals(id, expectedResult[12].intValue(), actualResult.getRankDelta());
             }
         }
     }
