@@ -21,6 +21,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 
 import au.com.shawware.util.StringUtil;
+import au.com.shawware.util.persistence.AbstractEntity;
 
 /**
  * Models a competition round as a set of matches.

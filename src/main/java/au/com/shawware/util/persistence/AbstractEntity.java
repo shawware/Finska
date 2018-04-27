@@ -5,10 +5,10 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-package au.com.shawware.compadmin.entity;
+package au.com.shawware.util.persistence;
 
 /**
- * The base class for all entities.
+ * The base class for all persisted entities.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */

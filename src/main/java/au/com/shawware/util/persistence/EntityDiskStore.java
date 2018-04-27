@@ -5,7 +5,7 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-package au.com.shawware.finska.persistence;
+package au.com.shawware.util.persistence;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.util.StringUtil;
 
 /**

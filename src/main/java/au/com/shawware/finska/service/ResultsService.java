@@ -21,9 +21,9 @@ import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.IEntityLoader;
-import au.com.shawware.finska.persistence.PersistenceException;
 import au.com.shawware.finska.scoring.CompetitionAnalyser;
 import au.com.shawware.finska.scoring.ScoringSystem;
+import au.com.shawware.util.persistence.PersistenceException;
 
 /**
  * Provides results-based services.
@@ -130,6 +130,23 @@ public class ResultsService
      * @return The list of rounds in time order.
      */
     public List<FinskaRound> getRounds()
+    {
+        List<FinskaRound> rounds = new ArrayList<>();
+        for (Integer id : mCompetition.getRoundIds())
+        {
+            rounds.add(mCompetition.getRound(id));
+        }
+        return rounds;
+    }
+
+    /**
+     * Retrieves a specific round for the current competition.
+     * 
+     * @param round the round number
+     *
+     * @return The round.
+     */
+    public List<FinskaRound> getRound(int round)
     {
         List<FinskaRound> rounds = new ArrayList<>();
         for (Integer id : mCompetition.getRoundIds())

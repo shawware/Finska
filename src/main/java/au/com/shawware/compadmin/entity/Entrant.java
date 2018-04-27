@@ -9,8 +9,8 @@ package au.com.shawware.compadmin.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.util.StringUtil;
+import au.com.shawware.util.persistence.AbstractEntity;
 
 /**
  * Models a competition entrant.

@@ -15,6 +15,7 @@ import java.util.Map;
 import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.ResultSpec;
+import au.com.shawware.util.html.HtmlGenerator;
 
 /**
  * Converts entities to HTML.

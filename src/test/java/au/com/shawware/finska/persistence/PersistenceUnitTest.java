@@ -19,11 +19,14 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
+import au.com.shawware.util.persistence.AbstractEntity;
+import au.com.shawware.util.persistence.IEntityStore;
+import au.com.shawware.util.persistence.PersistenceException;
+import au.com.shawware.util.persistence.PersistenceFactory;
 
 /**
  * Exercise the persistence layer.

@@ -5,26 +5,25 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-package au.com.shawware.finska.persistence;
-
-import au.com.shawware.util.SwException;
+package au.com.shawware.util.persistence;
 
 /**
- * Thrown when the persistence layer encounters an error.
+ * Unchecked exception for persistence errors.
+ * Exists to supports Java streams, which struggle with checked exceptions.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class PersistenceException extends SwException
+public class UncheckedPersistenceException extends RuntimeException
 {
     /** The ID for serialisation. */
-    private static final long serialVersionUID = -7730452928436012624L;
+    private static final long serialVersionUID = -4698625682598799065L;
 
     /**
      * Creates a new exception.
      * 
      * @param message the error message
      */
-    public PersistenceException(String message)
+    public UncheckedPersistenceException(String message)
     {
         super(message);
     }
@@ -35,7 +34,7 @@ public class PersistenceException extends SwException
      * @param message the error message
      * @param cause the cause of the error
      */
-    public PersistenceException(String message, Throwable cause)
+    public UncheckedPersistenceException(String message, Throwable cause)
     {
         super(message, cause);
     }

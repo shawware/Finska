@@ -13,13 +13,16 @@ import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-import au.com.shawware.compadmin.entity.AbstractEntity;
 import au.com.shawware.compadmin.entity.Competition;
 import au.com.shawware.compadmin.entity.Round;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
+import au.com.shawware.util.persistence.AbstractEntity;
+import au.com.shawware.util.persistence.IEntityStore;
+import au.com.shawware.util.persistence.PersistenceException;
+import au.com.shawware.util.persistence.PersistenceFactory;
 
 /**
  * Loads players and competitions from a store and makes them available.

@@ -11,6 +11,7 @@ import java.util.Map;
 
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.Player;
+import au.com.shawware.util.persistence.PersistenceException;
 
 /**
  * Defines the persistence API for loading entities.

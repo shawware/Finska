@@ -5,11 +5,9 @@
  * http://www.gnu.org/copyleft/gpl.html
  */
 
-package au.com.shawware.finska.persistence;
+package au.com.shawware.util.persistence;
 
 import java.util.Map;
-
-import au.com.shawware.compadmin.entity.AbstractEntity;
 
 /**
  * The persistence API for all entities.

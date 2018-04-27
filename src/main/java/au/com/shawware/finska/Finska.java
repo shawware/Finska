@@ -21,9 +21,9 @@ import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.EntityLoader;
 import au.com.shawware.finska.persistence.IEntityLoader;
-import au.com.shawware.finska.persistence.PersistenceFactory;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.finska.service.ResultsService;
+import au.com.shawware.util.persistence.PersistenceFactory;
 
 /**
  * Simple Finska program to generate output from specified competition data.

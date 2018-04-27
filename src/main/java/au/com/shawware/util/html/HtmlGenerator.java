@@ -5,7 +5,7 @@
  * https://www.gnu.org/copyleft/gpl.html
  */
 
-package au.com.shawware.compadmin.converter;
+package au.com.shawware.util.html;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -14,7 +14,7 @@ import java.util.Deque;
 import java.util.StringJoiner;
 
 /**
- * HTML utility class.
+ * HTML utility class for producing HTML.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
