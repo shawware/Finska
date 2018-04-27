@@ -150,6 +150,9 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         actualResults = compiler.compileResults(rounds);
         verifyResults(actualResults, expectedResults, false, false, false);
 
+        actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds);
+        verifyResults(actualResults, expectedResults, true, (rounds > 1), false);
+
         actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
         verifyResults(actualResults, expectedResults, true, (rounds > 1), false);
 
@@ -159,19 +162,25 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
            Assert.assertNotNull(actualResults);
            Assert.assertEquals(0, actualResults.size());
        }
-       if (rounds > 1)
+       else if (rounds == 2)
        {
            actualResults = compiler.compilePreviousResults();
            verifyResults(actualResults, expectedResults2, false, false, false);
            actualResults = compiler.compileResults(rounds - 1);
            verifyResults(actualResults, expectedResults2, false, false, false);
+           actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 1);
+           verifyResults(actualResults, expectedResults2, true, false, false);
        }
-       if (rounds > 2)
+       else // (rounds == 3)
        {
            actualResults = compiler.compilePreviousResults();
            verifyResults(actualResults, expectedResults2, false, false, false);
            actualResults = compiler.compileResults(rounds - 2);
            verifyResults(actualResults, expectedResults3, false, false, false);
+           actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 1);
+           verifyResults(actualResults, expectedResults2, true, true, false);
+           actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 2);
+           verifyResults(actualResults, expectedResults3, true, false, false);
        }
     }
 
@@ -302,7 +311,11 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         Assert.assertEquals(0, results.size());
 
         verifyExceptionThrown(() -> compiler.compileResults(-1), IllegalArgumentException.class, "Invalid number of rounds: -1");
-        verifyExceptionThrown(() -> compiler.compileResults(0), IllegalArgumentException.class, "Invalid number of rounds: 0");
-        verifyExceptionThrown(() -> compiler.compileResults(1), IllegalArgumentException.class, "Invalid number of rounds: 1");
+        verifyExceptionThrown(() -> compiler.compileResults(0),  IllegalArgumentException.class, "Invalid number of rounds: 0");
+        verifyExceptionThrown(() -> compiler.compileResults(1),  IllegalArgumentException.class, "Invalid number of rounds: 1");
+
+        verifyExceptionThrown(() -> LeaderBoardGenerator.generateLeaderBoard(compiler, -1), IllegalArgumentException.class, "Invalid number of rounds: -1");
+        verifyExceptionThrown(() -> LeaderBoardGenerator.generateLeaderBoard(compiler,  0), IllegalArgumentException.class, "Invalid number of rounds: 0");
+        verifyExceptionThrown(() -> LeaderBoardGenerator.generateLeaderBoard(compiler,  1), IllegalArgumentException.class, "Invalid number of rounds: 1");
     }
 }

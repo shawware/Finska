@@ -7,6 +7,7 @@
 
 package au.com.shawware.compadmin.scoring;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,8 @@ import java.util.Map;
 public class LeaderBoardGenerator
 {
     /**
-     * Generates a leaderboard using the given compiler.
+     * Generates a leader board using the given compiler for all rounds
+     * of a competition.
      * 
      * @param compiler the results compiler to use
      * 
@@ -32,9 +34,51 @@ public class LeaderBoardGenerator
 
         if (currentResults.size() > 0)
         {
-            currentResults.sort(compiler);
+            List<EntrantResult> previousResults = compiler.compilePreviousResults();
+            postProcessResults(currentResults, previousResults, compiler);
+        }
+        return currentResults;
+    }
 
-            rankResults(currentResults, compiler);
+    /**
+     * Generates a leader board using the given compiler for the given
+     * number of rounds of a competition.
+     * 
+     * @param compiler the results compiler to use
+     * @param rounds the number of rounds
+     * 
+     * @return The sorted, ranked leader board.
+     *
+     * @throws IllegalArgumentException invalid number of rounds 
+     */
+    public static List<EntrantResult> generateLeaderBoard(IResultsCompiler compiler, int rounds)
+    {
+        List<EntrantResult> currentResults = compiler.compileResults(rounds);
+
+        if (currentResults.size() > 0)
+        {
+            List<EntrantResult> previousResults = (rounds > 1) ?
+                    compiler.compileResults(rounds - 1) : new ArrayList<>();
+            postProcessResults(currentResults, previousResults, compiler);
+        }
+        return currentResults;
+    }
+
+    /**
+     * Post-processes the compiled results. This includes sorting, ranking
+     * and comparison with the results up to the previous round.
+     * 
+     * @param currentResults the current results
+     * @param previousResults the previous results (can be empty)
+     * @param comparator the result comparator
+     */
+    private static void postProcessResults(List<EntrantResult> currentResults, List<EntrantResult> previousResults, Comparator<EntrantResult> comparator)
+    {
+        if (currentResults.size() > 0)
+        {
+            currentResults.sort(comparator);
+
+            rankResults(currentResults, comparator);
 
             /*
              * If two (or more) teams have the same rank, we sort them by entrant ID
@@ -50,15 +94,13 @@ public class LeaderBoardGenerator
                 return rc;
             });
 
-            List<EntrantResult> previousResults = compiler.compilePreviousResults();
             if (previousResults.size() > 0)
             {
-                previousResults.sort(compiler);
-                rankResults(previousResults, compiler);
+                previousResults.sort(comparator);
+                rankResults(previousResults, comparator);
                 addPreviousRank(currentResults, previousResults);
             }
         }
-        return currentResults;
     }
 
     /**

@@ -75,14 +75,33 @@ public class ResultsService
 
     /**
      * Retrieve the competition data and calculate the latest leader board.
+     * 
      * The result is never <code>null</code> but can be empty if there is
-     * an error or no data is found.
+     * no data is found.
      * 
      * @return The calculated leader board.
      */
     public List<EntrantResult> getLeaderBoard()
     {
         return LeaderBoardGenerator.generateLeaderBoard(mCompiler);
+    }
+
+    /**
+     * Retrieve the competition data and calculate the latest leader board
+     * for the given number of rounds.
+     * 
+     * The result is never <code>null</code> but can be empty if there is
+     * no data found.
+     * 
+     * @param rounds the number of rounds
+     * 
+     * @return The calculated leader board.
+     *
+     * @throws IllegalArgumentException invalid number of rounds 
+     */
+    public List<EntrantResult> getLeaderBoard(int rounds)
+    {
+        return LeaderBoardGenerator.generateLeaderBoard(mCompiler, rounds);
     }
 
     /**
