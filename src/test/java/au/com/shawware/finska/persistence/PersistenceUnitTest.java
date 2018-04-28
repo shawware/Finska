@@ -7,14 +7,11 @@
 
 package au.com.shawware.finska.persistence;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.Map;
 
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,7 +20,7 @@ import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.util.persistence.AbstractEntity;
+import au.com.shawware.util.persistence.AbstractPersistenceUnitTest;
 import au.com.shawware.util.persistence.IEntityStore;
 import au.com.shawware.util.persistence.PersistenceException;
 import au.com.shawware.util.persistence.PersistenceFactory;
@@ -33,11 +30,9 @@ import au.com.shawware.util.persistence.PersistenceFactory;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings({"nls", "static-method", "boxing" })
-public class PersistenceUnitTest
+@SuppressWarnings({"nls", "boxing" })
+public class PersistenceUnitTest extends AbstractPersistenceUnitTest
 {
-    /** Test root directory for persisted entities. */
-    private static final String PERSISTENCE_ROOT = "/tmp/finska";
     /** Persisted match sub-directory. */
     private static final String MATCH_DIR  = "match";
     /** Persisted round sub-directory. */
@@ -56,24 +51,10 @@ public class PersistenceUnitTest
     public static void setup()
         throws IOException
     {
-        Path root = new File(PERSISTENCE_ROOT).toPath();
-        Files.createDirectories(root);
-        Files.createDirectory(root.resolve(PLAYER_DIR));
-        Files.createDirectory(root.resolve(COMP_DIR));
-        Files.createDirectory(root.resolve(ROUND_DIR));
-        Files.createDirectory(root.resolve(MATCH_DIR));
-    }
-
-    /**
-     * Cleanup after all tests.
-     * 
-     * @throws IOException file error
-     */
-    @AfterClass
-    public static void tearDown()
-        throws IOException
-    {
-        Runtime.getRuntime().exec("rm -r " + PERSISTENCE_ROOT);
+        Files.createDirectory(sRoot.resolve(PLAYER_DIR));
+        Files.createDirectory(sRoot.resolve(COMP_DIR));
+        Files.createDirectory(sRoot.resolve(ROUND_DIR));
+        Files.createDirectory(sRoot.resolve(MATCH_DIR));
     }
 
     /**
@@ -82,7 +63,7 @@ public class PersistenceUnitTest
      * @throws PersistenceException persistence error
      */
     @Test
-    public void basicChecks()
+    public void entityChecks()
         throws PersistenceException
     {
         PersistenceFactory factory = PersistenceFactory.getFactory(PERSISTENCE_ROOT);
@@ -120,43 +101,5 @@ public class PersistenceUnitTest
         Assert.assertEquals(m1.toString(), m2.toString());
         Player p2 = r2.getPlayer(p1.getId());
         Assert.assertEquals(p1.toString(), p2.toString());
-    }
-
-    /**
-     * Verifies the basic storage and retrieval of an entity.
-     * 
-     * @param store the entity store to use
-     * @param instance an entity instance
-     * 
-     * @throws PersistenceException persistence error
-     */
-    private <T extends AbstractEntity> void verifyBasicStorage(IEntityStore<T> store, T instance)
-        throws PersistenceException
-    {
-        Map<Integer, T> ts = store.getAll();
-        Assert.assertNotNull(ts);
-        Assert.assertEquals(0, ts.size());
-
-        T t1 = store.create(instance);
-        Assert.assertNotNull(t1);
-        T t2 = store.get(t1.getId());
-        Assert.assertNotNull(t2);
-        Assert.assertEquals(t1.toString(), t2.toString());
-
-        verifyEntityMap(store.getAll(), t1);
-    }
-
-    /**
-     * Verifies the given entity map contains the given entity instance.
-     * 
-     * @param map the map to verify
-     * @param instance the instance to verify
-     */
-    private <T extends AbstractEntity> void verifyEntityMap(Map<Integer, T> map, T instance)
-    {
-        Assert.assertNotNull(map);
-        Assert.assertEquals(1, map.size());
-        Assert.assertEquals(true, map.containsKey(instance.getId()));
-        Assert.assertEquals(map.get(instance.getId()).toString(), instance.toString());
     }
 }
