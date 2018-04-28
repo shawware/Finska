@@ -16,7 +16,7 @@ import java.util.Map;
  * 
  * @param <Entity> the type of entity being persisted
  */
-public interface IEntityStore<Entity extends AbstractEntity>
+public interface IEntityStore<Entity extends AbstractEntity<?>>
 {
     /**
      * Retrieves all the entities in the store.

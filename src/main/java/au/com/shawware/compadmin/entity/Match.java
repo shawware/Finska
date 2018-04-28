@@ -23,10 +23,8 @@ import au.com.shawware.util.persistence.AbstractEntity;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class Match extends AbstractEntity
+public abstract class Match extends AbstractEntity<Integer>
 {
-    /** The match's number (as opposed to ID). */
-    private final int mNumber;
     /** The date the match was held. */
     private final LocalDate mMatchDate;
 
@@ -37,22 +35,14 @@ public abstract class Match extends AbstractEntity
      * @param number the match's number
      * @param matchDate the date the match was held
      */
+    @SuppressWarnings("boxing")
     public Match(@JsonProperty("id") int id,
-                 @JsonProperty("number") int number,
+                 @JsonProperty("key") int number,
                  @JsonProperty("matchDate") LocalDate matchDate)
      {
-        super(id);
-        mNumber    = number;
+        super(id, number);
         mMatchDate = matchDate;
      }
-
-    /**
-     * @return This match's number.
-     */
-    public int getNumber()
-    {
-        return mNumber;
-    }
 
     /**
      * @return The date this match was played.
@@ -68,6 +58,6 @@ public abstract class Match extends AbstractEntity
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mNumber, mMatchDate);
+        return StringUtil.toString(getId(), getKey(), mMatchDate);
     }
 }

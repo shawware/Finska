@@ -31,10 +31,8 @@ import au.com.shawware.util.persistence.AbstractEntity;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class Round<MatchType extends Match> extends AbstractEntity
+public abstract class Round<MatchType extends Match> extends AbstractEntity<Integer>
 {
-    /** The round's number (as opposed to ID). */
-    private final int mNumber;
     /** The date the round was held. */
     private final LocalDate mRoundDate;
     /** The matches that make up this round. */
@@ -49,15 +47,15 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity
      * @param number the round's number
      * @param roundDate the date the round was held
      */
+    @SuppressWarnings("boxing")
     public Round(@JsonProperty("id") int id,
-                 @JsonProperty("number") int number,
+                 @JsonProperty("key") int number,
                  @JsonProperty("roundDate") LocalDate roundDate)
      {
-        super(id);
-        mNumber     = number;
-        mRoundDate  = roundDate;
-        mMatches    = new HashMap<>();
-        mMatchIds   = new HashSet<>();
+        super(id, number);
+        mRoundDate = roundDate;
+        mMatches   = new HashMap<>();
+        mMatchIds  = new HashSet<>();
      }
 
     /**
@@ -69,14 +67,6 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity
     public Round(int round, LocalDate roundDate)
     {
         this(DEFAULT_ID, round, roundDate);
-    }
-
-    /**
-     * @return This round's number.
-     */
-    public int getNumber()
-    {
-        return mNumber;
     }
 
     /**
@@ -155,6 +145,6 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mNumber, mRoundDate, mMatchIds);
+        return StringUtil.toString(getId(), getKey(), mRoundDate, mMatchIds);
     }
 }

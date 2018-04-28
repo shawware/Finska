@@ -84,6 +84,6 @@ public class TestMatch extends Match
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), getNumber(), getMatchDate(), mTeam1, mTeam2, mScore1, mScore2);
+        return StringUtil.toString(getId(), getKey(), getMatchDate(), mTeam1, mTeam2, mScore1, mScore2);
     }
 }

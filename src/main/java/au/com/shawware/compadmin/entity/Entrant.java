@@ -17,11 +17,8 @@ import au.com.shawware.util.persistence.AbstractEntity;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class Entrant extends AbstractEntity
+public abstract class Entrant extends AbstractEntity<String>
 {
-    /** The entrant's name. */
-    private final String mName;
-
     /**
      * Constructs a new, identified entrant.
      * 
@@ -29,10 +26,9 @@ public abstract class Entrant extends AbstractEntity
      * @param name the entrant's name
      */
     public Entrant(@JsonProperty("id") int id,
-                   @JsonProperty("name") String name)
+                   @JsonProperty("key") String name)
     {
-        super(id);
-        mName = name;
+        super(id, name);
     }
 
     /**
@@ -45,18 +41,10 @@ public abstract class Entrant extends AbstractEntity
         this(DEFAULT_ID, name);
     }
 
-    /**
-     * @return The entrant's name.
-     */
-    public String getName()
-    {
-        return mName;
-    }
-
     @Override
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mName);
+        return StringUtil.toString(getId(), getKey());
     }
 }

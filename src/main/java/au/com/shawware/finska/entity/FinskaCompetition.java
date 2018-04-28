@@ -28,7 +28,7 @@ public class FinskaCompetition extends Competition<FinskaRound, FinskaMatch>
      * @param startDate the competition's start date
      */
     public FinskaCompetition(@JsonProperty("id") int id,
-                             @JsonProperty("name") String name,
+                             @JsonProperty("key") String name,
                              @JsonProperty("startDate") LocalDate startDate)
     {
         super(id, name, startDate);

@@ -30,7 +30,7 @@ import au.com.shawware.util.StringUtil;
  * 
  * @param <EntityType> the entity to be persisted
  */
-public class EntityDiskStore<EntityType extends AbstractEntity> implements IEntityStore<EntityType>
+public class EntityDiskStore<EntityType extends AbstractEntity<?>> implements IEntityStore<EntityType>
 {
     /** The file extension to use for entities. */
     private static final String JSON_EXTENSION = ".json"; //$NON-NLS-1$

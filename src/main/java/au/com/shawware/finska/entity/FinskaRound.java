@@ -39,7 +39,7 @@ public class FinskaRound extends Round<FinskaMatch>
      * @param roundDate the date the round was held
      */
     public FinskaRound(@JsonProperty("id") int id,
-                       @JsonProperty("number") int number,
+                       @JsonProperty("key") int number,
                        @JsonProperty("roundDate") LocalDate roundDate)
     {
         super(id, number, roundDate);
@@ -119,6 +119,6 @@ public class FinskaRound extends Round<FinskaMatch>
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), getNumber(), getRoundDate(), getMatchIds(), mPlayersIds);
+        return StringUtil.toString(getId(), getKey(), getRoundDate(), getMatchIds(), mPlayersIds);
     }
 }

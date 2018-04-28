@@ -63,7 +63,7 @@ public abstract class AbstractPersistenceUnitTest
      * 
      * @throws PersistenceException persistence error
      */
-    protected final <T extends AbstractEntity> void verifyBasicStorage(IEntityStore<T> store, T instance)
+    protected final <T extends AbstractEntity<?>> void verifyBasicStorage(IEntityStore<T> store, T instance)
         throws PersistenceException
     {
         Map<Integer, T> ts = store.getAll();
@@ -74,6 +74,8 @@ public abstract class AbstractPersistenceUnitTest
         Assert.assertNotNull(t1);
         T t2 = store.get(t1.getId());
         Assert.assertNotNull(t2);
+        Assert.assertEquals(t1.getId(), t2.getId());
+        Assert.assertEquals(t1.getKey(), t2.getKey());
         Assert.assertEquals(t1.toString(), t2.toString());
 
         verifyEntityMap(store.getAll(), t1);
@@ -85,7 +87,7 @@ public abstract class AbstractPersistenceUnitTest
      * @param map the map to verify
      * @param instance the instance to verify
      */
-    protected final <T extends AbstractEntity> void verifyEntityMap(Map<Integer, T> map, T instance)
+    protected final <T extends AbstractEntity<?>> void verifyEntityMap(Map<Integer, T> map, T instance)
     {
         Assert.assertNotNull(map);
         Assert.assertEquals(1, map.size());

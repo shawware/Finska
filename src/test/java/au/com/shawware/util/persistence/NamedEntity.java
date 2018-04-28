@@ -16,11 +16,8 @@ import au.com.shawware.util.StringUtil;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class NamedEntity extends AbstractEntity
+public class NamedEntity extends AbstractEntity<String>
 {
-    /** The entity's name. */
-    private final String mName;
-
     /**
      * Constructs a new entity.
      * 
@@ -28,10 +25,9 @@ public class NamedEntity extends AbstractEntity
      * @param name the entity's name
      */
     public NamedEntity(@JsonProperty("id") int id,
-                       @JsonProperty("name") String name)
+                       @JsonProperty("key") String name)
     {
-        super(id);
-        mName = name;
+        super(id, name);
     }
 
     /**
@@ -44,18 +40,10 @@ public class NamedEntity extends AbstractEntity
         this(DEFAULT_ID, name);
     }
 
-    /**
-     * @return The entity's name.
-     */
-    public String getName()
-    {
-        return mName;
-    }
-
     @Override
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mName);
+        return StringUtil.toString(getId(), getKey());
     }
 }

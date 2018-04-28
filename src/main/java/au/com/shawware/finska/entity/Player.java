@@ -25,7 +25,7 @@ public class Player extends Entrant
      * @param name the player's name
      */
     public Player(@JsonProperty("id") int id,
-                  @JsonProperty("name") String name)
+                  @JsonProperty("key") String name)
     {
         super(id, name);
     }

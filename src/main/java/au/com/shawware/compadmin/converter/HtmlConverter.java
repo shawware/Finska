@@ -116,7 +116,7 @@ public class HtmlConverter implements IConverter
             }
 
             generator.openTag("td", "cell");
-            generator.value(entrants.get(result.getEntrantID()).getName());
+            generator.value(entrants.get(result.getEntrantID()).getKey());
             generator.closeTag();
 
             for (String name : spec.getItemNames())

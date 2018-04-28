@@ -31,10 +31,8 @@ import au.com.shawware.util.persistence.AbstractEntity;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class Competition<RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity
+public abstract class Competition<RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity<String>
 {
-    /** The competition's name. */
-    private final String mName;
     /** The competition start date. */
     private final LocalDate mStartDate;
     /** The rounds that make up this competition. */
@@ -50,11 +48,10 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
      * @param startDate the competition's start date
      */
     public Competition(@JsonProperty("id") int id,
-                       @JsonProperty("name") String name,
+                       @JsonProperty("key") String name,
                        @JsonProperty("startDate") LocalDate startDate)
     {
-        super(id);
-        mName      = name;
+        super(id, name);
         mStartDate = startDate;
         mRounds    = new HashMap<>();
         mRoundIds  = new HashSet<>();
@@ -69,14 +66,6 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     public Competition(String name, LocalDate startDate)
     {
         this(DEFAULT_ID, name, startDate);
-    }
-
-    /**
-     * @return The competition's name.
-     */
-    public String getName()
-    {
-        return mName;
     }
 
     /**
@@ -163,6 +152,6 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), mName, mStartDate, mRoundIds);
+        return StringUtil.toString(getId(), getKey(), mStartDate, mRoundIds);
     }
 }

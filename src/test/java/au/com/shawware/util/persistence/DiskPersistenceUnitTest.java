@@ -24,6 +24,8 @@ public class DiskPersistenceUnitTest extends AbstractPersistenceUnitTest
 {
     /** Persisted entity sub-directory. */
     private static final String ENTITY_DIR = "entity";
+    /** Persisted address sub-directory. */
+    private static final String ADDRESS_DIR = "address";
 
     /**
      * Setup test fixtures and the like before all tests.
@@ -35,6 +37,7 @@ public class DiskPersistenceUnitTest extends AbstractPersistenceUnitTest
         throws IOException
     {
         Files.createDirectory(sRoot.resolve(ENTITY_DIR));
+        Files.createDirectory(sRoot.resolve(ADDRESS_DIR));
     }
 
     /**
@@ -48,11 +51,18 @@ public class DiskPersistenceUnitTest extends AbstractPersistenceUnitTest
     {
         PersistenceFactory factory = PersistenceFactory.getFactory(PERSISTENCE_ROOT);
         IEntityStore<NamedEntity> entityStore = factory.getStore(NamedEntity.class, "Named");
+        IEntityStore<Address> addressStore = factory.getStore(Address.class);
 
         NamedEntity e1 = new NamedEntity("David");
         verifyBasicStorage(entityStore, e1);
 
         Map<Integer, NamedEntity> allEntities = entityStore.getAll();
         verifyEntityMap(allEntities, e1);
+
+        Address a1 = new Address(123, "Key Street");
+        verifyBasicStorage(addressStore, a1);
+
+        Map<Integer, Address> allAddresses = addressStore.getAll();
+        verifyEntityMap(allAddresses, a1);
     }
 }

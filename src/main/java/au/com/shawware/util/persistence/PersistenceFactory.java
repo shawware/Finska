@@ -70,7 +70,7 @@ public class PersistenceFactory
      * 
      * @return The store.
      */
-    public <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz)
+    public <EntityType extends AbstractEntity<?>> IEntityStore<EntityType> getStore(Class<EntityType> clazz)
     {
         return getStore(clazz, null);
     }
@@ -84,7 +84,7 @@ public class PersistenceFactory
      * 
      * @return The store.
      */
-    public <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz, String prefixToRemove)
+    public <EntityType extends AbstractEntity<?>> IEntityStore<EntityType> getStore(Class<EntityType> clazz, String prefixToRemove)
     {
         String name = clazz.getSimpleName();
         if (StringUtil.isNotEmpty(prefixToRemove) && name.startsWith(prefixToRemove))

@@ -41,13 +41,13 @@ public class FinskaMatch extends Match
      * @param matchDate the match's date
      */
     public FinskaMatch(@JsonProperty("id") int id,
-                       @JsonProperty("number") int number,
+                       @JsonProperty("key") int number,
                        @JsonProperty("matchDate") LocalDate matchDate)
     {
         super(id, number, matchDate);
-        mWinnerIds      = new HashSet<>();
-        mWinners        = new HashMap<>();
-        mFastWinnerIds  = new HashSet<>();
+        mWinnerIds     = new HashSet<>();
+        mWinners       = new HashMap<>();
+        mFastWinnerIds = new HashSet<>();
     }
 
     /**
@@ -186,6 +186,6 @@ public class FinskaMatch extends Match
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), getNumber(), getMatchDate(), mWinnerIds, mFastWinnerIds);
+        return StringUtil.toString(getId(), getKey(), getMatchDate(), mWinnerIds, mFastWinnerIds);
     }
 }
