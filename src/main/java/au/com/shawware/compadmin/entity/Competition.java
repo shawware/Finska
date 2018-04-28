@@ -105,13 +105,14 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     /**
      * @return The number of rounds in this competition so far.
      */
+    @JsonIgnore
     public int numberOfRounds()
     {
         return mRoundIds.size();
     }
 
     /**
-     * Get an iterator over the rounds.
+     * Get a stream over this competition's rounds.
      * 
      * @return The rounds in sequential order.
      */
@@ -135,12 +136,12 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     public RoundType getRound(int number)
         throws IllegalArgumentException
     {
-        Optional<RoundType> entity = getRounds().filter(r -> r.getKey().equals(number)).findAny();
-        if (!entity.isPresent())
+        Optional<RoundType> round = getRounds().filter(r -> r.getKey().equals(number)).findAny();
+        if (!round.isPresent())
         {
             throw new IllegalArgumentException("Round " + number + " is not present in this competition"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return entity.get();
+        return round.get();
     }
 
     /**

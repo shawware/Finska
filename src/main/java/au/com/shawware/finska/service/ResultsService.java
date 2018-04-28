@@ -7,9 +7,9 @@
 
 package au.com.shawware.finska.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,12 +131,7 @@ public class ResultsService
      */
     public List<FinskaRound> getRounds()
     {
-        List<FinskaRound> rounds = new ArrayList<>();
-        for (Integer id : mCompetition.getRoundIds())
-        {
-            rounds.add(mCompetition.getRound(id));
-        }
-        return rounds;
+        return mCompetition.getRounds().collect(Collectors.toList());
     }
 
     /**

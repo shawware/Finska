@@ -127,7 +127,7 @@ public class EntityLoader implements IEntityLoader
      * @throws PersistenceException missing entity
      */
     @SuppressWarnings("static-method")
-    private <Container extends AbstractEntity, Dependent extends AbstractEntity>
+    private <Container extends AbstractEntity<?>, Dependent extends AbstractEntity<?>>
         void loadDependentEntities(Map<Integer, Container> containers, Map<Integer, Dependent> dependents,
                                    Function<Container, Set<Integer>> getIdsFor, BiConsumer<Container, Dependent> addTo)
         throws PersistenceException
