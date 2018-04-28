@@ -8,6 +8,7 @@
 package au.com.shawware.finska.scoring;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -109,21 +110,21 @@ public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetiti
         {
             EntrantResult result = results.get(playerID);
             result.incrementResultItem(ResultItem.ROUNDS.toString(), 1);
-            result.incrementResultItem(ResultItem.MATCHES.toString(), round.getMatchIds().size());
+            result.incrementResultItem(ResultItem.MATCHES.toString(), round.numberOfMatches());
             if (mScoringSystem.scorePointsForPlaying())
             {
                 result.incrementResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForPlaying());
             }
         }
-        Set<Integer> matchIDs    = round.getMatchIds();
-        boolean recordWinBoth    = (mScoringSystem.scoreWinBoth() && (matchIDs.size() > 1));
-        boolean recordWinAll     = (mScoringSystem.scoreWinAll() && (matchIDs.size() > 1));
+        boolean recordWinBoth    = (mScoringSystem.scoreWinBoth() && (round.numberOfMatches() > 1));
+        boolean recordWinAll     = (mScoringSystem.scoreWinAll() && (round.numberOfMatches() > 1));
         boolean sameWinner       = true;
         int matchCount           = 0;
         Set<Integer> lastWinners = new HashSet<>();
-        for (Integer matchID : matchIDs)
+        Iterator<FinskaMatch> it = round.getMatches().iterator();
+        while (it.hasNext())
         {
-            FinskaMatch match = round.getMatch(matchID);
+            FinskaMatch match = it.next();
             if (!match.hasWinner())
             {
                 continue; // Skip matches that have not been played yet.

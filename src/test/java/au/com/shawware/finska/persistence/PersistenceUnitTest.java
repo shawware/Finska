@@ -100,7 +100,7 @@ public class PersistenceUnitTest extends AbstractPersistenceUnitTest
         FinskaCompetition c2 = allComps.get(c1.getId());
         FinskaRound r2 = c2.getRound(r1.getKey());
         Assert.assertEquals(r1.toString(), r2.toString());
-        FinskaMatch m2 = r2.getMatch(m1.getId());
+        FinskaMatch m2 = r2.getMatch(m1.getKey());
         Assert.assertEquals(m1.toString(), m2.toString());
         Player p2 = r2.getPlayer(p1.getId());
         Assert.assertEquals(p1.toString(), p2.toString());

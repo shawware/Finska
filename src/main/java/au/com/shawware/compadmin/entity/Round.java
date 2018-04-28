@@ -11,7 +11,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -102,24 +104,45 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity<Inte
     }
 
     /**
+     * @return The number of matches in this round so far.
+     */
+    @JsonIgnore
+    public int numberOfMatches()
+    {
+        return mMatchIds.size();
+    }
+
+    /**
+     * Get a stream over this round's matches.
+     * 
+     * @return The matches in sequential order.
+     */
+    @JsonIgnore
+    public Stream<MatchType> getMatches()
+    {
+        return mMatches.values().stream();
+    }
+
+    /**
      * Retrieve the given match from this round.
      * 
-     * @param id the match's ID
+     * @param number the match's number
      * 
      * @return The corresponding match.
      * 
      * @throws IllegalArgumentException match cannot be found
      */
-    @SuppressWarnings("boxing")
     @JsonIgnore
-    public MatchType getMatch(int id)
+    @SuppressWarnings("boxing")
+    public MatchType getMatch(int number)
         throws IllegalArgumentException
     {
-        if (!mMatches.containsKey(id))
+        Optional<MatchType> match = getMatches().filter(m -> m.getKey().equals(number)).findAny();
+        if (!match.isPresent())
         {
-            throw new IllegalArgumentException("Match " + id + " is not present in this round"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("Match " + number + " is not present in this round"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return mMatches.get(id);
+        return match.get();
     }
 
     /**

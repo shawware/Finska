@@ -70,9 +70,8 @@ public class TestCompiler extends AbstractResultsCompiler<TestCompetition, TestR
     @SuppressWarnings("boxing")
     protected void processRound(Map<Integer, EntrantResult> results, TestRound round)
     {
-        for (Integer matchID : round.getMatchIds())
+        round.getMatches().forEach(match ->
         {
-            TestMatch match = round.getMatch(matchID);
             EntrantResult result1 = results.get(match.getTeam1());
             EntrantResult result2 = results.get(match.getTeam2());
 
@@ -108,7 +107,7 @@ public class TestCompiler extends AbstractResultsCompiler<TestCompetition, TestR
                 result2.incrementResultItem(TestResultItems.DRAWS, 1);
                 result2.incrementResultItem(TestResultItems.POINTS, 1);
             }
-        }
+        });
     }
 
     @Override
