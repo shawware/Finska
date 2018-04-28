@@ -72,11 +72,14 @@ public class PersistenceUnitTest extends AbstractPersistenceUnitTest
         IEntityStore<FinskaRound> roundStore = factory.getStore(FinskaRound.class, "Finska");
         IEntityStore<FinskaMatch> matchStore = factory.getStore(FinskaMatch.class, "Finska");
 
+        final int ROUND = 100;
+        final int MATCH = 42;
+
         Player p1 = new Player("David");
         verifyBasicStorage(playerStore, p1);
 
-        FinskaRound r1 = new FinskaRound(1, LocalDate.of(2018, 3, 10));
-        FinskaMatch m1 = new FinskaMatch(1, r1.getRoundDate());
+        FinskaRound r1 = new FinskaRound(ROUND, LocalDate.of(2018, 3, 10));
+        FinskaMatch m1 = new FinskaMatch(MATCH, r1.getRoundDate());
         m1.addWinner(p1, true);
         verifyBasicStorage(matchStore, m1);
 
@@ -95,7 +98,7 @@ public class PersistenceUnitTest extends AbstractPersistenceUnitTest
         verifyEntityMap(allComps, c1);
 
         FinskaCompetition c2 = allComps.get(c1.getId());
-        FinskaRound r2 = c2.getRound(r1.getId());
+        FinskaRound r2 = c2.getRound(r1.getKey());
         Assert.assertEquals(r1.toString(), r2.toString());
         FinskaMatch m2 = r2.getMatch(m1.getId());
         Assert.assertEquals(m1.toString(), m2.toString());

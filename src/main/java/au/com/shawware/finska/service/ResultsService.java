@@ -142,18 +142,13 @@ public class ResultsService
     /**
      * Retrieves a specific round for the current competition.
      * 
-     * @param round the round number
+     * @param number the round number
      *
      * @return The round.
      */
-    public List<FinskaRound> getRound(int round)
+    public FinskaRound getRound(int number)
     {
-        List<FinskaRound> rounds = new ArrayList<>();
-        for (Integer id : mCompetition.getRoundIds())
-        {
-            rounds.add(mCompetition.getRound(id));
-        }
-        return rounds;
+        return mCompetition.getRound(number);
     }
 
     /**

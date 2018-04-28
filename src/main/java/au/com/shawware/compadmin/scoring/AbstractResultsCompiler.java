@@ -9,6 +9,7 @@ package au.com.shawware.compadmin.scoring;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -127,14 +128,14 @@ public abstract class AbstractResultsCompiler<
 
         // Process each round until we reach the limit;
         int i = 1;
-        for (Integer roundID : roundIDs)
+        Iterator<RoundType> it = mCompetition.getRounds().iterator();
+        while (it.hasNext())
         {
             if (i > rounds)
             {
                 break;
             }
-            RoundType round = mCompetition.getRound(roundID);
-            processRound(results, round);
+            processRound(results, it.next());
             i++;
         }
 
@@ -165,8 +166,7 @@ public abstract class AbstractResultsCompiler<
         String pointsItemName = getPointsItemName();
         String runningTotalItemName = getRunningTotalItemName();
 
-        Set<Integer> roundIds = mCompetition.getRoundIds();
-        List<List<EntrantResult>> results = new ArrayList<>(roundIds.size());
+        List<List<EntrantResult>> results = new ArrayList<>(mCompetition.numberOfRounds());
 
         Map<Integer, MutableInteger> runningTotals = new HashMap<>(mEntrants.size());
         for (Integer entrantID : mEntrants.keySet())
@@ -174,15 +174,13 @@ public abstract class AbstractResultsCompiler<
             runningTotals.put(entrantID, new MutableInteger(0));
         }
 
-        for (Integer roundID : roundIds)
-        {
+        mCompetition.getRounds().forEach(round -> {
             Map<Integer, EntrantResult> roundResults = new HashMap<>(mEntrants.size());
             for (Integer entrantID : mEntrants.keySet())
             {
                 roundResults.put(entrantID, new EntrantResult(entrantID, spec));
             }
 
-            RoundType round = mCompetition.getRound(roundID);
             processRound(roundResults, round);
 
             List<EntrantResult> roundResult = new ArrayList<>(mEntrants.size());
@@ -196,7 +194,7 @@ public abstract class AbstractResultsCompiler<
                 roundResult.add(entrantResult);
             }
             results.add(roundResult);
-        }
+        });
 
         return results;
     }

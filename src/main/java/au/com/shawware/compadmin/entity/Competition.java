@@ -11,7 +11,9 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -109,24 +111,36 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     }
 
     /**
+     * Get an iterator over the rounds.
+     * 
+     * @return The rounds in sequential order.
+     */
+    @JsonIgnore
+    public Stream<RoundType> getRounds()
+    {
+        return mRounds.values().stream();
+    }
+
+    /**
      * Retrieve the given round from this competition.
      * 
-     * @param id the round's ID
+     * @param number the round's number
      * 
      * @return The corresponding round.
      * 
      * @throws IllegalArgumentException round cannot be found
      */
-    @SuppressWarnings("boxing")
     @JsonIgnore
-    public RoundType getRound(int id)
+    @SuppressWarnings("boxing")
+    public RoundType getRound(int number)
         throws IllegalArgumentException
     {
-        if (!mRounds.containsKey(id))
+        Optional<RoundType> entity = getRounds().filter(r -> r.getKey().equals(number)).findAny();
+        if (!entity.isPresent())
         {
-            throw new IllegalArgumentException("Round " + id + " is not present in this competition"); //$NON-NLS-1$ //$NON-NLS-2$
+            throw new IllegalArgumentException("Round " + number + " is not present in this competition"); //$NON-NLS-1$ //$NON-NLS-2$
         }
-        return mRounds.get(id);
+        return entity.get();
     }
 
     /**
@@ -154,4 +168,4 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     {
         return StringUtil.toString(getId(), getKey(), mStartDate, mRoundIds);
     }
-}
+} 
