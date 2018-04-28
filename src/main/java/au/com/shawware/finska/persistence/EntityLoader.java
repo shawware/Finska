@@ -31,6 +31,8 @@ import au.com.shawware.util.persistence.PersistenceFactory;
  */
 public class EntityLoader implements IEntityLoader
 {
+    /** Class name prefix to ignore. */
+    private static final String PREFIX = "Finska"; //$NON-NLS-1$
     /* The singleton instances. */
     private static Map<String, EntityLoader> sLoaders = new HashMap<>();
 
@@ -50,9 +52,9 @@ public class EntityLoader implements IEntityLoader
      */
     private EntityLoader(PersistenceFactory factory)
     {
-        mCompetitionStore = factory.getStore(FinskaCompetition.class);
-        mRoundStore       = factory.getStore(FinskaRound.class);
-        mMatchStore       = factory.getStore(FinskaMatch.class);
+        mCompetitionStore = factory.getStore(FinskaCompetition.class, PREFIX);
+        mRoundStore       = factory.getStore(FinskaRound.class, PREFIX);
+        mMatchStore       = factory.getStore(FinskaMatch.class, PREFIX);
         mPlayerStore      = factory.getStore(Player.class);
     }
 

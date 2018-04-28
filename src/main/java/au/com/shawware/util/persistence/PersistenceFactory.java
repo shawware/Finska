@@ -19,8 +19,6 @@ import au.com.shawware.util.StringUtil;
  */
 public class PersistenceFactory
 {
-    /** Class name prefix to ignore. */
-    private static final String PREFIX = "Finska"; //$NON-NLS-1$
     /** The singleton instance. */
     private static Map<String, PersistenceFactory> sFactories = new HashMap<>();
     /** The root directory for entity sub-directories. */
@@ -74,10 +72,24 @@ public class PersistenceFactory
      */
     public <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz)
     {
+        return getStore(clazz, null);
+    }
+
+    /**
+     * Creates an entity store for the given class.
+     * 
+     * @param clazz the entity type to store
+     * @param prefixToRemove the prefix to remove from the class name when naming the store directory
+     * @param <EntityType> the type of entity for the store
+     * 
+     * @return The store.
+     */
+    public <EntityType extends AbstractEntity> IEntityStore<EntityType> getStore(Class<EntityType> clazz, String prefixToRemove)
+    {
         String name = clazz.getSimpleName();
-        if (name.startsWith(PREFIX))
+        if (StringUtil.isNotEmpty(prefixToRemove) && name.startsWith(prefixToRemove))
         {
-            name = name.substring(PREFIX.length());
+            name = name.substring(prefixToRemove.length());
         }
         String directory = mRoot + '/' + name.toLowerCase();
         return new EntityDiskStore<EntityType>(directory, name, name.substring(0, 1), clazz);

@@ -87,9 +87,9 @@ public class PersistenceUnitTest
     {
         PersistenceFactory factory = PersistenceFactory.getFactory(PERSISTENCE_ROOT);
         IEntityStore<Player> playerStore = factory.getStore(Player.class);
-        IEntityStore<FinskaCompetition> competitionStore = factory.getStore(FinskaCompetition.class);
-        IEntityStore<FinskaRound> roundStore = factory.getStore(FinskaRound.class);
-        IEntityStore<FinskaMatch> matchStore = factory.getStore(FinskaMatch.class);
+        IEntityStore<FinskaCompetition> competitionStore = factory.getStore(FinskaCompetition.class, "Finska");
+        IEntityStore<FinskaRound> roundStore = factory.getStore(FinskaRound.class, "Finska");
+        IEntityStore<FinskaMatch> matchStore = factory.getStore(FinskaMatch.class, "Finska");
 
         Player p1 = new Player("David");
         verifyBasicStorage(playerStore, p1);
