@@ -63,7 +63,7 @@ public class FinskaRound extends Round<FinskaMatch>
     /**
      * @return The IDs of the players who participated.
      */
-    public Set<Integer> getPlayersIds()
+    public Set<Integer> getPlayerIds()
     {
         return mPlayersIds;
     }

@@ -106,7 +106,7 @@ public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetiti
     @Override
     protected void processRound(Map<Integer, EntrantResult> results, FinskaRound round)
     {
-        for (Integer playerID : round.getPlayersIds())
+        for (Integer playerID : round.getPlayerIds())
         {
             EntrantResult result = results.get(playerID);
             result.incrementResultItem(ResultItem.ROUNDS.toString(), 1);

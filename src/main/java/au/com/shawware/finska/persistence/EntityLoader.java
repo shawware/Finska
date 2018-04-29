@@ -110,7 +110,7 @@ public class EntityLoader implements IEntityLoader
 
         loadDependentEntities(competitions, rounds, Competition::getRoundIds, Competition::addRound);
         loadDependentEntities(rounds, matches, Round::getMatchIds, Round::addMatch);
-        loadDependentEntities(rounds, players, FinskaRound::getPlayersIds, FinskaRound::addPlayer);
+        loadDependentEntities(rounds, players, FinskaRound::getPlayerIds, FinskaRound::addPlayer);
         loadDependentEntities(matches, players, FinskaMatch::getWinnerIds, FinskaMatch::addWinner);
 
         return competitions;
