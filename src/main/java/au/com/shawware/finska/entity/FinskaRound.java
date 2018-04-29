@@ -10,8 +10,10 @@ package au.com.shawware.finska.entity;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -113,6 +115,15 @@ public class FinskaRound extends Round<FinskaMatch>
             throw new IllegalArgumentException("Player " + id + " is not present in this round"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mPlayers.get(id);
+    }
+
+    /**
+     * @return The players involved in this round.
+     */
+    @JsonIgnore
+    public List<Player> getPlayers()
+    {
+        return mPlayers.values().stream().collect(Collectors.toList());
     }
 
     @Override

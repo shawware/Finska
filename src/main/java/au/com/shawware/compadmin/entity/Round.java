@@ -10,10 +10,11 @@ package au.com.shawware.compadmin.entity;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -118,9 +119,9 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity<Inte
      * @return The matches in sequential order.
      */
     @JsonIgnore
-    public Stream<MatchType> getMatches()
+    public List<MatchType> getMatches()
     {
-        return mMatches.values().stream();
+        return mMatches.values().stream().collect(Collectors.toList());
     }
 
     /**
@@ -137,7 +138,7 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity<Inte
     public MatchType getMatch(int number)
         throws IllegalArgumentException
     {
-        Optional<MatchType> match = getMatches().filter(m -> m.getKey().equals(number)).findAny();
+        Optional<MatchType> match = mMatches.values().stream().filter(m -> m.getKey().equals(number)).findAny();
         if (!match.isPresent())
         {
             throw new IllegalArgumentException("Match " + number + " is not present in this round"); //$NON-NLS-1$ //$NON-NLS-2$

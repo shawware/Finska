@@ -10,10 +10,11 @@ package au.com.shawware.compadmin.entity;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -112,14 +113,14 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     }
 
     /**
-     * Get a stream over this competition's rounds.
+     * This competition's rounds.
      * 
      * @return The rounds in sequential order.
      */
     @JsonIgnore
-    public Stream<RoundType> getRounds()
+    public List<RoundType> getRounds()
     {
-        return mRounds.values().stream();
+        return mRounds.values().stream().collect(Collectors.toList());
     }
 
     /**
@@ -136,7 +137,7 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     public RoundType getRound(int number)
         throws IllegalArgumentException
     {
-        Optional<RoundType> round = getRounds().filter(r -> r.getKey().equals(number)).findAny();
+        Optional<RoundType> round = mRounds.values().stream().filter(r -> r.getKey().equals(number)).findAny();
         if (!round.isPresent())
         {
             throw new IllegalArgumentException("Round " + number + " is not present in this competition"); //$NON-NLS-1$ //$NON-NLS-2$

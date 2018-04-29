@@ -9,7 +9,6 @@ package au.com.shawware.finska.service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -131,7 +130,7 @@ public class ResultsService
      */
     public List<FinskaRound> getRounds()
     {
-        return mCompetition.getRounds().collect(Collectors.toList());
+        return mCompetition.getRounds();
     }
 
     /**
