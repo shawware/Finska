@@ -21,6 +21,16 @@ import au.com.shawware.util.persistence.PersistenceException;
 public interface IEntityLoader
 {
     /**
+     * Retrieves all competitions.
+     * 
+     * @return The competitions.
+     * 
+     * @throws PersistenceException error loading competitions
+     */
+    Map<Integer, FinskaCompetition> getCompetitions()
+        throws PersistenceException;
+
+    /**
      * Retrieves the specified competition.
      * 
      * @param id the competition ID

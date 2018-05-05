@@ -100,7 +100,8 @@ public class EntityLoader implements IEntityLoader
      * 
      * @throws PersistenceException error loading data
      */
-    /*package*/ Map<Integer, FinskaCompetition> getCompetitions()
+    @Override
+    public Map<Integer, FinskaCompetition> getCompetitions()
         throws PersistenceException
     {
         Map<Integer, Player> players = getPlayers();
