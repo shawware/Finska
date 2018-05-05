@@ -91,10 +91,10 @@ public class PersistenceUnitTest extends AbstractPersistenceUnitTest
         c1.addRound(r1);
         verifyBasicStorage(competitionStore, c1);
 
-        Map<Integer, Player> allPlayers = EntityLoader.getLoader(factory).getPlayers();
+        Map<Integer, Player> allPlayers = EntityRepository.getRepository(factory).getPlayers();
         verifyEntityMap(allPlayers, p1);
 
-        Map<Integer, FinskaCompetition> allComps = EntityLoader.getLoader(factory).getCompetitions();
+        Map<Integer, FinskaCompetition> allComps = EntityRepository.getRepository(factory).getCompetitions();
         verifyEntityMap(allComps, c1);
 
         FinskaCompetition c2 = allComps.get(c1.getId());

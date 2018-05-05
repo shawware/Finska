@@ -22,8 +22,8 @@ import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.finska.persistence.EntityLoader;
-import au.com.shawware.finska.persistence.IEntityLoader;
+import au.com.shawware.finska.persistence.EntityRepository;
+import au.com.shawware.finska.persistence.IEntityRepository;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.finska.service.ResultsService;
 import au.com.shawware.util.persistence.PersistenceException;
@@ -45,9 +45,9 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            IEntityLoader loader = EntityLoader.getLoader(PersistenceFactory.getFactory("./data"));
+            IEntityRepository repository = EntityRepository.getRepository(PersistenceFactory.getFactory("./data"));
             ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
-            ResultsService service = new ResultsService(loader, scoringSystem);
+            ResultsService service = new ResultsService(repository, scoringSystem);
             service.initialise();
             Map<Integer, Player> players = service.getPlayers();
             List<EntrantResult> leaderBoard = service.getLeaderBoard();
@@ -72,9 +72,9 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
     {
         try
         {
-            IEntityLoader loader = EntityLoader.getLoader(PersistenceFactory.getFactory("./data"));
+            IEntityRepository repository = EntityRepository.getRepository(PersistenceFactory.getFactory("./data"));
             ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
-            ResultsService service = new ResultsService(loader, scoringSystem);
+            ResultsService service = new ResultsService(repository, scoringSystem);
             service.initialise();
             List<List<EntrantResult>> roundResults = service.getRoundResults();
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/rounds.html")));

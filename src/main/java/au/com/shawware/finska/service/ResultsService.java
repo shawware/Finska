@@ -19,7 +19,7 @@ import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.finska.persistence.IEntityLoader;
+import au.com.shawware.finska.persistence.IEntityRepository;
 import au.com.shawware.finska.scoring.CompetitionAnalyser;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.util.persistence.PersistenceException;
@@ -35,7 +35,7 @@ public class ResultsService
     private static final Logger LOG = LoggerFactory.getLogger(ResultsService.class);
 
     /** The source for competition data. */
-    private final IEntityLoader mLoader;
+    private final IEntityRepository mRepository;
     /** The Finska scoring system to use. */
     private final ScoringSystem mScoringSystem;
 
@@ -50,12 +50,12 @@ public class ResultsService
     /**
      * Constructs a new service.
      * 
-     * @param loader the competition data source
+     * @param repository the competition data source
      * @param scoringSystem the scoring system to use
      */
-    public ResultsService(IEntityLoader loader, ScoringSystem scoringSystem)
+    public ResultsService(IEntityRepository repository, ScoringSystem scoringSystem)
     {
-        mLoader        = loader;
+        mRepository    = repository;
         mScoringSystem = scoringSystem;
     }
 
@@ -67,8 +67,8 @@ public class ResultsService
     public void initialise()
         throws PersistenceException
     {
-        mPlayers = mLoader.getPlayers();
-        mCompetition = mLoader.getCompetition(1); // TODO: inject ID?
+        mPlayers = mRepository.getPlayers();
+        mCompetition = mRepository.getCompetition(1); // TODO: inject ID?
         mCompiler = new CompetitionAnalyser(mPlayers, mCompetition, mScoringSystem);
     }
 

@@ -14,11 +14,11 @@ import au.com.shawware.finska.entity.Player;
 import au.com.shawware.util.persistence.PersistenceException;
 
 /**
- * Defines the persistence API for loading entities.
+ * Defines the persistence API for Finska entity CRUD.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public interface IEntityLoader
+public interface IEntityRepository
 {
     /**
      * Retrieves all competitions.

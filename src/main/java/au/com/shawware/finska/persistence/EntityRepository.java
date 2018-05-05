@@ -25,16 +25,16 @@ import au.com.shawware.util.persistence.PersistenceException;
 import au.com.shawware.util.persistence.PersistenceFactory;
 
 /**
- * Loads players and competitions from a store and makes them available.
+ * Implements the Finska entity repositories.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class EntityLoader implements IEntityLoader
+public class EntityRepository implements IEntityRepository
 {
     /** Class name prefix to ignore. */
     private static final String PREFIX = "Finska"; //$NON-NLS-1$
     /* The singleton instances. */
-    private static Map<String, EntityLoader> sLoaders = new HashMap<>();
+    private static Map<String, EntityRepository> sRepositories = new HashMap<>();
 
     /** The competition store. */
     private final IEntityStore<FinskaCompetition> mCompetitionStore;
@@ -46,11 +46,11 @@ public class EntityLoader implements IEntityLoader
     private final IEntityStore<Player> mPlayerStore;
 
     /**
-     * Constructs a new loader.
+     * Constructs a new repository.
      * 
      * @param factory the persistence factory to use for obtaining stores
      */
-    private EntityLoader(PersistenceFactory factory)
+    private EntityRepository(PersistenceFactory factory)
     {
         mCompetitionStore = factory.getStore(FinskaCompetition.class, PREFIX);
         mRoundStore       = factory.getStore(FinskaRound.class, PREFIX);
@@ -59,18 +59,19 @@ public class EntityLoader implements IEntityLoader
     }
 
     /**
-     * Gets a singleton instance of the loader.
+     * Gets a singleton instance of the repository.
+     * 
      * @param factory the factory to obtain persistence stores from
      * 
-     * @return The loader.
+     * @return The repository.
      */
-    public static synchronized final IEntityLoader getLoader(PersistenceFactory factory)
+    public static synchronized final IEntityRepository getRepository(PersistenceFactory factory)
     {
-        if (!sLoaders.containsKey(factory.getRoot()))
+        if (!sRepositories.containsKey(factory.getRoot()))
         {
-            sLoaders.put(factory.getRoot(), new EntityLoader(factory));
+            sRepositories.put(factory.getRoot(), new EntityRepository(factory));
         }
-        return sLoaders.get(factory.getRoot());
+        return sRepositories.get(factory.getRoot());
     }
 
     @Override
