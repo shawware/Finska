@@ -64,7 +64,7 @@ public class EntityLoader implements IEntityLoader
      * 
      * @return The loader.
      */
-    public static synchronized final EntityLoader getLoader(PersistenceFactory factory)
+    public static synchronized final IEntityLoader getLoader(PersistenceFactory factory)
     {
         if (!sLoaders.containsKey(factory.getRoot()))
         {
