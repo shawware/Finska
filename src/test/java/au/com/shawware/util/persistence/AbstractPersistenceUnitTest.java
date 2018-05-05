@@ -17,13 +17,15 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 
+import au.com.shawware.util.test.AbstractUnitTest;
+
 /**
  * Base class for persistence unit tests.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings({"nls", "static-method", "boxing" })
-public abstract class AbstractPersistenceUnitTest
+public abstract class AbstractPersistenceUnitTest extends AbstractUnitTest
 {
     /** Test root directory for persisted entities. */
     protected static final String PERSISTENCE_ROOT = "/tmp/persist";
