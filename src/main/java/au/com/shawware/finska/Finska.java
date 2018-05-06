@@ -19,10 +19,10 @@ import au.com.shawware.compadmin.converter.HtmlConverter;
 import au.com.shawware.compadmin.converter.IConverter;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.finska.entity.Player;
-import au.com.shawware.finska.persistence.EntityRepository;
-import au.com.shawware.finska.persistence.IEntityRepository;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.finska.service.ResultsService;
+import au.com.shawware.finska.service.ServiceFactory;
+import au.com.shawware.util.persistence.PersistenceException;
 import au.com.shawware.util.persistence.PersistenceFactory;
 
 /**
@@ -30,10 +30,9 @@ import au.com.shawware.util.persistence.PersistenceFactory;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
+@SuppressWarnings("nls")
 public class Finska
 {
-    /** The competition data source. */
-    private final IEntityRepository mRepository;
     /** The results service to use. */
     private final ResultsService mService;
     /** The directory to store output in. */
@@ -44,11 +43,15 @@ public class Finska
      * 
      * @param dataDir the data directory
      * @param outputDir the output directory
+     * 
+     * @throws PersistenceException error during initialisation
      */
     private Finska(String dataDir, String outputDir)
+        throws PersistenceException
     {
-        mRepository = EntityRepository.getRepository(PersistenceFactory.getFactory(dataDir));
-        mService    = new ResultsService(mRepository, new ScoringSystem(3, 1, 1, 1, 0));
+        PersistenceFactory factory = PersistenceFactory.getFactory(dataDir);
+        ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
+        mService = ServiceFactory.getFactory(factory, scoringSystem).getResultsService();
         mOutputDir  = outputDir;
     }
 
@@ -64,8 +67,16 @@ public class Finska
             System.err.println("usage: finska <data dir> <output dir>");
             System.exit(1);
         }
-        Finska finska = new Finska(args[0], args[1]);
-        System.exit(finska.run());
+        try
+        {
+            Finska finska = new Finska(args[0], args[1]);
+            System.exit(finska.run());
+        }
+        catch (PersistenceException e)
+        {
+            System.err.println("Peristence error: " + e.getMessage());
+            System.exit(1);
+        }
     }
 
     /**

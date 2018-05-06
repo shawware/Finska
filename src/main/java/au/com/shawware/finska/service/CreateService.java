@@ -30,15 +30,19 @@ public class CreateService
 
     /** The source for competition data. */
     private final IEntityRepository mRepository;
+    /** The observer to be notified when this services updates the repository. */
+    private final IChangeObserver mObserver;
 
     /**
      * Constructs a new service.
      * 
      * @param repository the competition data source
+     * @param observer observes changes to the repository made by this service
      */
-    public CreateService(IEntityRepository repository)
+    /*package*/ CreateService(IEntityRepository repository, IChangeObserver observer)
     {
         mRepository = repository;
+        mObserver   = observer;
     }
 
     /**
@@ -82,6 +86,8 @@ public class CreateService
 
         round = mRepository.createRound(competition, round);
         LOG.info("Created new round " + round.getKey() + " in competition " + competition.getKey()); //$NON-NLS-1$ //$NON-NLS-2$
+
+        mObserver.repositoryUpdated();
 
         return round;
     }

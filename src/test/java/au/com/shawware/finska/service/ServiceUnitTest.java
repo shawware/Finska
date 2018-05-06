@@ -19,8 +19,7 @@ import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.AbstractFinskaPersistenceUnitTest;
-import au.com.shawware.finska.persistence.EntityRepository;
-import au.com.shawware.finska.persistence.IEntityRepository;
+import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.util.persistence.PersistenceException;
 
 /**
@@ -52,8 +51,9 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 
         comp = sCompetitionStore.create(comp);
 
-        IEntityRepository repository = EntityRepository.getRepository(sFactory);
-        CreateService service = new CreateService(repository);
+        ScoringSystem scoringSystem = new ScoringSystem(1, 0, 0, 0, 0);
+        ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
+        CreateService service = services.getCreateService();
 
         int[] playerIds = new int[] {p1.getId(), p3.getId()};
         LocalDate roundDate = LocalDate.of(2018, 5, 6);
@@ -77,7 +77,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
             round.getPlayer(id); // Will throw an exception if not present
         });
 
-        comp = repository.getCompetition(comp.getId());
+        comp = services.getResultsService().getCompetition();
         roundIds = comp.getRoundIds();
         rounds = comp.getRounds();
         FinskaRound copy = comp.getRound(round.getKey());

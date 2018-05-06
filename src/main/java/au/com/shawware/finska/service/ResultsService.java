@@ -30,7 +30,7 @@ import au.com.shawware.util.persistence.PersistenceException;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 @SuppressWarnings("boxing")
-public class ResultsService
+public class ResultsService implements IChangeObserver
 {
     private static final Logger LOG = LoggerFactory.getLogger(ResultsService.class);
 
@@ -53,18 +53,14 @@ public class ResultsService
      * @param repository the competition data source
      * @param scoringSystem the scoring system to use
      */
-    public ResultsService(IEntityRepository repository, ScoringSystem scoringSystem)
+    /*package*/ ResultsService(IEntityRepository repository, ScoringSystem scoringSystem)
     {
         mRepository    = repository;
         mScoringSystem = scoringSystem;
     }
 
-    /**
-     * Initialises the results service.
-     * 
-     * @throws PersistenceException persistence error
-     */
-    public void initialise()
+    @Override
+    public void repositoryUpdated()
         throws PersistenceException
     {
         mPlayers = mRepository.getPlayers();
