@@ -26,8 +26,8 @@ public class ServiceFactory
     private static Map<String, ServiceFactory> sInstances;
     /** The wrapped results service. */
     private final ResultsService mResultsService;
-    /** The wrapped create service. */
-    private final CreateService mCreateService;
+    /** The wrapped round service. */
+    private final RoundService mRoundService;
 
     /**
      * Constructs a new service factory.
@@ -41,7 +41,7 @@ public class ServiceFactory
         throws PersistenceException
     {
         mResultsService = new ResultsService(repository, scoringSystem);
-        mCreateService  = new CreateService(repository, mResultsService);
+        mRoundService   = new RoundService(repository, mResultsService);
         mResultsService.repositoryUpdated();
     }
 
@@ -79,10 +79,10 @@ public class ServiceFactory
     }
 
     /**
-     * @return The create service.
+     * @return The round service.
      */
-    public CreateService getCreateService()
+    public RoundService getRoundService()
     {
-        return mCreateService;
+        return mRoundService;
     }
 }

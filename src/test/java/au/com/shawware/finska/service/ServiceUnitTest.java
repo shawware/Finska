@@ -35,8 +35,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 {
     /** The results service to use in our tests. */
     private static ResultsService sResultsService;
-    /** The create service to use in our tests. */
-    private static CreateService sCreateService;
+    /** The round service to use in our tests. */
+    private static RoundService sRoundService;
     /** The test competition. */
     private static FinskaCompetition sCompetition;
     /** The test players. */
@@ -67,7 +67,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         ScoringSystem scoringSystem = new ScoringSystem(1, 0, 0, 0, 0);
         ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
         sResultsService = services.getResultsService();
-        sCreateService = services.getCreateService();
+        sRoundService = services.getRoundService();
     }
 
     /**
@@ -97,14 +97,14 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Assert.assertEquals(0, roundIds.size());
         Assert.assertEquals(0, rounds.size());
 
-        FinskaRound round = sCreateService.createRound(sCompetition.getId(), roundDate, playerIds);
+        FinskaRound round = sRoundService.createRound(sCompetition.getId(), roundDate, playerIds);
 
         verifyRound(round, roundDate, playerIds);
 
         int[] updatedPlayerIds = new int[] { p2.getId(), p3.getId() };
         LocalDate changedDate = roundDate.plusDays(1);
 
-        round = sCreateService.updateRound(sCompetition.getId(), round.getKey(), changedDate, updatedPlayerIds);
+        round = sRoundService.updateRound(sCompetition.getId(), round.getKey(), changedDate, updatedPlayerIds);
 
         verifyRound(round, changedDate, updatedPlayerIds);
     }
@@ -141,7 +141,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     }
 
     /**
-     * Verifies the handling for the create service methods.
+     * Verifies the handling for the rounds service methods.
      */
     @Test
     public void verifyErrorHandling()
@@ -149,15 +149,15 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         LocalDate roundDate = LocalDate.of(2018, 5, 6);
         int[] playerIds = new int[] { 1, 2, 3 };
 
-        verifyCheckedExceptionThrown(() -> sCreateService.createRound(0, null, null),               IllegalArgumentException.class, "Empty round date");
-        verifyCheckedExceptionThrown(() -> sCreateService.createRound(0, roundDate, null),          IllegalArgumentException.class, "Empty player IDs");
-        verifyCheckedExceptionThrown(() -> sCreateService.createRound(0, roundDate, new int[0]),    IllegalArgumentException.class, "Empty player IDs");
-        verifyCheckedExceptionThrown(() -> sCreateService.createRound(0, roundDate, playerIds),     PersistenceException.class,     "Competition does not exist: 0");
+        verifyCheckedExceptionThrown(() -> sRoundService.createRound(0, null, null),               IllegalArgumentException.class, "Empty round date");
+        verifyCheckedExceptionThrown(() -> sRoundService.createRound(0, roundDate, null),          IllegalArgumentException.class, "Empty player IDs");
+        verifyCheckedExceptionThrown(() -> sRoundService.createRound(0, roundDate, new int[0]),    IllegalArgumentException.class, "Empty player IDs");
+        verifyCheckedExceptionThrown(() -> sRoundService.createRound(0, roundDate, playerIds),     PersistenceException.class,     "Competition does not exist: 0");
 
-        verifyCheckedExceptionThrown(() -> sCreateService.updateRound(0, 0, null, null),            IllegalArgumentException.class, "Empty round date");
-        verifyCheckedExceptionThrown(() -> sCreateService.updateRound(0, 0, roundDate, null),       IllegalArgumentException.class, "Empty player IDs");
-        verifyCheckedExceptionThrown(() -> sCreateService.updateRound(0, 0, roundDate, new int[0]), IllegalArgumentException.class, "Empty player IDs");
-        verifyCheckedExceptionThrown(() -> sCreateService.updateRound(0, 0, roundDate, playerIds),  PersistenceException.class,     "Competition does not exist: 0");
-        verifyCheckedExceptionThrown(() -> sCreateService.updateRound(1, 0, roundDate, playerIds),  IllegalArgumentException.class, "Round 0 is not present in this competition");
+        verifyCheckedExceptionThrown(() -> sRoundService.updateRound(0, 0, null, null),            IllegalArgumentException.class, "Empty round date");
+        verifyCheckedExceptionThrown(() -> sRoundService.updateRound(0, 0, roundDate, null),       IllegalArgumentException.class, "Empty player IDs");
+        verifyCheckedExceptionThrown(() -> sRoundService.updateRound(0, 0, roundDate, new int[0]), IllegalArgumentException.class, "Empty player IDs");
+        verifyCheckedExceptionThrown(() -> sRoundService.updateRound(0, 0, roundDate, playerIds),  PersistenceException.class,     "Competition does not exist: 0");
+        verifyCheckedExceptionThrown(() -> sRoundService.updateRound(1, 0, roundDate, playerIds),  IllegalArgumentException.class, "Round 0 is not present in this competition");
     }
 }

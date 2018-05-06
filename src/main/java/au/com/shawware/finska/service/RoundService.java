@@ -21,13 +21,13 @@ import au.com.shawware.finska.persistence.IEntityRepository;
 import au.com.shawware.util.persistence.PersistenceException;
 
 /**
- * Provides services for creating competition data.
+ * Provides services for maintaining rounds.
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class CreateService
+public class RoundService
 {
-    private static final Logger LOG = LoggerFactory.getLogger(CreateService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RoundService.class);
 
     /** The source for competition data. */
     private final IEntityRepository mRepository;
@@ -40,7 +40,7 @@ public class CreateService
      * @param repository the competition data source
      * @param observer observes changes to the repository made by this service
      */
-    /*package*/ CreateService(IEntityRepository repository, IChangeObserver observer)
+    RoundService(IEntityRepository repository, IChangeObserver observer)
     {
         mRepository = repository;
         mObserver   = observer;
