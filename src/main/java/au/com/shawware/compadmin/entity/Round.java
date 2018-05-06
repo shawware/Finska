@@ -37,7 +37,7 @@ import au.com.shawware.util.persistence.AbstractEntity;
 public abstract class Round<MatchType extends Match> extends AbstractEntity<Integer>
 {
     /** The date the round was held. */
-    private final LocalDate mRoundDate;
+    private LocalDate mRoundDate;
     /** The matches that make up this round. */
     private final Map<Integer, MatchType> mMatches;
     /** The set of match IDs. */
@@ -49,14 +49,17 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity<Inte
      * @param id the round's ID
      * @param number the round's number
      * @param roundDate the date the round was held
+     * 
+     * @throws IllegalArgumentException invalid parameters, eg. null round date
      */
     @SuppressWarnings("boxing")
     public Round(@JsonProperty("id") int id,
                  @JsonProperty("key") int number,
                  @JsonProperty("roundDate") LocalDate roundDate)
-     {
+        throws IllegalArgumentException
+    {
         super(id, number);
-        mRoundDate = roundDate;
+        setRoundDate(roundDate);
         mMatches   = new HashMap<>();
         mMatchIds  = new HashSet<>();
      }
@@ -80,6 +83,23 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity<Inte
     public LocalDate getRoundDate()
     {
         return mRoundDate;
+    }
+
+    /**
+     * Updates this round's round date.
+     * 
+     * @param roundDate the new round date
+     * 
+     * @throws IllegalArgumentException null round date
+     */
+    public void setRoundDate(LocalDate roundDate)
+        throws IllegalArgumentException
+    {
+        if (roundDate == null)
+        {
+            throw new IllegalArgumentException("Empty round date"); //$NON-NLS-1$
+        }
+        mRoundDate = roundDate;
     }
 
     /**

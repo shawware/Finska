@@ -159,4 +159,11 @@ public class EntityRepository implements IEntityRepository
         mCompetitionStore.update(competition);
         return round;
     }
+
+    @Override
+    public void updateRound(FinskaRound round)
+        throws PersistenceException
+    {
+        mRoundStore.update(round);
+    }
 }

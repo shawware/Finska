@@ -65,4 +65,14 @@ public interface IEntityRepository
      */
     FinskaRound createRound(FinskaCompetition competition, FinskaRound round)
         throws PersistenceException;
+
+    /**
+     * Updates the given round.
+     * 
+     * @param round the new round
+     * 
+     * @throws PersistenceException error during update
+     */
+    void updateRound(FinskaRound round)
+        throws PersistenceException;
 }

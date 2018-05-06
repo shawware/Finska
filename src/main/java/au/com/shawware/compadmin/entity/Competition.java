@@ -146,6 +146,19 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     }
 
     /**
+     * Determines whether this competition has the given round.
+     * 
+     * @param id the round ID to test for
+     * 
+     * @return Whether the given round exists.
+     */
+    @SuppressWarnings("boxing")
+    public boolean hasRound(int id)
+    {
+        return mRoundIds.contains(id);
+    }
+
+    /**
      * @return The competition's round IDs.
      */
     public Set<Integer> getRoundIds()
