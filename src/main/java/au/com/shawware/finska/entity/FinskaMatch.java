@@ -99,6 +99,21 @@ public class FinskaMatch extends Match
     }
 
     /**
+     * Whether the given player ID is that of a winner of this match.
+     * 
+     * @param id the player's ID
+     * 
+     * @return Whether the given player is a winner.
+     */
+    @JsonIgnore
+    @SuppressWarnings("boxing")
+    public boolean isWinner(int id)
+    {
+        // TODO: how do we validate the ID belongs to a valid player?
+        return mWinnerIds.contains(id);
+    }
+
+    /**
      * Retrieve the given player from this match.
      * 
      * @param id the player's ID
@@ -146,6 +161,17 @@ public class FinskaMatch extends Match
         mWinners.clear();
         mWinnerIds.clear();
         mWinnerIds.addAll(winnerIds);
+    }
+
+    /**
+     * Whether this match has a fast winner(s).
+     *
+     * @return Whether this match has a fast winner(s).
+     */
+    @JsonIgnore
+    public boolean hasFastWinner()
+    {
+        return (mFastWinnerIds.size() > 0);
     }
 
     /**
