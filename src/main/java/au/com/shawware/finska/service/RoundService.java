@@ -56,14 +56,8 @@ public class RoundService extends AbstractService
     public FinskaRound createRound(int competitionID, LocalDate roundDate, int[] playerIds)
         throws PersistenceException
     {
-        if (roundDate == null)
-        {
-            throw new IllegalArgumentException("Empty round date");
-        }
-        if ((playerIds == null) || (playerIds.length == 0))
-        {
-            throw new IllegalArgumentException("Empty player IDs");
-        }
+        verifyParameters(roundDate, playerIds);
+
         // TODO: add players to comp
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         Map<Integer, Player> players = mRepository.getPlayers();
@@ -105,14 +99,8 @@ public class RoundService extends AbstractService
     public FinskaRound updateRound(int competitionID, int number, LocalDate roundDate, int[] playerIds)
         throws PersistenceException
     {
-        if (roundDate == null)
-        {
-            throw new IllegalArgumentException("Empty round date");
-        }
-        if ((playerIds == null) || (playerIds.length == 0))
-        {
-            throw new IllegalArgumentException("Empty player IDs");
-        }
+        verifyParameters(roundDate, playerIds);
+
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         FinskaRound round = competition.getRound(number);
         // TODO; verify round date is within comp dates
@@ -136,5 +124,27 @@ public class RoundService extends AbstractService
         mObserver.repositoryUpdated();
 
         return round;
+    }
+
+    /**
+     * Verify the given parameters meet the minimum standard.
+     * 
+     * @param roundDate the round date
+     * @param playerIds the players participating in the round
+     * 
+     * @throws IllegalArgumentException invalid parameter
+     */
+    @SuppressWarnings({ "nls", "static-method" })
+    private void verifyParameters(LocalDate roundDate, int[] playerIds)
+        throws IllegalArgumentException
+    {
+        if (roundDate == null)
+        {
+            throw new IllegalArgumentException("Empty round date");
+        }
+        if ((playerIds == null) || (playerIds.length == 0))
+        {
+            throw new IllegalArgumentException("Empty player IDs");
+        }
     }
 }

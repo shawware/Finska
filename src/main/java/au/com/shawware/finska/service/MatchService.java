@@ -57,10 +57,8 @@ public class MatchService extends AbstractService
     public FinskaMatch createMatch(int competitionID, int roundNumber, int[] winnerIds, boolean fastWin)
         throws PersistenceException
     {
-        if ((winnerIds == null) || (winnerIds.length == 0))
-        {
-            throw new IllegalArgumentException("Empty winner IDs");
-        }
+        verifyParameters(winnerIds);
+
         // TODO: add players to comp
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         FinskaRound round = competition.getRound(roundNumber);
@@ -107,10 +105,8 @@ public class MatchService extends AbstractService
     public FinskaMatch updateMatch(int competitionID, int roundNumber, int matchNumber, int[] winnerIds, boolean fastWin)
         throws PersistenceException
     {
-        if ((winnerIds == null) || (winnerIds.length == 0))
-        {
-            throw new IllegalArgumentException("Empty winner IDs");
-        }
+        verifyParameters(winnerIds);
+
         // TODO: add players to comp
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         FinskaRound round = competition.getRound(roundNumber);
@@ -139,5 +135,22 @@ public class MatchService extends AbstractService
         mObserver.repositoryUpdated();
 
         return match;
+    }
+
+    /**
+     * Verify the given parameters meet the minimum standard.
+     * 
+     * @param winnerIds the IDs of the winning players
+     * 
+     * @throws IllegalArgumentException invalid parameter
+     */
+    @SuppressWarnings({ "nls", "static-method" })
+    private void verifyParameters(int[] winnerIds)
+        throws IllegalArgumentException
+    {
+        if ((winnerIds == null) || (winnerIds.length == 0))
+        {
+            throw new IllegalArgumentException("Empty winner IDs");
+        }
     }
 }
