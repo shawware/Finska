@@ -53,7 +53,7 @@ public class MatchService extends AbstractService
      * @throws PersistenceException storage error
      * @throws IllegalArgumentException empty argument
      */
-    @SuppressWarnings({ "nls", "boxing" })
+    @SuppressWarnings({ "nls" })
     public FinskaMatch createMatch(int competitionID, int roundNumber, int[] winnerIds, boolean fastWin)
         throws PersistenceException
     {
@@ -65,20 +65,8 @@ public class MatchService extends AbstractService
         Map<Integer, Player> players = mRepository.getPlayers();
 
         FinskaMatch match = new FinskaMatch(round.numberOfMatches() + 1, round.getRoundDate());
-        for (int winnerId : winnerIds)
-        {
-            // TODO: handle duplicates
-            if (!players.containsKey(winnerId))
-            {
-                throw new PersistenceException("Cannot find player with ID: " + winnerId);
-            }
-            if (!round.hasPlayer(winnerId))
-            {
-                throw new PersistenceException("Cannot find player eith ID " + winnerId +  " in round " + roundNumber);
-            }
-            match.addWinner(players.get(winnerId));
-        }
-        match.setFastWinner(fastWin);
+
+        updateMatch(players, round, match, winnerIds, fastWin);
 
         match = mRepository.createMatch(competition, round, match);
         LOG.info("Created new match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
@@ -101,7 +89,7 @@ public class MatchService extends AbstractService
      * @throws PersistenceException storage error
      * @throws IllegalArgumentException empty argument
      */
-    @SuppressWarnings({ "nls", "boxing" })
+    @SuppressWarnings({ "nls" })
     public FinskaMatch updateMatch(int competitionID, int roundNumber, int matchNumber, int[] winnerIds, boolean fastWin)
         throws PersistenceException
     {
@@ -113,6 +101,31 @@ public class MatchService extends AbstractService
         FinskaMatch match = round.getMatch(matchNumber);
         Map<Integer, Player> players = mRepository.getPlayers();
 
+        updateMatch(players, round, match, winnerIds, fastWin);
+
+        mRepository.updateMatch(competition, round, match);
+        LOG.info("Upadted match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
+
+        mObserver.repositoryUpdated();
+
+        return match;
+    }
+
+    /**
+     * Updates the given match with the given new settings.
+     * 
+     * @param players the competition's players
+     * @param round the match's round
+     * @param match the match to update
+     * @param winnerIds the IDs of the winning players
+     * @param fastWin whether the winning players had a fast win
+     * 
+     * @throws PersistenceException validation error
+     */
+    @SuppressWarnings({ "nls", "boxing", "static-method" })
+    private void updateMatch(Map<Integer, Player> players, FinskaRound round, FinskaMatch match, int[] winnerIds, boolean fastWin)
+        throws PersistenceException
+    {
         match.setWinnerIds(Collections.emptySet()); // TODO: is this the best way to clear the player IDs?
         for (int winnerId : winnerIds)
         {
@@ -123,18 +136,11 @@ public class MatchService extends AbstractService
             }
             if (!round.hasPlayer(winnerId))
             {
-                throw new PersistenceException("Cannot find player eith ID " + winnerId +  " in round " + roundNumber);
+                throw new PersistenceException("Cannot find player eith ID " + winnerId +  " in round " + round.getKey());
             }
             match.addWinner(players.get(winnerId));
         }
         match.setFastWinner(fastWin);
-
-        mRepository.updateMatch(competition, round, match);
-        LOG.info("Upadted match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
-
-        mObserver.repositoryUpdated();
-
-        return match;
     }
 
     /**

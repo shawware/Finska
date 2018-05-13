@@ -52,7 +52,7 @@ public class RoundService extends AbstractService
      * @throws PersistenceException storage error
      * @throws IllegalArgumentException empty argument
      */
-    @SuppressWarnings({ "nls", "boxing" })
+    @SuppressWarnings({ "nls" })
     public FinskaRound createRound(int competitionID, LocalDate roundDate, int[] playerIds)
         throws PersistenceException
     {
@@ -64,15 +64,8 @@ public class RoundService extends AbstractService
         // TODO; verify round date is within comp dates
 
         FinskaRound round = new FinskaRound(competition.numberOfRounds() + 1, roundDate);
-        for (int playerId : playerIds)
-        {
-            // TODO: handle duplicates
-            if (!players.containsKey(playerId))
-            {
-                throw new PersistenceException("Cannot find player with ID: " + playerId);
-            }
-            round.addPlayer(players.get(playerId));
-        }
+
+        updateRound(players, round, roundDate, playerIds);
 
         round = mRepository.createRound(competition, round);
         LOG.info("Created new round " + round.getKey() + " in competition " + competition.getKey());
@@ -95,7 +88,7 @@ public class RoundService extends AbstractService
      * @throws PersistenceException storage error
      * @throws IllegalArgumentException empty argument
      */
-    @SuppressWarnings({ "nls", "boxing" })
+    @SuppressWarnings({ "nls" })
     public FinskaRound updateRound(int competitionID, int number, LocalDate roundDate, int[] playerIds)
         throws PersistenceException
     {
@@ -106,6 +99,30 @@ public class RoundService extends AbstractService
         // TODO; verify round date is within comp dates
         Map<Integer, Player> players = mRepository.getPlayers();
 
+        updateRound(players, round, roundDate, playerIds);
+
+        mRepository.updateRound(round);
+        LOG.info("Updated round " + round.getKey() + " in competition " + competition.getKey());
+
+        mObserver.repositoryUpdated();
+
+        return round;
+    }
+
+    /**
+     * Updates the given round with the given new settings.
+     * 
+     * @param players the competition's players
+     * @param round the match's round
+     * @param roundDate the round date
+     * @param playerIds the players participating in the round
+     * 
+     * @throws PersistenceException validation error
+     */
+    @SuppressWarnings({ "nls", "boxing", "static-method" })
+    private void updateRound(Map<Integer, Player> players, FinskaRound round, LocalDate roundDate, int[] playerIds)
+        throws PersistenceException
+    {
         round.setRoundDate(roundDate);
         round.setPlayerIds(Collections.emptySet()); // TODO: is this the best way to clear the player IDs?
         for (int playerId : playerIds)
@@ -117,13 +134,6 @@ public class RoundService extends AbstractService
             }
             round.addPlayer(players.get(playerId));
         }
-
-        mRepository.updateRound(round);
-        LOG.info("Updated round " + round.getKey() + " in competition " + competition.getKey());
-
-        mObserver.repositoryUpdated();
-
-        return round;
     }
 
     /**
