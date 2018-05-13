@@ -104,7 +104,7 @@ public class MatchService extends AbstractService
         updateMatch(players, round, match, winnerIds, fastWin);
 
         mRepository.updateMatch(competition, round, match);
-        LOG.info("Upadted match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
+        LOG.info("Updated match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
 
         mObserver.repositoryUpdated();
 

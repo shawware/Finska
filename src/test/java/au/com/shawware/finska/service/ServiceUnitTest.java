@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.AbstractFinskaPersistenceUnitTest;
@@ -37,6 +38,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     private static ResultsService sResultsService;
     /** The round service to use in our tests. */
     private static RoundService sRoundService;
+    /** The round service to use in our tests. */
+    private static MatchService sMatchService;
     /** The test competition. */
     private static FinskaCompetition sCompetition;
     /** The test players. */
@@ -68,6 +71,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
         sResultsService = services.getResultsService();
         sRoundService = services.getRoundService();
+        sMatchService = services.getMatchService();
     }
 
     /**
@@ -79,6 +83,10 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     public void testRounds()
         throws PersistenceException
     {
+        // Refresh given that other tests may have added data
+        sCompetition = sResultsService.getCompetition();
+        int numberOfRounds = sCompetition.numberOfRounds(); // Other tests may have added rounds
+
         /*
          * We've added three players to the store, but other tests may have also added players.
          * So we just get the first three we can find.
@@ -94,33 +102,52 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 
         Set<Integer> roundIds = sCompetition.getRoundIds();
         List<FinskaRound> rounds = sCompetition.getRounds();
-        Assert.assertEquals(0, roundIds.size());
-        Assert.assertEquals(0, rounds.size());
+        Assert.assertEquals(numberOfRounds, roundIds.size());
+        Assert.assertEquals(numberOfRounds, rounds.size());
 
         FinskaRound round = sRoundService.createRound(sCompetition.getId(), roundDate, playerIds);
 
-        verifyRound(round, roundDate, playerIds);
+        // Refresh the data after the change
+        sCompetition = sResultsService.getCompetition();
+
+        Assert.assertEquals(numberOfRounds + 1, sCompetition.numberOfRounds());
+        verifyRound(round, numberOfRounds + 1, roundDate, playerIds);
 
         int[] updatedPlayerIds = new int[] { p2.getId(), p3.getId() };
         LocalDate changedDate = roundDate.plusDays(1);
 
         round = sRoundService.updateRound(sCompetition.getId(), round.getKey(), changedDate, updatedPlayerIds);
 
-        verifyRound(round, changedDate, updatedPlayerIds);
+        Assert.assertEquals(numberOfRounds + 1, sCompetition.numberOfRounds());
+        Assert.assertEquals(0, round.numberOfMatches());
+        verifyRound(round, numberOfRounds + 1, changedDate, updatedPlayerIds);
+
+        int[] winnerIds = new int[] { p3.getId() };
+
+        FinskaMatch match = sMatchService.createMatch(sCompetition.getId(), round.getKey(), winnerIds, false);
+
+        // Refresh the data after the change
+        sCompetition = sResultsService.getCompetition();
+        round = sCompetition.getRound(round.getKey());
+
+        Assert.assertEquals(1, round.numberOfMatches());
+
+        verifyMatch(match, round.getKey(), winnerIds, false);
     }
 
     /**
      * Verify the given round is as expected.
      * 
      * @param round the round under test
+     * @param roundNumber the expected round number
      * @param roundDate the expected round date
      * @param playerIds the expected player IDs
      */
-    private void verifyRound(FinskaRound round, LocalDate roundDate, int[] playerIds)
+    private void verifyRound(FinskaRound round, int roundNumber, LocalDate roundDate, int[] playerIds)
     {
         Assert.assertNotNull(round);
         Assert.assertTrue(round.getId() > FinskaRound.DEFAULT_ID);
-        Assert.assertEquals(Integer.valueOf(1), round.getKey());
+        Assert.assertEquals(Integer.valueOf(roundNumber), round.getKey());
         Assert.assertEquals(roundDate, round.getRoundDate());
 
         Set<Integer> IDs = round.getPlayerIds();
@@ -128,23 +155,61 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Arrays.stream(playerIds).forEach(id -> {
             Assert.assertTrue(IDs.contains(id));
             round.getPlayer(id); // Will throw an exception if not present
+            Assert.assertTrue(round.hasPlayer(id));
         });
 
         FinskaCompetition comp = sResultsService.getCompetition();
         Set<Integer> roundIds = comp.getRoundIds();
         List<FinskaRound> rounds = comp.getRounds();
         FinskaRound copy = comp.getRound(round.getKey());
-        Assert.assertEquals(1, roundIds.size());
+        Assert.assertEquals(roundNumber, roundIds.size());
         Assert.assertTrue(roundIds.contains(round.getKey()));
-        Assert.assertEquals(1, rounds.size());
+        Assert.assertEquals(roundNumber, rounds.size());
         Assert.assertEquals(round.toString(), copy.toString());
     }
 
     /**
-     * Verifies the handling for the rounds service methods.
+     * Verifies the given match against the given data.
+     * 
+     * @param match the match to verify
+     * @param roundNumber the match's round number
+     * @param winnerIds the expected IDs of the winners
+     * @param fastWin whether the winners are expected to have had a fast win
+     */
+    private void verifyMatch(FinskaMatch match, int roundNumber, int[] winnerIds, boolean fastWin)
+    {
+        Assert.assertNotNull(match);
+        Assert.assertTrue(match.getId() > FinskaMatch.DEFAULT_ID);
+        Assert.assertEquals(Integer.valueOf(1), match.getKey());
+        Assert.assertEquals(fastWin, match.hasFastWinner());
+
+        Set<Integer> IDs = match.getWinnerIds();
+        Assert.assertEquals(winnerIds.length, IDs.size());
+        Arrays.stream(winnerIds).forEach(id -> {
+            Assert.assertTrue(IDs.contains(id));
+            match.getWinner(id); // Will throw an exception if not present
+            Assert.assertEquals(fastWin, match.isFastWinner(id));
+        });
+
+        FinskaCompetition comp = sResultsService.getCompetition();
+        FinskaRound round = comp.getRound(roundNumber);
+        Set<Integer> matchIds = round.getMatchIds();
+        List<FinskaMatch> matches = round.getMatches();
+        FinskaMatch copy = round.getMatch(match.getKey());
+        Assert.assertEquals(1, matchIds.size());
+        Assert.assertTrue(matchIds.contains(match.getKey()));
+        Assert.assertEquals(1, matches.size());
+        Assert.assertEquals(match.toString(), copy.toString());
+    }
+
+    /**
+     * Verifies the handling for service methods.
+     * 
+     * @throws PersistenceException persistence error
      */
     @Test
     public void verifyErrorHandling()
+        throws PersistenceException
     {
         LocalDate roundDate = LocalDate.of(2018, 5, 6);
         int[] playerIds = new int[] { 1, 2, 3 };
@@ -159,5 +224,18 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         verifyCheckedExceptionThrown(() -> sRoundService.updateRound(0, 0, roundDate, new int[0]), IllegalArgumentException.class, "Empty player IDs");
         verifyCheckedExceptionThrown(() -> sRoundService.updateRound(0, 0, roundDate, playerIds),  PersistenceException.class,     "Competition does not exist: 0");
         verifyCheckedExceptionThrown(() -> sRoundService.updateRound(1, 0, roundDate, playerIds),  IllegalArgumentException.class, "Round 0 is not present in this competition");
+
+        verifyCheckedExceptionThrown(() -> sMatchService.createMatch(0, 0, null, false),           IllegalArgumentException.class, "Empty winner IDs");
+        verifyCheckedExceptionThrown(() -> sMatchService.createMatch(0, 0, new int[0], false),     IllegalArgumentException.class, "Empty winner IDs");
+        verifyCheckedExceptionThrown(() -> sMatchService.createMatch(0, 0, playerIds, false),      PersistenceException.class,     "Competition does not exist: 0");
+        verifyCheckedExceptionThrown(() -> sMatchService.createMatch(1, 0, playerIds, false),      IllegalArgumentException.class, "Round 0 is not present in this competition");
+
+        verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(0, 0, 0, null, false),        IllegalArgumentException.class, "Empty winner IDs");
+        verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(0, 0, 0, new int[0], false),  IllegalArgumentException.class, "Empty winner IDs");
+        verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(0, 0, 0, playerIds, false),   PersistenceException.class,     "Competition does not exist: 0");
+        verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(1, 0, 0, playerIds, false),   IllegalArgumentException.class, "Round 0 is not present in this competition");
+ 
+        sRoundService.createRound(sCompetition.getId(), roundDate, playerIds);
+        verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(1, 1, 0, playerIds, false),   IllegalArgumentException.class, "Match 0 is not present in this round");
     }
 }
