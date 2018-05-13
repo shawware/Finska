@@ -208,6 +208,23 @@ public class FinskaMatch extends Match
         mFastWinnerIds.addAll(fastWinnerIds);
     }
 
+    /**
+     * Specifies whether this match's winners had a fast win.
+     * 
+     * @param fastWin the new setting
+     */
+    public void setFastWinner(boolean fastWin)
+    {
+        if (fastWin)
+        {
+            setFastWinnerIds(mWinnerIds);
+        }
+        else
+        {
+            mFastWinnerIds.clear();
+        }
+    }
+
     @Override
     @SuppressWarnings("boxing")
     public String toString()

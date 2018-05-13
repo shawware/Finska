@@ -166,4 +166,14 @@ public class EntityRepository implements IEntityRepository
     {
         mRoundStore.update(round);
     }
+
+    @Override
+    public FinskaMatch createMatch(FinskaCompetition competition, FinskaRound round, FinskaMatch match)
+        throws PersistenceException
+    {
+        mMatchStore.create(match);
+        round.addMatch(match);
+        mRoundStore.update(round);
+        return match;
+    }
 }

@@ -97,6 +97,19 @@ public class FinskaRound extends Round<FinskaMatch>
     }
 
     /**
+     * Determines whether this round has this player.
+     * 
+     * @param id the player's ID
+     * 
+     * @return Whether this round has this player.
+     */
+    @SuppressWarnings("boxing")
+    public boolean hasPlayer(int id)
+    {
+        return mPlayers.containsKey(id);
+    }
+
+    /**
      * Retrieve the given player from this competition.
      * 
      * @param id the player's ID
@@ -110,7 +123,7 @@ public class FinskaRound extends Round<FinskaMatch>
     public Player getPlayer(int id)
         throws IllegalArgumentException
     {
-        if (!mPlayers.containsKey(id))
+        if (!hasPlayer(id))
         {
             throw new IllegalArgumentException("Player " + id + " is not present in this round"); //$NON-NLS-1$ //$NON-NLS-2$
         }

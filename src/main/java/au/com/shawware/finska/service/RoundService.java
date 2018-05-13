@@ -25,14 +25,9 @@ import au.com.shawware.util.persistence.PersistenceException;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class RoundService
+public class RoundService extends AbstractService
 {
     private static final Logger LOG = LoggerFactory.getLogger(RoundService.class);
-
-    /** The source for competition data. */
-    private final IEntityRepository mRepository;
-    /** The observer to be notified when this services updates the repository. */
-    private final IChangeObserver mObserver;
 
     /**
      * Constructs a new service.
@@ -40,10 +35,9 @@ public class RoundService
      * @param repository the competition data source
      * @param observer observes changes to the repository made by this service
      */
-    RoundService(IEntityRepository repository, IChangeObserver observer)
+    /*package*/ RoundService(IEntityRepository repository, IChangeObserver observer)
     {
-        mRepository = repository;
-        mObserver   = observer;
+        super(repository, observer);
     }
 
     /**

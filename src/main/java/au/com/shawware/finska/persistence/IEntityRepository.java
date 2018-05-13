@@ -10,6 +10,7 @@ package au.com.shawware.finska.persistence;
 import java.util.Map;
 
 import au.com.shawware.finska.entity.FinskaCompetition;
+import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.util.persistence.PersistenceException;
@@ -74,5 +75,19 @@ public interface IEntityRepository
      * @throws PersistenceException error during update
      */
     void updateRound(FinskaRound round)
+        throws PersistenceException;
+
+    /**
+     * Creates a new match in the given round of the given competition.
+     * 
+     * @param competition the competition
+     * @param round the new round
+     * @param match the new match
+     * 
+     * @return The created match.
+     * 
+     * @throws PersistenceException error during creation
+     */
+    FinskaMatch createMatch(FinskaCompetition competition, FinskaRound round, FinskaMatch match)
         throws PersistenceException;
 }
