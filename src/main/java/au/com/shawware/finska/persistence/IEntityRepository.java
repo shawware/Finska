@@ -90,4 +90,16 @@ public interface IEntityRepository
      */
     FinskaMatch createMatch(FinskaCompetition competition, FinskaRound round, FinskaMatch match)
         throws PersistenceException;
+
+    /**
+     * Updates an existing match in the given round of the given competition.
+     * 
+     * @param competition the competition
+     * @param round the new round
+     * @param match the new match
+     * 
+     * @throws PersistenceException error during update
+     */
+    void updateMatch(FinskaCompetition competition, FinskaRound round, FinskaMatch match)
+        throws PersistenceException;
 }

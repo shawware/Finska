@@ -7,6 +7,7 @@
 
 package au.com.shawware.finska.service;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -83,6 +84,57 @@ public class MatchService extends AbstractService
 
         match = mRepository.createMatch(competition, round, match);
         LOG.info("Created new match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
+
+        mObserver.repositoryUpdated();
+
+        return match;
+    }
+
+    /**
+     * Updates an existing match with the given features in the specified competition / round.
+     * @param competitionID the competition ID
+     * @param roundNumber the round number (within the competition)
+     * @param matchNumber the match number (within the round)
+     * @param winnerIds the IDs of the winning players
+     * @param fastWin whether the winning players had a fast win
+     * 
+     * @return The new match.
+     * 
+     * @throws PersistenceException storage error
+     * @throws IllegalArgumentException empty argument
+     */
+    @SuppressWarnings({ "nls", "boxing" })
+    public FinskaMatch updateMatch(int competitionID, int roundNumber, int matchNumber, int[] winnerIds, boolean fastWin)
+        throws PersistenceException
+    {
+        if ((winnerIds == null) || (winnerIds.length == 0))
+        {
+            throw new IllegalArgumentException("Empty winner IDs");
+        }
+        // TODO: add players to comp
+        FinskaCompetition competition = mRepository.getCompetition(competitionID);
+        FinskaRound round = competition.getRound(roundNumber);
+        FinskaMatch match = round.getMatch(matchNumber);
+        Map<Integer, Player> players = mRepository.getPlayers();
+
+        match.setWinnerIds(Collections.emptySet()); // TODO: is this the best way to clear the player IDs?
+        for (int winnerId : winnerIds)
+        {
+            // TODO: handle duplicates
+            if (!players.containsKey(winnerId))
+            {
+                throw new PersistenceException("Cannot find player with ID: " + winnerId);
+            }
+            if (!round.hasPlayer(winnerId))
+            {
+                throw new PersistenceException("Cannot find player eith ID " + winnerId +  " in round " + roundNumber);
+            }
+            match.addWinner(players.get(winnerId));
+        }
+        match.setFastWinner(fastWin);
+
+        mRepository.updateMatch(competition, round, match);
+        LOG.info("Upadted match " + match.getKey() + " in round " + roundNumber + " in competition " + competition.getKey());
 
         mObserver.repositoryUpdated();
 
