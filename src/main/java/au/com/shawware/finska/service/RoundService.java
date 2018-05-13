@@ -50,7 +50,7 @@ public class RoundService extends AbstractService
      * @return The new round.
      * 
      * @throws PersistenceException storage error
-     * @throws IllegalArgumentException empty argument
+     * @throws IllegalArgumentException empty or invalid argument
      */
     @SuppressWarnings({ "nls" })
     public FinskaRound createRound(int competitionID, LocalDate roundDate, int[] playerIds)
@@ -86,7 +86,7 @@ public class RoundService extends AbstractService
      * @return The updated round.
      * 
      * @throws PersistenceException storage error
-     * @throws IllegalArgumentException empty argument
+     * @throws IllegalArgumentException empty or invalid argument
      */
     @SuppressWarnings({ "nls" })
     public FinskaRound updateRound(int competitionID, int number, LocalDate roundDate, int[] playerIds)
@@ -117,11 +117,11 @@ public class RoundService extends AbstractService
      * @param roundDate the round date
      * @param playerIds the players participating in the round
      * 
-     * @throws PersistenceException validation error
+     * @throws IllegalArgumentException validation error
      */
     @SuppressWarnings({ "nls", "boxing", "static-method" })
     private void updateRound(Map<Integer, Player> players, FinskaRound round, LocalDate roundDate, int[] playerIds)
-        throws PersistenceException
+        throws IllegalArgumentException
     {
         round.setRoundDate(roundDate);
         round.setPlayerIds(Collections.emptySet()); // TODO: is this the best way to clear the player IDs?
@@ -130,7 +130,7 @@ public class RoundService extends AbstractService
             // TODO: handle duplicates
             if (!players.containsKey(playerId))
             {
-                throw new PersistenceException("Cannot find player with ID: " + playerId);
+                throw new IllegalArgumentException("Cannot find player with ID: " + playerId);
             }
             round.addPlayer(players.get(playerId));
         }

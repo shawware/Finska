@@ -51,7 +51,7 @@ public class MatchService extends AbstractService
      * @return The new match.
      * 
      * @throws PersistenceException storage error
-     * @throws IllegalArgumentException empty argument
+     * @throws IllegalArgumentException empty or invalid argument
      */
     @SuppressWarnings({ "nls" })
     public FinskaMatch createMatch(int competitionID, int roundNumber, int[] winnerIds, boolean fastWin)
@@ -87,7 +87,7 @@ public class MatchService extends AbstractService
      * @return The new match.
      * 
      * @throws PersistenceException storage error
-     * @throws IllegalArgumentException empty argument
+     * @throws IllegalArgumentException empty or invalid argument
      */
     @SuppressWarnings({ "nls" })
     public FinskaMatch updateMatch(int competitionID, int roundNumber, int matchNumber, int[] winnerIds, boolean fastWin)
@@ -120,11 +120,11 @@ public class MatchService extends AbstractService
      * @param winnerIds the IDs of the winning players
      * @param fastWin whether the winning players had a fast win
      * 
-     * @throws PersistenceException validation error
+     * @throws IllegalArgumentException validation error
      */
     @SuppressWarnings({ "nls", "boxing", "static-method" })
     private void updateMatch(Map<Integer, Player> players, FinskaRound round, FinskaMatch match, int[] winnerIds, boolean fastWin)
-        throws PersistenceException
+        throws IllegalArgumentException
     {
         match.setWinnerIds(Collections.emptySet()); // TODO: is this the best way to clear the player IDs?
         for (int winnerId : winnerIds)
@@ -132,11 +132,11 @@ public class MatchService extends AbstractService
             // TODO: handle duplicates
             if (!players.containsKey(winnerId))
             {
-                throw new PersistenceException("Cannot find player with ID: " + winnerId);
+                throw new IllegalArgumentException("Cannot find player with ID: " + winnerId);
             }
             if (!round.hasPlayer(winnerId))
             {
-                throw new PersistenceException("Cannot find player eith ID " + winnerId +  " in round " + round.getKey());
+                throw new IllegalArgumentException("Cannot find player eith ID " + winnerId +  " in round " + round.getKey());
             }
             match.addWinner(players.get(winnerId));
         }
