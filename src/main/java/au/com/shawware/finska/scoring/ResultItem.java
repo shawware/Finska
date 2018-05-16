@@ -14,27 +14,26 @@ import au.com.shawware.compadmin.scoring.ResultSpec;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings("nls")
 public enum ResultItem
 {
     /** The total number of rounds played. */
-    ROUNDS("Rounds"),
+    ROUNDS,
     /** The total number of matches played. */
-    MATCHES("Matches"),
+    MATCHES,
     /** The total number of wins. */
-    WINS("Wins"),
+    WINS,
     /** The total name of "fast" wins, ie. 5 tosses. */
-    FAST_WINS("Fast Wins"),
+    FAST_WINS,
     /** The total number of times the first two matches in a round were won. */
-    WIN_BOTH("Win Both"),
+    WIN_BOTH,
     /** The total number of times all matches in a round were won. */
-    WIN_ALL("Win All"),
+    WIN_ALL,
     /** The total number of points. */
-    POINTS("Points"),
+    POINTS,
     /** The average number of points per round. */
-    POINTS_PER_ROUND("Pts/Round"),
+    POINTS_PER_ROUND,
     /** The running total number of points. */
-    RUNNING_TOTAL("Total");
+    RUNNING_TOTAL;
 
     /** The items used to order and rank results. */
     private static final ResultSpec sComparisonSpec;
@@ -43,30 +42,11 @@ public enum ResultItem
         sComparisonSpec.addItem(ResultItem.POINTS.toString());
     }
 
-    /** The text to display for this item. */
-    private final String mText;
-
-    /**
-     * Constructs a new item.
-     * 
-     * @param text the display text
-     */
-    private ResultItem(String text)
-    {
-        mText = text;
-    }
-
     /**
      * @return The items used to order and rank results.
      */
     public static ResultSpec getComparisonSpecification()
     {
         return sComparisonSpec;
-    }
-
-    @Override
-    public String toString()
-    {
-        return mText;
     }
 }
