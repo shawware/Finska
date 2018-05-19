@@ -41,12 +41,8 @@ public abstract class AbstractPersistenceUnitTest extends AbstractUnitTest
     public static void initialSetup()
         throws IOException
     {
-        File root = new File(PERSISTENCE_ROOT);
-        sRoot = root.toPath();
-        if (!root.exists())
-        {
-            Files.createDirectories(sRoot);
-        }
+        sRoot = new File(PERSISTENCE_ROOT).toPath();
+        Files.createDirectories(sRoot);
     }
 
     /**
