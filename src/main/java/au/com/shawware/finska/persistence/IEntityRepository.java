@@ -12,7 +12,6 @@ import java.util.Map;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
-import au.com.shawware.finska.entity.Player;
 import au.com.shawware.util.persistence.PersistenceException;
 
 /**
@@ -42,16 +41,6 @@ public interface IEntityRepository
      * @throws PersistenceException error loading competition
      */
     FinskaCompetition getCompetition(int id)
-        throws PersistenceException;
-
-    /**
-     * Retrieves the competition players.
-     * 
-     * @return The players as map from ID to player.
-     * 
-     * @throws PersistenceException error loading players
-     */
-    Map<Integer, Player> getPlayers()
         throws PersistenceException;
 
     /**

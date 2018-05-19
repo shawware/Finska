@@ -58,14 +58,12 @@ public class RoundService extends AbstractService
     {
         verifyParameters(roundDate, playerIds);
 
-        // TODO: add players to comp
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
-        Map<Integer, Player> players = mRepository.getPlayers();
         // TODO; verify round date is within comp dates
 
         FinskaRound round = new FinskaRound(competition.numberOfRounds() + 1, roundDate);
 
-        updateRound(players, round, roundDate, playerIds);
+        updateRound(competition.getEntrantMap(), round, roundDate, playerIds);
 
         round = mRepository.createRound(competition, round);
         LOG.info("Created new round " + round.getKey() + " in competition " + competition.getKey());
@@ -97,9 +95,8 @@ public class RoundService extends AbstractService
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         FinskaRound round = competition.getRound(number);
         // TODO; verify round date is within comp dates
-        Map<Integer, Player> players = mRepository.getPlayers();
 
-        updateRound(players, round, roundDate, playerIds);
+        updateRound(competition.getEntrantMap(), round, roundDate, playerIds);
 
         mRepository.updateRound(round);
         LOG.info("Updated round " + round.getKey() + " in competition " + competition.getKey());

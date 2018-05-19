@@ -31,15 +31,14 @@ public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetiti
     private final ScoringSystem mScoringSystem;
 
     /**
-     * Constructs a new analyser for the given players, competition and scoring system.
+     * Constructs a new analyser for the given competition and scoring system.
      * 
-     * @param players the full set of players in the competition
      * @param competition the competition to analyse
      * @param scoringSystem the scoring system to use
      */
-    public CompetitionAnalyser(Map<Integer, Player> players, FinskaCompetition competition, ScoringSystem scoringSystem)
+    public CompetitionAnalyser(FinskaCompetition competition, ScoringSystem scoringSystem)
     {
-        super(competition, players, ResultItem.getComparisonSpecification());
+        super(competition, ResultItem.getComparisonSpecification());
         mScoringSystem = scoringSystem;
     }
 

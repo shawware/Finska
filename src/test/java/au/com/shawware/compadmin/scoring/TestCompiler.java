@@ -29,7 +29,7 @@ public class TestCompiler extends AbstractResultsCompiler<TestCompetition, TestR
      */
     public TestCompiler(TestCompetition competition)
     {
-        this(competition, AbstractScoringUnitTest.sEntrants, AbstractScoringUnitTest.sComparisonSpec);
+        this(competition, AbstractScoringUnitTest.sComparisonSpec);
     }
 
     /**
@@ -37,12 +37,11 @@ public class TestCompiler extends AbstractResultsCompiler<TestCompetition, TestR
      * Primarily used to test the constructor error checking logic.
      * 
      * @param competition the test competition
-     * @param entrants the competition entrants
      * @param comparisonSpec the comparison specification
      */
-    public TestCompiler(TestCompetition competition, Map<Integer, TestEntrant> entrants, ResultSpec comparisonSpec)
+    public TestCompiler(TestCompetition competition, ResultSpec comparisonSpec)
     {
-        super(competition, entrants, comparisonSpec);
+        super(competition, comparisonSpec);
     }
 
     @Override

@@ -8,9 +8,7 @@
 package au.com.shawware.finska.scoring;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,8 +36,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
     @Test
     public void testAlgorithm()
     {
-        Map<Integer, Player> players = new HashMap<>();
-        FinskaCompetition competition = createCompetition(players);
+        FinskaCompetition competition = createCompetition();
 
         // Test the a basic scoring Scoring System - no bonuses of any kind.
         ScoringSystem scoringSystem = new ScoringSystem(5, 0, 0, 0, 0);
@@ -51,7 +48,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 3, 5, 2,  5, 2, 0, 0, 0, 10, 5.0      },
             { 5, 4, 3,  7, 1, 0, 0, 0,  5, 5.0/3.0  },
         };
-        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and games.
         scoringSystem = new ScoringSystem(2, 1, 0, 0, 0);
@@ -63,7 +60,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 5, 2,  5, 2, 0, 0, 0,  6, 3.0      },
             { 5, 4, 3,  7, 1, 0, 0, 0,  5, 5.0/3.0  },
         };
-        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and fast wins.
         scoringSystem = new ScoringSystem(2, 0, 5, 0, 0);
@@ -75,7 +72,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 5, 2,  5, 2, 0, 0, 0,  4, 2.0      },
             { 5, 4, 3,  7, 1, 0, 0, 0,  2, 2.0/3.0  },
         };
-        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win both.
         scoringSystem = new ScoringSystem(4, 0, 0, 1, 0);
@@ -87,7 +84,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 3, 5, 11, 2, 0, 0, 0,  8, 1.6      },
             { 5, 4, 3,  7, 1, 0, 0, 0,  4, 4.0/3.0  },
         };
-        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the a scoring Scoring System that counts wins and win alls.
         scoringSystem = new ScoringSystem(4, 0, 0, 0, 1);
@@ -99,7 +96,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 3, 5, 11, 2, 0, 0, 0,  8, 1.6      },
             { 5, 4, 3,  7, 1, 0, 0, 0,  4, 4.0/3.0  },
         };
-        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
 
         // Test the Seertech Scoring System
         scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
@@ -111,7 +108,7 @@ public class AnalyserUnitTest extends AbstractUnitTest
             { 4, 5, 2,  5, 2, 0, 1, 0,  9, 4.5 },
             { 5, 4, 3,  7, 1, 0, 0, 0,  6, 2.0 },
         };
-        verifyAlgorithm(competition, players, scoringSystem, expectedResults);
+        verifyAlgorithm(competition, scoringSystem, expectedResults);
     }
 
     /**
@@ -119,13 +116,12 @@ public class AnalyserUnitTest extends AbstractUnitTest
      * for the given competition and scoring system.
      * 
      * @param competition the competition
-     * @param players the players in the competition
      * @param scoringSystem the scoring system
      * @param expectedResults the expected results
      */
-    private void verifyAlgorithm(FinskaCompetition competition, Map<Integer, Player> players, ScoringSystem scoringSystem, Number[][] expectedResults)
+    private void verifyAlgorithm(FinskaCompetition competition, ScoringSystem scoringSystem, Number[][] expectedResults)
     {
-        IResultsCompiler compiler = new CompetitionAnalyser(players, competition, scoringSystem);
+        IResultsCompiler compiler = new CompetitionAnalyser(competition, scoringSystem);
         List<EntrantResult> leaderBoard = LeaderBoardGenerator.generateLeaderBoard(compiler);
 
         Assert.assertNotNull(leaderBoard);
@@ -173,23 +169,15 @@ public class AnalyserUnitTest extends AbstractUnitTest
     /**
      * Create a competition with players, matches and games.
      * 
-     * @param players holder for the players that are created for the competition
-     * 
      * @return The generated competition.
      */
-    private FinskaCompetition createCompetition(Map<Integer, Player> players)
+    private FinskaCompetition createCompetition()
     {
         Player p1 = new Player(1, "David");
         Player p2 = new Player(2, "Mike");
         Player p3 = new Player(3, "Tom");
         Player p4 = new Player(4, "Dick");
         Player p5 = new Player(5, "Harry");
-
-        players.put(p1.getId(), p1);
-        players.put(p2.getId(), p2);
-        players.put(p3.getId(), p3);
-        players.put(p4.getId(), p4);
-        players.put(p5.getId(), p5);
 
         // A match of three players, two games with two different winners, one a fast win.
         FinskaRound r1 = new FinskaRound(1, 1, LocalDate.of(2018, 3, 10));
@@ -280,6 +268,12 @@ public class AnalyserUnitTest extends AbstractUnitTest
         r6.addMatch(m12);
 
         FinskaCompetition competition = new FinskaCompetition("C1", LocalDate.of(2018, 3, 9));
+
+        competition.addEntrant(p1);
+        competition.addEntrant(p2);
+        competition.addEntrant(p3);
+        competition.addEntrant(p4);
+        competition.addEntrant(p5);
 
         competition.addRound(r1);
         competition.addRound(r2);

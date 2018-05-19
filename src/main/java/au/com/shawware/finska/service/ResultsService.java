@@ -10,9 +10,6 @@ package au.com.shawware.finska.service;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.IResultsCompiler;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
@@ -29,11 +26,8 @@ import au.com.shawware.util.persistence.PersistenceException;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings("boxing")
 public class ResultsService implements IChangeObserver
 {
-    private static final Logger LOG = LoggerFactory.getLogger(ResultsService.class);
-
     /** The source for competition data. */
     private final IEntityRepository mRepository;
     /** The Finska scoring system to use. */
@@ -42,8 +36,6 @@ public class ResultsService implements IChangeObserver
     // Items based on others, created during initialisation.
     /** The competition we are processing. */
     private FinskaCompetition mCompetition;
-    /** The players in the competitions. */
-    private Map<Integer, Player> mPlayers;
     /** The results compiler for the competition, players and scoring system. */
     private IResultsCompiler mCompiler;
 
@@ -63,9 +55,8 @@ public class ResultsService implements IChangeObserver
     public void repositoryUpdated()
         throws PersistenceException
     {
-        mPlayers = mRepository.getPlayers();
         mCompetition = mRepository.getCompetition(1); // TODO: inject ID?
-        mCompiler = new CompetitionAnalyser(mPlayers, mCompetition, mScoringSystem);
+        mCompiler = new CompetitionAnalyser(mCompetition, mScoringSystem);
     }
 
     /**
@@ -149,7 +140,7 @@ public class ResultsService implements IChangeObserver
      */
     public Map<Integer, Player> getPlayers()
     {
-        return mPlayers;
+        return mCompetition.getEntrantMap();
     }
 
     /**
@@ -161,12 +152,6 @@ public class ResultsService implements IChangeObserver
      */
     public Player getPlayer(int id)
     {
-        if (!mPlayers.containsKey(id))
-        {
-            String msg = "Player does not exist: " + id; //$NON-NLS-1$
-            LOG.error(msg); 
-            throw new IllegalArgumentException(msg);
-        }
-        return mPlayers.get(id);
+        return mCompetition.getEntrant(id);
     }
 }

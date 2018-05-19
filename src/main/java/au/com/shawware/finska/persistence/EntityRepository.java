@@ -75,13 +75,6 @@ public class EntityRepository implements IEntityRepository
     }
 
     @Override
-    public Map<Integer, Player> getPlayers()
-        throws PersistenceException
-    {
-        return mPlayerStore.getAll();
-    }
-
-    @Override
     @SuppressWarnings("boxing")
     public FinskaCompetition getCompetition(int id)
         throws PersistenceException
@@ -105,7 +98,7 @@ public class EntityRepository implements IEntityRepository
     public Map<Integer, FinskaCompetition> getCompetitions()
         throws PersistenceException
     {
-        Map<Integer, Player> players = getPlayers();
+        Map<Integer, Player> players = mPlayerStore.getAll();
         Map<Integer, FinskaMatch> matches = mMatchStore.getAll();
         Map<Integer, FinskaRound> rounds = mRoundStore.getAll();
         Map<Integer, FinskaCompetition> competitions = mCompetitionStore.getAll();

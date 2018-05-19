@@ -8,8 +8,6 @@
 package au.com.shawware.compadmin.scoring;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.BeforeClass;
 
@@ -32,8 +30,6 @@ public class AbstractScoringUnitTest extends AbstractUnitTest
     protected static ResultSpec sComparisonSpec;
     /** A sample competition. */
     protected static TestCompetition sCompetition;
-    /** A sample set of entrants. */
-    protected static Map<Integer, TestEntrant> sEntrants;
     /** The full set of result items. */
     protected static ResultSpec sSpec;
 
@@ -61,11 +57,10 @@ public class AbstractScoringUnitTest extends AbstractUnitTest
 
         sCompetition = new TestCompetition(1, "Test", LocalDate.of(2018, 3, 9));
 
-        sEntrants = new HashMap<>();
         for (int i = 1; i <= 6; i++)
         {
-            TestEntrant e = new TestEntrant(i, "E" + String.format("%02d", i));
-            sEntrants.put(e.getId(), e);
+            TestEntrant entrant = new TestEntrant(i, "E" + String.format("%02d", i));
+            sCompetition.addEntrant(entrant);
         }
     }
 
@@ -81,6 +76,7 @@ public class AbstractScoringUnitTest extends AbstractUnitTest
     protected final TestCompetition generateCompetition(int[][] matches, int start, int end)
     {
         TestCompetition competition = new TestCompetition(1, "Test", LocalDate.of(2018, 3, 9));
+        sCompetition.getEntrants().forEach(competition::addEntrant);
         TestRound round = null;
         for (int i = start; i < end; i++)
         {

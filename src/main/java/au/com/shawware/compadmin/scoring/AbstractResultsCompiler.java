@@ -49,18 +49,18 @@ public abstract class AbstractResultsCompiler<
      * Constructs a new compiler using the given competition and result specification.
      * 
      * @param competition the competition to analyse
-     * @param entrants the competition entrants
      * @param comparisonSpec the comparison result specification
-     * 
+     *
      * @throws IllegalArgumentException empty competition or comparison specification
      */
-    public AbstractResultsCompiler(CompetitionType competition, Map<Integer, EntrantType> entrants, ResultSpec comparisonSpec)
+    public AbstractResultsCompiler(CompetitionType competition, ResultSpec comparisonSpec)
         throws IllegalArgumentException
     {
         if (competition == null)
         {
             throw new IllegalArgumentException("Empty competition"); //$NON-NLS-1$
         }
+        Map<Integer, EntrantType> entrants = competition.getEntrantMap();
         if ((entrants == null) || (entrants.size() == 0))
         {
             throw new IllegalArgumentException("Empty entrants"); //$NON-NLS-1$

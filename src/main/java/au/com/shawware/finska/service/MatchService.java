@@ -62,7 +62,7 @@ public class MatchService extends AbstractService
         // TODO: add players to comp
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         FinskaRound round = competition.getRound(roundNumber);
-        Map<Integer, Player> players = mRepository.getPlayers();
+        Map<Integer, Player> players = competition.getEntrantMap();
 
         FinskaMatch match = new FinskaMatch(round.numberOfMatches() + 1, round.getRoundDate());
 
@@ -99,7 +99,7 @@ public class MatchService extends AbstractService
         FinskaCompetition competition = mRepository.getCompetition(competitionID);
         FinskaRound round = competition.getRound(roundNumber);
         FinskaMatch match = round.getMatch(matchNumber);
-        Map<Integer, Player> players = mRepository.getPlayers();
+        Map<Integer, Player> players = competition.getEntrantMap();
 
         updateMatch(players, round, match, winnerIds, fastWin);
 

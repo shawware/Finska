@@ -8,9 +8,7 @@
 package au.com.shawware.finska.scoring;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,14 +43,15 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
         r1.addPlayer(p1);
         r1.addMatch(m1);
         FinskaCompetition c1 = new FinskaCompetition(1, "C1", LocalDate.of(2018, 3, 10));
+        c1.addEntrant(p1);
         c1.addRound(r1);
 
-        verifyResultItems(c1, p1, 3, 0, -1,  0, -7, false, false, false, false);
-        verifyResultItems(c1, p1, 3, 1,  0,  0,  0,  true, false, false, false);
-        verifyResultItems(c1, p1, 3, 1,  2,  0,  0,  true,  true, false, false);
-        verifyResultItems(c1, p1, 3, 1,  0,  2,  0,  true, false,  true, false);
-        verifyResultItems(c1, p1, 3, 1,  0,  0,  3,  true, false, false,  true);
-        verifyResultItems(c1, p1, 3, 1,  1,  0,  1,  true,  true, false,  true);
+        verifyResultItems(c1, 3, 0, -1, 0,  -7, false, false, false, false);
+        verifyResultItems(c1, 3, 1, 0,  0,  0,  true,  false, false, false);
+        verifyResultItems(c1, 3, 1, 2,  0,  0,  true,  true,  false, false);
+        verifyResultItems(c1, 3, 1, 0,  2,  0,  true,  false, true,  false);
+        verifyResultItems(c1, 3, 1, 0,  0,  3,  true,  false, false, true);
+        verifyResultItems(c1, 3, 1, 1,  0,  1,  true,  true,  false, true);
 
         verifyExceptionThrown(() -> new ScoringSystem(3, 0, 0, 1, 1),
                 IllegalArgumentException.class, "Win both and win all specified simultaneously");
@@ -63,7 +62,6 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
      * as per the given configuration items for a scoring system.
      * 
      * @param competition the competition under test
-     * @param player the test player in the competition
      * @param win points for a win
      * @param play points for playing
      * @param fast points for fast wins
@@ -74,21 +72,18 @@ public class ScoringSystemUnitTest extends AbstractUnitTest
      * @param expectScoreWinBoth whether scoring for win both is expected
      * @param expectScoreWinAll whether scoring for win all is expected
      */
-    private void verifyResultItems(FinskaCompetition competition, Player player,
-            int win, int play, int fast, int both, int all,
-            boolean expectScoreForPlaying, boolean expectScoreFastWins,
-            boolean expectScoreWinBoth, boolean expectScoreWinAll)
+    private void verifyResultItems(FinskaCompetition competition, int win,
+            int play, int fast, int both, int all, boolean expectScoreForPlaying,
+            boolean expectScoreFastWins, boolean expectScoreWinBoth,
+            boolean expectScoreWinAll)
     {
-        Map<Integer, Player> players = new HashMap<>();
-        players.put(player.getId(), player);
-
         ScoringSystem scoringSystem = new ScoringSystem(win, play, fast, both, all);
 
         verifyScoringSystem(scoringSystem, win, play, fast, both, all,
                 expectScoreForPlaying, expectScoreFastWins,
                 expectScoreWinBoth, expectScoreWinAll);
 
-        IResultsCompiler compiler = new CompetitionAnalyser(players, competition, scoringSystem);
+        IResultsCompiler compiler = new CompetitionAnalyser(competition, scoringSystem);
 
         List<EntrantResult> results = compiler.compileCurrentResults();
         Assert.assertNotNull(results);

@@ -57,9 +57,6 @@ public class PersistenceUnitTest extends AbstractFinskaPersistenceUnitTest
         c1.addRound(r1);
         verifyBasicStorage(sCompetitionStore, c1);
 
-        Map<Integer, Player> allPlayers = EntityRepository.getRepository(sFactory).getPlayers();
-        verifyEntityMap(allPlayers, p1);
-
         Map<Integer, FinskaCompetition> allComps = EntityRepository.getRepository(sFactory).getCompetitions();
         verifyEntityMap(allComps, c1);
 

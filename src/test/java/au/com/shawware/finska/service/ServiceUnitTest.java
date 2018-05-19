@@ -43,7 +43,6 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     /** The test competition. */
     private static FinskaCompetition sCompetition;
     /** The test players. */
-    private static Map<Integer, Player> sPlayers;
 
     /**
      * Setup test fixtures and the like before all tests.
@@ -54,9 +53,6 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     public static void setupServices()
         throws PersistenceException
     {
-        FinskaCompetition comp = new FinskaCompetition("C1", LocalDate.of(2018,  5,  5));
-        sCompetition = sCompetitionStore.create(comp);
-
         Player p1 = new Player("David");
         Player p2 = new Player("Paul");
         Player p3 = new Player("Jane");
@@ -65,7 +61,11 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         sPlayerStore.create(p2);
         sPlayerStore.create(p3);
 
-        sPlayers = sPlayerStore.getAll();
+        FinskaCompetition comp = new FinskaCompetition("C1", LocalDate.of(2018,  5,  5));
+        comp.addEntrant(p1);
+        comp.addEntrant(p2);
+        comp.addEntrant(p3);
+        sCompetition = sCompetitionStore.create(comp);
 
         ScoringSystem scoringSystem = new ScoringSystem(1, 0, 0, 0, 0);
         ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
@@ -91,11 +91,12 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
          * We've added three players to the store, but other tests may have also added players.
          * So we just get the first three we can find.
          */
-        List<Integer> allPlayerIds = sPlayers.keySet().stream().collect(Collectors.toList());
+        Map<Integer, Player> players = sCompetition.getEntrantMap();
+        List<Integer> allPlayerIds = sCompetition.getEntrantIds().stream().collect(Collectors.toList());
         Assert.assertTrue(allPlayerIds.size() >= 3);
-        Player p1 = sPlayers.get(allPlayerIds.get(0));
-        Player p2 = sPlayers.get(allPlayerIds.get(1));
-        Player p3 = sPlayers.get(allPlayerIds.get(2));
+        Player p1 = players.get(allPlayerIds.get(0));
+        Player p2 = players.get(allPlayerIds.get(1));
+        Player p3 = players.get(allPlayerIds.get(2));
 
         int[] playerIds = new int[] { p1.getId(), p3.getId() };
         LocalDate roundDate = LocalDate.of(2018, 5, 6);

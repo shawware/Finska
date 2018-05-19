@@ -152,6 +152,17 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
     }
 
     /**
+     * This competition's entrants.
+     * 
+     * @return The entrants as a map.
+     */
+    @JsonIgnore
+    public Map<Integer, EntrantType> getEntrantMap()
+    {
+        return mEntrants;
+    }
+
+    /**
      * Retrieve the given entrant from this competition.
      * 
      * @param id the entrant's ID

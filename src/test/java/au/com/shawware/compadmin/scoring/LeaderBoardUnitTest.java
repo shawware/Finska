@@ -15,7 +15,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import au.com.shawware.compadmin.entity.TestCompetition;
-import au.com.shawware.compadmin.entity.TestEntrant;
 
 /**
  * Exercise and verify the leaderboard generator business logic.
@@ -294,12 +293,8 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     @Test
     public void testErrorHandling()
     {
-        Map<Integer, TestEntrant> emptyEntrants = new HashMap<>();
-
-        verifyExceptionThrown(() -> new TestCompiler(null, null, null), IllegalArgumentException.class, "Empty competition");
-        verifyExceptionThrown(() -> new TestCompiler(sCompetition, null, null), IllegalArgumentException.class, "Empty entrants");
-        verifyExceptionThrown(() -> new TestCompiler(sCompetition, emptyEntrants, null), IllegalArgumentException.class, "Empty entrants");
-        verifyExceptionThrown(() -> new TestCompiler(sCompetition, sEntrants, null), IllegalArgumentException.class, "Empty comparison item specification");
+        verifyExceptionThrown(() -> new TestCompiler(null, null), IllegalArgumentException.class, "Empty competition");
+        verifyExceptionThrown(() -> new TestCompiler(sCompetition, null), IllegalArgumentException.class, "Empty comparison item specification");
 
         IResultsCompiler compiler = new TestCompiler(sCompetition);
         List<EntrantResult> results = compiler.compileCurrentResults();
