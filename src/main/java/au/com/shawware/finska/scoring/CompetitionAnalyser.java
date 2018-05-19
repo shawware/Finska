@@ -25,7 +25,6 @@ import au.com.shawware.finska.entity.Player;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-@SuppressWarnings("boxing")
 public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetition, FinskaRound, FinskaMatch, Player>
 {
     /** The scoring system in use. */
@@ -136,7 +135,7 @@ public class CompetitionAnalyser extends AbstractResultsCompiler<FinskaCompetiti
                 EntrantResult result = results.get(winnerId);
                 result.incrementResultItem(ResultItem.WINS.toString(), 1);
                 result.incrementResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForWin());
-                if (mScoringSystem.scoreFastWins() && match.isFastWinner(winnerId))
+                if (mScoringSystem.scoreFastWins() && match.isFastWin())
                 {
                     result.incrementResultItem(ResultItem.FAST_WINS.toString(), 1);
                     result.incrementResultItem(ResultItem.POINTS.toString(), mScoringSystem.pointsForFastWin());

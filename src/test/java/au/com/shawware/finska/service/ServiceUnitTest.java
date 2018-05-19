@@ -181,14 +181,13 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Assert.assertNotNull(match);
         Assert.assertTrue(match.getId() > FinskaMatch.DEFAULT_ID);
         Assert.assertEquals(Integer.valueOf(1), match.getKey());
-        Assert.assertEquals(fastWin, match.hasFastWinner());
+        Assert.assertEquals(fastWin, match.isFastWin());
 
         Set<Integer> IDs = match.getWinnerIds();
         Assert.assertEquals(winnerIds.length, IDs.size());
         Arrays.stream(winnerIds).forEach(id -> {
             Assert.assertTrue(IDs.contains(id));
             match.getWinner(id); // Will throw an exception if not present
-            Assert.assertEquals(fastWin, match.isFastWinner(id));
         });
 
         FinskaCompetition comp = sResultsService.getCompetition();

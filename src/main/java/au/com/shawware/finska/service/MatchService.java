@@ -140,7 +140,7 @@ public class MatchService extends AbstractService
             }
             match.addWinner(players.get(winnerId));
         }
-        match.setFastWinner(fastWin);
+        match.setFastWin(fastWin);
     }
 
     /**

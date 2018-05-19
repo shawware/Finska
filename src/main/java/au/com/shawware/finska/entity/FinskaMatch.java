@@ -30,8 +30,8 @@ public class FinskaMatch extends Match
     private Set<Integer> mWinnerIds;
     /** The winning players. */
     private Map<Integer, Player> mWinners;
-    /** Any of the winning players that won in 5 tosses.  */
-    private Set<Integer> mFastWinnerIds;
+    /** Did the winners complete their win in 5 tosses.  */
+    private boolean mFastWin;
 
     /**
      * Constructs a new match.
@@ -47,7 +47,7 @@ public class FinskaMatch extends Match
         super(id, number, matchDate);
         mWinnerIds     = new HashSet<>();
         mWinners       = new HashMap<>();
-        mFastWinnerIds = new HashSet<>();
+        mFastWin       = false;
     }
 
     /**
@@ -62,24 +62,12 @@ public class FinskaMatch extends Match
     }
 
     /**
-     * Adds a winner to this match.
-     * 
-     * @param player the winning player to add
-     * @param fastWinner whether the player one in 5 tosses
+     * @return Whether this match has a winner yet.
      */
-    @SuppressWarnings("boxing")
-    public void addWinner(Player player, boolean fastWinner)
+    @JsonIgnore
+    public boolean hasWinner()
     {
-        if (player == null)
-        {
-            throw new IllegalArgumentException("Null player"); //$NON-NLS-1$
-        }
-        if (mWinnerIds.contains(player.getId()))
-        {
-            throw new IllegalArgumentException("Player " + player.getId() + " has already been recorded"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        addWinner(player);
-        mFastWinnerIds.add(player.getId());
+        return (mWinnerIds.size() > 0);
     }
 
     /**
@@ -93,6 +81,10 @@ public class FinskaMatch extends Match
         if (player == null)
         {
             throw new IllegalArgumentException("Null player"); //$NON-NLS-1$
+        }
+        if (mWinners.containsKey(player.getId()))
+        {
+            throw new IllegalArgumentException("Player " + player.getId() + " has already been recorded"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         mWinnerIds.add(player.getId());
         mWinners.put(player.getId(), player);
@@ -122,8 +114,8 @@ public class FinskaMatch extends Match
      * 
      * @throws IllegalArgumentException player cannot be found
      */
-    @SuppressWarnings("boxing")
     @JsonIgnore
+    @SuppressWarnings("boxing")
     public Player getWinner(int id)
         throws IllegalArgumentException
     {
@@ -132,15 +124,6 @@ public class FinskaMatch extends Match
             throw new IllegalArgumentException("Player " + id + " is not present in this match"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return mWinners.get(id);
-    }
-
-    /**
-     * @return Whether this match has a winner yet.
-     */
-    @JsonIgnore
-    public boolean hasWinner()
-    {
-        return (mWinnerIds.size() > 0);
     }
 
     /**
@@ -168,44 +151,9 @@ public class FinskaMatch extends Match
      *
      * @return Whether this match has a fast winner(s).
      */
-    @JsonIgnore
-    public boolean hasFastWinner()
+    public boolean isFastWin()
     {
-        return (mFastWinnerIds.size() > 0);
-    }
-
-    /**
-     * Whether the given player ID won the match in 5 tosses.
-     * 
-     * @param winnerId the player ID to test
-     * 
-     * @return Whether they won fast.
-     */
-    @JsonIgnore
-    @SuppressWarnings("boxing")
-    public boolean isFastWinner(int winnerId)
-    {
-        return mFastWinnerIds.contains(winnerId);
-    }
-
-    /**
-     * @return The IDs of any fast winners.
-     */
-    public Set<Integer> getFastWinnerIds()
-    {
-        return mFastWinnerIds;
-    }
-
-    /**
-     * Specifies whether this match was won in 5 tosses.
-     * 
-     * @param fastWinnerIds the new setting
-     */
-    public void setFastWinnerIds(Set<Integer> fastWinnerIds)
-    {
-        // TODO: check IDs in players
-        mFastWinnerIds.clear();
-        mFastWinnerIds.addAll(fastWinnerIds);
+        return mFastWin;
     }
 
     /**
@@ -213,22 +161,15 @@ public class FinskaMatch extends Match
      * 
      * @param fastWin the new setting
      */
-    public void setFastWinner(boolean fastWin)
+    public void setFastWin(boolean fastWin)
     {
-        if (fastWin)
-        {
-            setFastWinnerIds(mWinnerIds);
-        }
-        else
-        {
-            mFastWinnerIds.clear();
-        }
+        mFastWin = fastWin;
     }
 
     @Override
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), getKey(), getMatchDate(), mWinnerIds, mFastWinnerIds);
+        return StringUtil.toString(getId(), getKey(), getMatchDate(), mWinnerIds, mFastWin);
     }
 }

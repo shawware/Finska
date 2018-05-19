@@ -195,7 +195,8 @@ public class AnalyserUnitTest extends AbstractUnitTest
         FinskaRound r1 = new FinskaRound(1, 1, LocalDate.of(2018, 3, 10));
         FinskaMatch m1 = new FinskaMatch(1, 1, r1.getRoundDate());
         FinskaMatch m2 = new FinskaMatch(2, 2, r1.getRoundDate());
-        m1.addWinner(p1, true);
+        m1.addWinner(p1);
+        m1.setFastWin(true);
         m2.addWinner(p2);
 
         r1.addPlayer(p1);
@@ -251,7 +252,8 @@ public class AnalyserUnitTest extends AbstractUnitTest
         FinskaMatch m8 = new FinskaMatch(8, 8, r5.getRoundDate());
         FinskaMatch m9 = new FinskaMatch(9, 9, r5.getRoundDate());
         m8.addWinner(p1);
-        m9.addWinner(p3, true);
+        m9.addWinner(p3);
+        m9.setFastWin(true);
 
         r5.addPlayer(p1);
         r5.addPlayer(p2);

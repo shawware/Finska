@@ -44,7 +44,8 @@ public class PersistenceUnitTest extends AbstractFinskaPersistenceUnitTest
 
         FinskaRound r1 = new FinskaRound(ROUND, LocalDate.of(2018, 3, 10));
         FinskaMatch m1 = new FinskaMatch(MATCH, r1.getRoundDate());
-        m1.addWinner(p1, true);
+        m1.addWinner(p1);
+        m1.setFastWin(true);
         verifyBasicStorage(sMatchStore, m1);
 
         r1.addPlayer(p1);
