@@ -14,7 +14,7 @@ import java.time.LocalDate;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class TestCompetition extends Competition<TestRound, TestMatch>
+public class TestCompetition extends Competition<TestEntrant, TestRound, TestMatch>
 {
     /**
      * Constructs a test competition.

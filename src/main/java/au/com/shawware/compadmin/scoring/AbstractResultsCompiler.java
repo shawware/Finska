@@ -33,7 +33,7 @@ import au.com.shawware.util.StringUtil;
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
 public abstract class AbstractResultsCompiler<
-        CompetitionType extends Competition<RoundType, MatchType>,
+        CompetitionType extends Competition<EntrantType, RoundType, MatchType>,
         RoundType extends Round<MatchType>,
         MatchType extends Match,
         EntrantType extends Entrant> implements IResultsCompiler

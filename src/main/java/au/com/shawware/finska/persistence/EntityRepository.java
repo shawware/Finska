@@ -110,6 +110,7 @@ public class EntityRepository implements IEntityRepository
         Map<Integer, FinskaRound> rounds = mRoundStore.getAll();
         Map<Integer, FinskaCompetition> competitions = mCompetitionStore.getAll();
 
+        loadDependentEntities(competitions, players, Competition::getEntrantIds, Competition::addEntrant);
         loadDependentEntities(competitions, rounds, Competition::getRoundIds, Competition::addRound);
         loadDependentEntities(rounds, matches, Round::getMatchIds, Round::addMatch);
         loadDependentEntities(rounds, players, FinskaRound::getPlayerIds, FinskaRound::addPlayer);

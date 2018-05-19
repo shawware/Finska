@@ -53,6 +53,7 @@ public class PersistenceUnitTest extends AbstractFinskaPersistenceUnitTest
         verifyBasicStorage(sRoundStore, r1);
 
         FinskaCompetition c1 = new FinskaCompetition("C1", LocalDate.of(2018, 3, 9));
+        c1.addEntrant(p1);
         c1.addRound(r1);
         verifyBasicStorage(sCompetitionStore, c1);
 
@@ -63,11 +64,13 @@ public class PersistenceUnitTest extends AbstractFinskaPersistenceUnitTest
         verifyEntityMap(allComps, c1);
 
         FinskaCompetition c2 = allComps.get(c1.getId());
+        Player p2 = c2.getEntrant(p1.getId());
+        Assert.assertEquals(p1.toString(), p2.toString());
         FinskaRound r2 = c2.getRound(r1.getKey());
         Assert.assertEquals(r1.toString(), r2.toString());
         FinskaMatch m2 = r2.getMatch(m1.getKey());
         Assert.assertEquals(m1.toString(), m2.toString());
-        Player p2 = r2.getPlayer(p1.getId());
+        p2 = r2.getPlayer(p1.getId());
         Assert.assertEquals(p1.toString(), p2.toString());
     }
 }

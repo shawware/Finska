@@ -18,7 +18,7 @@ import au.com.shawware.compadmin.entity.Competition;
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public class FinskaCompetition extends Competition<FinskaRound, FinskaMatch>
+public class FinskaCompetition extends Competition<Player, FinskaRound, FinskaMatch>
 {
     /**
      * Constructs a new, identified Finska competition.

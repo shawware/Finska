@@ -29,15 +29,20 @@ import au.com.shawware.util.persistence.AbstractEntity;
 /**
  * Models a competition.
  * 
+ * @param <EntrantType> the type of entrants we support
  * @param <RoundType> the type of rounds we support
  * @param <MatchType> the type of matches we support
  *
  * @author <a href="mailto:david.shaw@shawware.com.au">David Shaw</a>
  */
-public abstract class Competition<RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity<String>
+public abstract class Competition<EntrantType extends Entrant, RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity<String>
 {
     /** The competition start date. */
     private final LocalDate mStartDate;
+    /** The entrants in this competition. */
+    private final Map<Integer, EntrantType> mEntrants;
+    /** The IDs of the entrants. */
+    private final Set<Integer> mEntrantIds;
     /** The rounds that make up this competition. */
     private final Map<Integer, RoundType> mRounds;
     /** The set of round IDs. */
@@ -55,9 +60,11 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
                        @JsonProperty("startDate") LocalDate startDate)
     {
         super(id, name);
-        mStartDate = startDate;
-        mRounds    = new HashMap<>();
-        mRoundIds  = new HashSet<>();
+        mStartDate  = startDate;
+        mEntrants   = new HashMap<>();
+        mEntrantIds = new HashSet<>();
+        mRounds     = new HashMap<>();
+        mRoundIds   = new HashSet<>();
     }
 
     /**
@@ -79,6 +86,103 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     public LocalDate getStartDate()
     {
         return mStartDate;
+    }
+
+    /**
+     * @return The competition's entrant IDs.
+     */
+    public Set<Integer> getEntrantIds()
+    {
+        return mEntrantIds;
+    }
+
+    /**
+     * Updates this competition's entrant IDs.
+     * 
+     * @param entrantIds the new entrant IDs
+     */
+    public void setEntrantIds(Set<Integer> entrantIds)
+    {
+        mEntrantIds.clear();
+        mEntrantIds.addAll(entrantIds);
+    }
+
+    /**
+     * Adds a new entrant to this competition.
+     * 
+     * @param id the entrant's ID
+     */
+    @SuppressWarnings("boxing")
+    public void addEntrantId(int id)
+    {
+        mEntrantIds.add(id);
+    }
+
+    /**
+     * Adds the given entrant to this competition.
+     * 
+     * @param entrant the entrant to add
+     */
+    @SuppressWarnings("boxing")
+    public void addEntrant(EntrantType entrant)
+    {
+        if (entrant == null) {
+            throw new IllegalArgumentException("Null entrant"); //$NON-NLS-1$
+        }
+        if (entrant.getId() == DEFAULT_ID) {
+            throw new IllegalArgumentException("Invalid entrant ID"); //$NON-NLS-1$
+        }
+        if (mEntrants.containsKey(entrant.getId())) {
+            throw new IllegalArgumentException("Competition " + getId() + " already contains entrant " + entrant.getId());  //$NON-NLS-1$//$NON-NLS-2$
+        }
+        // Duplicate is okay.
+        addEntrantId(entrant.getId());
+        mEntrants.put(entrant.getId(), entrant);
+    }
+
+    /**
+     * This competition's entrants.
+     * 
+     * @return The entrants.
+     */
+    @JsonIgnore
+    public List<EntrantType> getEntrants()
+    {
+        return mEntrants.values().stream().collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieve the given entrant from this competition.
+     * 
+     * @param id the entrant's ID
+     * 
+     * @return The corresponding entrant.
+     * 
+     * @throws IllegalArgumentException entrant cannot be found
+     */
+    @JsonIgnore
+    public EntrantType getEntrant(int id)
+        throws IllegalArgumentException
+    {
+        Optional<EntrantType> entrant = mEntrants.values().stream().filter(e -> e.getId() == id).findAny();
+        if (!entrant.isPresent())
+        {
+            throw new IllegalArgumentException("Entrant " + id + " is not present in this competition"); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return entrant.get();
+    }
+
+    /**
+     * Determines whether this competition has the given entrant.
+     * 
+     * @param id the entrant ID to test for
+     * 
+     * @return Whether the given entrant exists.
+     */
+    @SuppressWarnings("boxing")
+    public boolean hasEntrant(int id)
+    {
+        return mEntrantIds.contains(id);
     }
 
     /**
@@ -181,6 +285,6 @@ public abstract class Competition<RoundType extends Round<MatchType>, MatchType 
     @SuppressWarnings("boxing")
     public String toString()
     {
-        return StringUtil.toString(getId(), getKey(), mStartDate, mRoundIds);
+        return StringUtil.toString(getId(), getKey(), mStartDate, mEntrantIds, mRoundIds);
     }
 } 
