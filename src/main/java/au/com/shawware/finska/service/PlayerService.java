@@ -7,6 +7,8 @@
 
 package au.com.shawware.finska.service;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,34 @@ public class PlayerService extends AbstractService
     /*package*/ PlayerService(IEntityRepository repository, IChangeObserver observer)
     {
         super(repository, observer);
+    }
+
+    /**
+     * Retrieves all the players (not just those in a specific competition).
+     * 
+     * @return The players.
+     * 
+     * @throws PersistenceException storage error
+     */
+    public Map<Integer, Player> getPlayers()
+        throws PersistenceException
+    {
+        return mRepository.getPlayers();
+    }
+
+    /**
+     * Retrieve the player data for the specified player.
+     * 
+     * @param id the player's ID
+     *
+     * @return The player.
+     * 
+     * @throws PersistenceException storage error
+     */
+    public Player getPlayer(int id)
+        throws PersistenceException
+    {
+        return mRepository.getPlayer(id);
     }
 
     /**

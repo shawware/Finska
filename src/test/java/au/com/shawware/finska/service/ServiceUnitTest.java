@@ -209,14 +209,37 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     public void testPlayers()
         throws PersistenceException
     {
+        Map<Integer, Player> players = sPlayerService.getPlayers();
+        int initialCount = players.size();
+
         Player p1 = sPlayerService.createPlayer("Test");
         Assert.assertNotNull(p1);
         Assert.assertEquals("Test", p1.getKey());
 
-        Player p2 = sPlayerService.updatePlayer(p1.getId(), "Delta");
+        Player p2 = sPlayerService.getPlayer(p1.getId());
+        Assert.assertNotNull(p2);
+        Assert.assertEquals(p1.getId(), p2.getId());
+        Assert.assertEquals("Test", p2.getKey());
+
+        players = sPlayerService.getPlayers();
+        Assert.assertEquals(initialCount + 1, players.size());
+        Assert.assertTrue(players.containsKey(p1.getId()));
+        Assert.assertEquals(p1.toString(), players.get(p1.getId()).toString());
+
+        p2 = sPlayerService.updatePlayer(p1.getId(), "Delta");
         Assert.assertNotNull(p2);
         Assert.assertEquals(p1.getId(), p2.getId());
         Assert.assertEquals("Delta", p2.getKey());
+
+        p2 = sPlayerService.getPlayer(p1.getId());
+        Assert.assertNotNull(p2);
+        Assert.assertEquals(p1.getId(), p2.getId());
+        Assert.assertEquals("Delta", p2.getKey());
+
+        players = sPlayerService.getPlayers();
+        Assert.assertEquals(initialCount + 1, players.size());
+        Assert.assertTrue(players.containsKey(p2.getId()));
+        Assert.assertEquals(p2.toString(), players.get(p2.getId()).toString());
     }
 
     /**

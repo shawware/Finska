@@ -138,8 +138,9 @@ public class ResultsService implements IChangeObserver
     }
 
     /**
-     * Retrieve the player data. The result is never <code>null</code>
-     * but can be empty if there is an error or no players are found.
+     * Retrieve the player data for the current competition.
+     * The result is never <code>null</code> but can be empty if there
+     * is an error or no players are found.
      * 
      * @return The player data map - never null.
      */

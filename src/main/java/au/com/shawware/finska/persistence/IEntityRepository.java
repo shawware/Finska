@@ -23,6 +23,28 @@ import au.com.shawware.util.persistence.PersistenceException;
 public interface IEntityRepository
 {
     /**
+     * Retrieves all players.
+     * 
+     * @return The players.
+     * 
+     * @throws PersistenceException error loading players
+     */
+    Map<Integer, Player> getPlayers()
+        throws PersistenceException;
+
+    /**
+     * Retrieve the player data for the specified player.
+     * 
+     * @param id the player's ID
+     *
+     * @return The player.
+     *
+     * @throws PersistenceException error loading player
+     */
+    public Player getPlayer(int id)
+        throws PersistenceException;
+
+    /**
      * Retrieves all competitions.
      * 
      * @return The competitions.
