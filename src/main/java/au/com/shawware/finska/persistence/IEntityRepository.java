@@ -12,6 +12,7 @@ import java.util.Map;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.FinskaMatch;
 import au.com.shawware.finska.entity.FinskaRound;
+import au.com.shawware.finska.entity.Player;
 import au.com.shawware.util.persistence.PersistenceException;
 
 /**
@@ -90,5 +91,27 @@ public interface IEntityRepository
      * @throws PersistenceException error during update
      */
     void updateMatch(FinskaCompetition competition, FinskaRound round, FinskaMatch match)
+        throws PersistenceException;
+
+    /**
+     * Creates a new player.
+     * 
+     * @param player the new player
+     * 
+     * @return The created player.
+     * 
+     * @throws PersistenceException error during creation
+     */
+    Player createPlayer(Player player)
+        throws PersistenceException;
+
+    /**
+     * Updates an existing player.
+     * 
+     * @param player the player to update
+     * 
+     * @throws PersistenceException error during update
+     */
+    void updatePlayer(Player player)
         throws PersistenceException;
 }

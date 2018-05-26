@@ -30,6 +30,8 @@ public class ServiceFactory
     private final RoundService mRoundService;
     /** The wrapped match service. */
     private final MatchService mMatchService;
+    /** The wrapped player service. */
+    private final PlayerService mPlayerService;
 
     /**
      * Constructs a new service factory.
@@ -45,6 +47,7 @@ public class ServiceFactory
         mResultsService = new ResultsService(repository, scoringSystem);
         mRoundService   = new RoundService(repository, mResultsService);
         mMatchService   = new MatchService(repository, mResultsService);
+        mPlayerService  = new PlayerService(repository, mResultsService);
         mResultsService.repositoryUpdated();
     }
 
@@ -95,5 +98,13 @@ public class ServiceFactory
     public MatchService getMatchService()
     {
         return mMatchService;
+    }
+
+    /**
+     * @return The player service.
+     */
+    public PlayerService getPlayerService()
+    {
+        return mPlayerService;
     }
 }

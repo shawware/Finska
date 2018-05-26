@@ -177,4 +177,18 @@ public class EntityRepository implements IEntityRepository
     {
         mMatchStore.update(match);
     }
+
+    @Override
+    public Player createPlayer(Player player)
+        throws PersistenceException
+    {
+        return mPlayerStore.create(player);
+    }
+
+    @Override
+    public void updatePlayer(Player player)
+        throws PersistenceException
+    {
+        mPlayerStore.update(player);
+    }
 }

@@ -38,11 +38,12 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     private static ResultsService sResultsService;
     /** The round service to use in our tests. */
     private static RoundService sRoundService;
-    /** The round service to use in our tests. */
+    /** The match service to use in our tests. */
     private static MatchService sMatchService;
+    /** The match service to use in our tests. */
+    private static PlayerService sPlayerService;
     /** The test competition. */
     private static FinskaCompetition sCompetition;
-    /** The test players. */
 
     /**
      * Setup test fixtures and the like before all tests.
@@ -53,25 +54,22 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     public static void setupServices()
         throws PersistenceException
     {
-        Player p1 = new Player("David");
-        Player p2 = new Player("Paul");
-        Player p3 = new Player("Jane");
+        ScoringSystem scoringSystem = new ScoringSystem(1, 0, 0, 0, 0);
+        ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
+        sResultsService = services.getResultsService();
+        sRoundService   = services.getRoundService();
+        sMatchService   = services.getMatchService();
+        sPlayerService  = services.getPlayerService();
 
-        sPlayerStore.create(p1);
-        sPlayerStore.create(p2);
-        sPlayerStore.create(p3);
+        Player p1 = sPlayerService.createPlayer("David");
+        Player p2 = sPlayerService.createPlayer("Paul");
+        Player p3 = sPlayerService.createPlayer("Jane");
 
         FinskaCompetition comp = new FinskaCompetition("C1", LocalDate.of(2018,  5,  5));
         comp.addEntrant(p1);
         comp.addEntrant(p2);
         comp.addEntrant(p3);
         sCompetition = sCompetitionStore.create(comp);
-
-        ScoringSystem scoringSystem = new ScoringSystem(1, 0, 0, 0, 0);
-        ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
-        sResultsService = services.getResultsService();
-        sRoundService = services.getRoundService();
-        sMatchService = services.getMatchService();
     }
 
     /**
@@ -203,6 +201,25 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     }
 
     /**
+     * Test the player entity.
+     * 
+     * @throws PersistenceException error during storage
+     */
+    @Test
+    public void testPlayers()
+        throws PersistenceException
+    {
+        Player p1 = sPlayerService.createPlayer("Test");
+        Assert.assertNotNull(p1);
+        Assert.assertEquals("Test", p1.getKey());
+
+        Player p2 = sPlayerService.updatePlayer(p1.getId(), "Delta");
+        Assert.assertNotNull(p2);
+        Assert.assertEquals(p1.getId(), p2.getId());
+        Assert.assertEquals("Delta", p2.getKey());
+    }
+
+    /**
      * Verifies the handling for service methods.
      * 
      * @throws PersistenceException persistence error
@@ -213,6 +230,12 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     {
         LocalDate roundDate = LocalDate.of(2018, 5, 6);
         int[] playerIds = new int[] { 1, 2, 3 };
+
+        verifyCheckedExceptionThrown(() -> sPlayerService.createPlayer(null),                      IllegalArgumentException.class, "Empty player name");
+        verifyCheckedExceptionThrown(() -> sPlayerService.createPlayer(""),                        IllegalArgumentException.class, "Empty player name");
+
+        verifyCheckedExceptionThrown(() -> sPlayerService.updatePlayer(0, null),                   IllegalArgumentException.class, "Empty player name");
+        verifyCheckedExceptionThrown(() -> sPlayerService.updatePlayer(0, ""),                     IllegalArgumentException.class, "Empty player name");
 
         verifyCheckedExceptionThrown(() -> sRoundService.createRound(0, null, null),               IllegalArgumentException.class, "Empty round date");
         verifyCheckedExceptionThrown(() -> sRoundService.createRound(0, roundDate, null),          IllegalArgumentException.class, "Empty player IDs");

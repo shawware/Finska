@@ -55,8 +55,13 @@ public class ResultsService implements IChangeObserver
     public void repositoryUpdated()
         throws PersistenceException
     {
-        mCompetition = mRepository.getCompetition(1); // TODO: inject ID?
-        mCompiler = new CompetitionAnalyser(mCompetition, mScoringSystem);
+        Integer ID = new Integer(1); // TODO: inject ID?
+        Map<Integer, FinskaCompetition> competitions = mRepository.getCompetitions();
+        if (competitions.containsKey(ID)) 
+        {
+            mCompetition = competitions.get(ID);
+            mCompiler = new CompetitionAnalyser(mCompetition, mScoringSystem);
+        }
     }
 
     /**
