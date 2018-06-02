@@ -9,6 +9,7 @@ package au.com.shawware.finska.service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.IResultsCompiler;
@@ -107,6 +108,15 @@ public class ResultsService implements IChangeObserver
         return mCompiler.compileRoundResults();
     }
 
+    /**
+     * All of the competitions.
+     * 
+     * @return The competitions .
+     */
+    public List<FinskaCompetition> getCompetitions()
+    {
+        return mCompetitions.values().stream().collect(Collectors.toList());
+    }
 
     /**
      * Retrieves the specified competition.
