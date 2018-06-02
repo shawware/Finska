@@ -26,6 +26,8 @@ public class ServiceFactory
     private static Map<String, ServiceFactory> sInstances;
     /** The wrapped results service. */
     private final ResultsService mResultsService;
+    /** The wrapped competition service. */
+    private final CompetitionService mCompetitionService;
     /** The wrapped round service. */
     private final RoundService mRoundService;
     /** The wrapped match service. */
@@ -44,10 +46,11 @@ public class ServiceFactory
     private ServiceFactory(IEntityRepository repository, ScoringSystem scoringSystem)
         throws PersistenceException
     {
-        mResultsService = new ResultsService(repository, scoringSystem);
-        mRoundService   = new RoundService(repository, mResultsService);
-        mMatchService   = new MatchService(repository, mResultsService);
-        mPlayerService  = new PlayerService(repository, mResultsService);
+        mResultsService     = new ResultsService(repository, scoringSystem);
+        mCompetitionService = new CompetitionService(repository, mResultsService);
+        mRoundService       = new RoundService(repository, mResultsService);
+        mMatchService       = new MatchService(repository, mResultsService);
+        mPlayerService      = new PlayerService(repository, mResultsService);
         mResultsService.repositoryUpdated();
     }
 
@@ -82,6 +85,14 @@ public class ServiceFactory
     public ResultsService getResultsService()
     {
         return mResultsService;
+    }
+
+    /**
+     * @return The competition service.
+     */
+    public CompetitionService getCompetitionService()
+    {
+        return mCompetitionService;
     }
 
     /**

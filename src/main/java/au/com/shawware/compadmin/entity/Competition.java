@@ -38,7 +38,7 @@ import au.com.shawware.util.persistence.AbstractEntity;
 public abstract class Competition<EntrantType extends Entrant, RoundType extends Round<MatchType>, MatchType extends Match> extends AbstractEntity<String>
 {
     /** The competition start date. */
-    private final LocalDate mStartDate;
+    private LocalDate mStartDate;
     /** The entrants in this competition. */
     private final Map<Integer, EntrantType> mEntrants;
     /** The IDs of the entrants. */
@@ -81,11 +81,23 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
     /**
      * @return The competition's start date.
      */
-    @JsonDeserialize(using = LocalDateDeserializer.class) 
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     public LocalDate getStartDate()
     {
         return mStartDate;
+    }
+
+    /**
+     * Sets this competition's start date.
+     * 
+     * @param startDate the new start date
+     */
+    @JsonDeserialize(using = LocalDateDeserializer.class)
+    @JsonSerialize(using = LocalDateSerializer.class)
+    public void setStartDate(LocalDate startDate)
+    {
+        mStartDate = startDate;
     }
 
     /**
@@ -103,6 +115,7 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
      */
     public void setEntrantIds(Set<Integer> entrantIds)
     {
+        mEntrants.clear();
         mEntrantIds.clear();
         mEntrantIds.addAll(entrantIds);
     }

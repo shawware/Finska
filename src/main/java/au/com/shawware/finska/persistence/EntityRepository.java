@@ -159,6 +159,21 @@ public class EntityRepository implements IEntityRepository
     }
 
     @Override
+    public FinskaCompetition createCompetition(FinskaCompetition competition)
+            throws PersistenceException
+    {
+        mCompetitionStore.create(competition);
+        return competition;
+    }
+
+    @Override
+    public void updateCompetition(FinskaCompetition competition)
+            throws PersistenceException
+    {
+        mCompetitionStore.update(competition);
+    }
+
+    @Override
     public FinskaRound createRound(FinskaCompetition competition, FinskaRound round)
         throws PersistenceException
     {

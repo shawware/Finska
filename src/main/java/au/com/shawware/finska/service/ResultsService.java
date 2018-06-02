@@ -34,6 +34,8 @@ public class ResultsService implements IChangeObserver
     private final ScoringSystem mScoringSystem;
 
     // Items based on others, created during initialisation.
+    /** The full set of competitions. */
+    private Map<Integer, FinskaCompetition> mCompetitions;
     /** The competition we are processing. */
     private FinskaCompetition mCompetition;
     /** The results compiler for the competition, players and scoring system. */
@@ -56,10 +58,10 @@ public class ResultsService implements IChangeObserver
         throws PersistenceException
     {
         Integer ID = new Integer(1); // TODO: inject ID?
-        Map<Integer, FinskaCompetition> competitions = mRepository.getCompetitions();
-        if (competitions.containsKey(ID)) 
+        mCompetitions = mRepository.getCompetitions();
+        if (mCompetitions.containsKey(ID)) 
         {
-            mCompetition = competitions.get(ID);
+            mCompetition = mCompetitions.get(ID);
             mCompiler = new CompetitionAnalyser(mCompetition, mScoringSystem);
         }
     }
@@ -103,6 +105,20 @@ public class ResultsService implements IChangeObserver
     public List<List<EntrantResult>> getRoundResults()
     {
         return mCompiler.compileRoundResults();
+    }
+
+
+    /**
+     * Retrieves the specified competition.
+     * 
+     * @param id the competition ID
+     * 
+     * @return The specified competition or null if there is none.
+     */
+    @SuppressWarnings("boxing")
+    public FinskaCompetition getCompetition(int id)
+    {
+        return mCompetitions.get(id);
     }
 
     /**

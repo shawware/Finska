@@ -36,6 +36,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 {
     /** The results service to use in our tests. */
     private static ResultsService sResultsService;
+    /** The competition service to use in our tests. */
+    private static CompetitionService sCompetitionService;
     /** The round service to use in our tests. */
     private static RoundService sRoundService;
     /** The match service to use in our tests. */
@@ -56,20 +58,80 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     {
         ScoringSystem scoringSystem = new ScoringSystem(1, 0, 0, 0, 0);
         ServiceFactory services = ServiceFactory.getFactory(sFactory, scoringSystem);
-        sResultsService = services.getResultsService();
-        sRoundService   = services.getRoundService();
-        sMatchService   = services.getMatchService();
-        sPlayerService  = services.getPlayerService();
+        sResultsService     = services.getResultsService();
+        sCompetitionService = services.getCompetitionService();
+        sRoundService       = services.getRoundService();
+        sMatchService       = services.getMatchService();
+        sPlayerService      = services.getPlayerService();
 
         Player p1 = sPlayerService.createPlayer("David");
         Player p2 = sPlayerService.createPlayer("Paul");
         Player p3 = sPlayerService.createPlayer("Jane");
 
-        FinskaCompetition comp = new FinskaCompetition("C1", LocalDate.of(2018,  5,  5));
-        comp.addEntrant(p1);
-        comp.addEntrant(p2);
-        comp.addEntrant(p3);
-        sCompetition = sCompetitionStore.create(comp);
+        int[] playerIds = new int[] { p1.getId(), p2.getId(), p3.getId() };
+
+        sCompetition = sCompetitionService.createCompetition("C1", LocalDate.of(2018, 5, 5), playerIds);
+    }
+
+    /**
+     * Test the competition entity.
+     * 
+     * @throws PersistenceException error during storage
+     */
+    @Test
+    public void testCompetitions()
+        throws PersistenceException
+    {
+        Map<Integer, Player> players = sPlayerService.getPlayers();
+        int[] playerIds = players.keySet().stream().mapToInt(Integer::intValue).toArray();
+
+        LocalDate startDate =  LocalDate.of(2018, 6, 2);
+        FinskaCompetition c1 = sCompetitionService.createCompetition("T1 - A", startDate, playerIds);
+ 
+        verifyCompetition(c1, c1.getId(), "T1 - A", startDate, playerIds, false);
+ 
+        FinskaCompetition c2 = sResultsService.getCompetition(c1.getId());
+        verifyCompetition(c2, c1.getId(), "T1 - A", startDate, playerIds, true);
+
+        LocalDate updatedStartDate =  LocalDate.of(2018, 6, 3);
+        int[] updatedPlayerIds = new int[playerIds.length - 1];
+        for (int i=1; i<playerIds.length; i++) {
+            updatedPlayerIds[i-1] = playerIds[i];
+        }
+ 
+        sCompetitionService.updateCompetition(c1.getId(), "T1 - B", updatedStartDate, updatedPlayerIds);
+
+        c2 = sResultsService.getCompetition(c1.getId());
+        verifyCompetition(c2, c1.getId(), "T1 - B", updatedStartDate, updatedPlayerIds, true);
+
+    }
+
+    /**
+     * Verify the given competition is as expected.
+     * 
+     * @param competition the competition under test
+     * @param competitionID the expected competition ID
+     * @param name the expected name
+     * @param startDate the expected start date
+     * @param playerIds the expected player IDs
+     * @param playersPresent whether the players will be present in the competition
+     */
+    private void verifyCompetition(FinskaCompetition competition, int competitionID, String name,
+                                   LocalDate startDate, int[] playerIds, boolean playersPresent)
+    {
+        Assert.assertNotNull(competition);
+        Assert.assertEquals(competitionID, competition.getId());
+        Assert.assertEquals(name, competition.getKey());
+        Assert.assertEquals(startDate, competition.getStartDate());
+
+        Set<Integer> IDs = competition.getEntrantIds();
+        Assert.assertEquals(playerIds.length, IDs.size());
+        Arrays.stream(playerIds).forEach(id -> {
+            Assert.assertTrue(IDs.contains(id));
+            if (playersPresent) {
+                competition.getEntrant(id); // Will throw an exception if not present
+            }
+        });
     }
 
     /**

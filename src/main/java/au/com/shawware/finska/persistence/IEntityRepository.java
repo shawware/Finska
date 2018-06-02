@@ -67,6 +67,28 @@ public interface IEntityRepository
         throws PersistenceException;
 
     /**
+     * Creates a new competition.
+     * 
+     * @param competition the competition
+     * 
+     * @return The created competition.
+     * 
+     * @throws PersistenceException error during creation
+     */
+    FinskaCompetition createCompetition(FinskaCompetition competition)
+        throws PersistenceException;
+
+    /**
+     * Updates the given competition.
+     * 
+     * @param competition the competition to update
+     * 
+     * @throws PersistenceException error during update
+     */
+    void updateCompetition(FinskaCompetition competition)
+        throws PersistenceException;
+
+    /**
      * Creates a new round in the given competition.
      * 
      * @param competition the competition
@@ -82,7 +104,7 @@ public interface IEntityRepository
     /**
      * Updates the given round.
      * 
-     * @param round the new round
+     * @param round the round to update
      * 
      * @throws PersistenceException error during update
      */
@@ -93,7 +115,7 @@ public interface IEntityRepository
      * Creates a new match in the given round of the given competition.
      * 
      * @param competition the competition
-     * @param round the new round
+     * @param round the round the match belongs to
      * @param match the new match
      * 
      * @return The created match.
@@ -107,8 +129,8 @@ public interface IEntityRepository
      * Updates an existing match in the given round of the given competition.
      * 
      * @param competition the competition
-     * @param round the new round
-     * @param match the new match
+     * @param round the round the match belongs to
+     * @param match the match to update
      * 
      * @throws PersistenceException error during update
      */
