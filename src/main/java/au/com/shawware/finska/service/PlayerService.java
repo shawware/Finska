@@ -104,11 +104,13 @@ public class PlayerService extends AbstractService
      */
     @SuppressWarnings({ "nls" })
     public Player updatePlayer(int id, String name)
-        throws PersistenceException
+        throws PersistenceException, IllegalArgumentException
     {
         verifyParameters(name);
 
-        Player player = new Player(id, name);
+        Player player = mRepository.getPlayer(id);
+
+        player.setKey(name);
 
         mRepository.updatePlayer(player);
         LOG.info("Updated player " + player.getId());

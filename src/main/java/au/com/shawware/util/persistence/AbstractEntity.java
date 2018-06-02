@@ -27,7 +27,7 @@ public abstract class AbstractEntity<KeyType> implements Comparable<AbstractEnti
     private int mId;
 
     /** The entity's key. */
-    private final KeyType mKey;
+    private KeyType mKey;
 
     /**
      * Constructs a new base entity with the default ID.
@@ -84,6 +84,16 @@ public abstract class AbstractEntity<KeyType> implements Comparable<AbstractEnti
     public final KeyType getKey()
     {
         return mKey;
+    }
+
+    /**
+     * Sets this entity's key.
+     * 
+     * @param key the new key
+     */
+    public void setKey(KeyType key)
+    {
+        mKey = key;
     }
 
     @Override
