@@ -55,7 +55,7 @@ public class MatchService extends AbstractService
      */
     @SuppressWarnings({ "nls" })
     public FinskaMatch createMatch(int competitionID, int roundNumber, int[] winnerIds, boolean fastWin)
-        throws PersistenceException
+        throws PersistenceException, IllegalArgumentException
     {
         verifyParameters(winnerIds);
 
@@ -91,7 +91,7 @@ public class MatchService extends AbstractService
      */
     @SuppressWarnings({ "nls" })
     public FinskaMatch updateMatch(int competitionID, int roundNumber, int matchNumber, int[] winnerIds, boolean fastWin)
-        throws PersistenceException
+        throws PersistenceException, IllegalArgumentException
     {
         verifyParameters(winnerIds);
 

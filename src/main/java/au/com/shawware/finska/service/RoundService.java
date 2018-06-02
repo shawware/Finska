@@ -54,7 +54,7 @@ public class RoundService extends AbstractService
      */
     @SuppressWarnings({ "nls" })
     public FinskaRound createRound(int competitionID, LocalDate roundDate, int[] playerIds)
-        throws PersistenceException
+        throws PersistenceException, IllegalArgumentException
     {
         verifyParameters(roundDate, playerIds);
 
@@ -88,7 +88,7 @@ public class RoundService extends AbstractService
      */
     @SuppressWarnings({ "nls" })
     public FinskaRound updateRound(int competitionID, int number, LocalDate roundDate, int[] playerIds)
-        throws PersistenceException
+        throws PersistenceException, IllegalArgumentException
     {
         verifyParameters(roundDate, playerIds);
 

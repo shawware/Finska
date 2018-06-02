@@ -77,7 +77,7 @@ public class PlayerService extends AbstractService
      */
     @SuppressWarnings({ "nls" })
     public Player createPlayer(String name)
-        throws PersistenceException
+        throws PersistenceException, IllegalArgumentException
     {
         verifyParameters(name);
 
