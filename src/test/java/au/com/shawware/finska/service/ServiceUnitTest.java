@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -46,8 +45,6 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     private static PlayerService sPlayerService;
     /** Today. */
     private static LocalDate sToday;
-    /** The test competition. */
-    private static FinskaCompetition sCompetition;
 
     /**
      * Setup test fixtures and the like before all tests.
@@ -65,16 +62,12 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         sRoundService       = services.getRoundService();
         sMatchService       = services.getMatchService();
         sPlayerService      = services.getPlayerService();
+        sToday              = LocalDate.now();
 
-        Player p1 = sPlayerService.createPlayer("David");
-        Player p2 = sPlayerService.createPlayer("Paul");
-        Player p3 = sPlayerService.createPlayer("Jane");
-
-        int[] playerIds = new int[] { p1.getId(), p2.getId(), p3.getId() };
-
-        // The primary competition is in the past, so it will be the current competition.
-        sToday = LocalDate.now();
-        sCompetition = sCompetitionService.createCompetition("C1", sToday.minusDays(7), playerIds);
+        // Create some players to use in the tests.
+        sPlayerService.createPlayer("David");
+        sPlayerService.createPlayer("Paul");
+        sPlayerService.createPlayer("Jane");
     }
 
     /**
@@ -83,7 +76,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
      * @throws PersistenceException error during storage
      */
     @Test
-    public void testCompetitions()
+    public void testCompetitionService()
         throws PersistenceException
     {
         Map<Integer, Player> players = sPlayerService.getPlayers();
@@ -143,56 +136,50 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
      * @throws PersistenceException error during storage
      */
     @Test
-    public void testRounds()
+    public void testRoundAndMatchServices()
         throws PersistenceException
     {
-        // Refresh given that other tests may have added data
-        sCompetition = sResultsService.getCurrentCompetition();
-        int numberOfRounds = sCompetition.numberOfRounds(); // Other tests may have added rounds
+        Player p1 = sPlayerService.createPlayer("Michael");
+        Player p2 = sPlayerService.createPlayer("Peter");
+        Player p3 = sPlayerService.createPlayer("Tom");
 
-        /*
-         * We've added three players to the store, but other tests may have also added players.
-         * So we just get the first three we can find.
-         */
-        Map<Integer, Player> players = sCompetition.getEntrantMap();
-        List<Integer> allPlayerIds = sCompetition.getEntrantIds().stream().collect(Collectors.toList());
-        Assert.assertTrue(allPlayerIds.size() >= 3);
-        Player p1 = players.get(allPlayerIds.get(0));
-        Player p2 = players.get(allPlayerIds.get(1));
-        Player p3 = players.get(allPlayerIds.get(2));
+        int[] playerIds = new int[] { p1.getId(), p2.getId(), p3.getId() };
 
-        int[] playerIds = new int[] { p1.getId(), p3.getId() };
-        LocalDate roundDate = sCompetition.getStartDate().plusDays(1);
+        FinskaCompetition competition = sCompetitionService.createCompetition("C1", sToday.minusDays(7), playerIds);
+        int numberOfRounds = competition.numberOfRounds(); // Other tests may have added rounds
 
-        Set<Integer> roundIds = sCompetition.getRoundIds();
-        List<FinskaRound> rounds = sCompetition.getRounds();
+        playerIds = new int[] { p1.getId(), p3.getId() };
+        LocalDate roundDate = competition.getStartDate().plusDays(1);
+
+        Set<Integer> roundIds = competition.getRoundIds();
+        List<FinskaRound> rounds = competition.getRounds();
         Assert.assertEquals(numberOfRounds, roundIds.size());
         Assert.assertEquals(numberOfRounds, rounds.size());
 
-        FinskaRound round = sRoundService.createRound(sCompetition.getId(), roundDate, playerIds);
+        FinskaRound round = sRoundService.createRound(competition.getId(), roundDate, playerIds);
 
         // Refresh the data after the change
-        sCompetition = sResultsService.getCurrentCompetition();
+        competition = sResultsService.getCurrentCompetition();
 
-        Assert.assertEquals(numberOfRounds + 1, sCompetition.numberOfRounds());
+        Assert.assertEquals(numberOfRounds + 1, competition.numberOfRounds());
         verifyRound(round, numberOfRounds + 1, roundDate, playerIds);
 
         int[] updatedPlayerIds = new int[] { p2.getId(), p3.getId() };
         LocalDate changedDate = roundDate.plusDays(1);
 
-        round = sRoundService.updateRound(sCompetition.getId(), round.getKey(), changedDate, updatedPlayerIds);
+        round = sRoundService.updateRound(competition.getId(), round.getKey(), changedDate, updatedPlayerIds);
 
-        Assert.assertEquals(numberOfRounds + 1, sCompetition.numberOfRounds());
+        Assert.assertEquals(numberOfRounds + 1, competition.numberOfRounds());
         Assert.assertEquals(0, round.numberOfMatches());
         verifyRound(round, numberOfRounds + 1, changedDate, updatedPlayerIds);
 
         int[] winnerIds = new int[] { p3.getId() };
 
-        FinskaMatch match = sMatchService.createMatch(sCompetition.getId(), round.getKey(), winnerIds, false);
+        FinskaMatch match = sMatchService.createMatch(competition.getId(), round.getKey(), winnerIds, false);
 
         // Refresh the data after the change
-        sCompetition = sResultsService.getCurrentCompetition();
-        round = sCompetition.getRound(round.getKey());
+        competition = sResultsService.getCurrentCompetition();
+        round = competition.getRound(round.getKey());
 
         Assert.assertEquals(1, round.numberOfMatches());
 
@@ -271,7 +258,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
      * @throws PersistenceException error during storage
      */
     @Test
-    public void testPlayers()
+    public void testPlayerService()
         throws PersistenceException
     {
         Map<Integer, Player> players = sPlayerService.getPlayers();
@@ -316,8 +303,9 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     public void verifyErrorHandling()
         throws PersistenceException
     {
-        LocalDate roundDate = sCompetition.getStartDate().plusDays(5);
         int[] playerIds = new int[] { 1, 2, 3 };
+        FinskaCompetition competition = sCompetitionService.createCompetition("Error Test", sToday.plusDays(14), playerIds);
+        LocalDate roundDate = competition.getStartDate().plusDays(5);
 
         verifyCheckedExceptionThrown(() -> sPlayerService.createPlayer(null),                      IllegalArgumentException.class, "Empty player name");
         verifyCheckedExceptionThrown(() -> sPlayerService.createPlayer(""),                        IllegalArgumentException.class, "Empty player name");
@@ -346,7 +334,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(0, 0, 0, playerIds, false),   PersistenceException.class,     "Competition does not exist: 0");
         verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(1, 0, 0, playerIds, false),   IllegalArgumentException.class, "Round 0 is not present in this competition");
  
-        sRoundService.createRound(sCompetition.getId(), roundDate, playerIds);
-        verifyCheckedExceptionThrown(() -> sMatchService.updateMatch(1, 1, 0, playerIds, false),   IllegalArgumentException.class, "Match 0 is not present in this round");
+        FinskaRound round = sRoundService.createRound(competition.getId(), roundDate, playerIds);
+        verifyCheckedExceptionThrown(() ->
+            sMatchService.updateMatch(competition.getId(), round.getKey(), 0, playerIds, false),   IllegalArgumentException.class, "Match 0 is not present in this round");
     }
 }
