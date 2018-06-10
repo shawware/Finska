@@ -71,7 +71,67 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     }
 
     /**
-     * Test the competition entity.
+     * Test the results service - primarily the algorithm for determining the current competition.
+     * 
+     * @throws PersistenceException error accessing storage
+     */
+    @Test
+    public void testResultsService()
+        throws PersistenceException
+    {
+        // We assume there are no competitions so far - which relies on this test running first.
+        verifyResultsService(0, 0, null);
+
+        int[] playerIds = sPlayerService.getPlayers().keySet().stream().mapToInt(Integer::intValue).toArray();
+
+        int c1id = sCompetitionService.createCompetition("RS-1", sToday.plusDays(7), playerIds).getId();
+        verifyResultsService(1, c1id, new int[] { c1id });
+
+        int c2id = sCompetitionService.createCompetition("RS-2", sToday.plusDays(14), playerIds).getId();
+        verifyResultsService(2, c1id, new int[] { c2id, c1id });
+
+        int c3id = sCompetitionService.createCompetition("RS-3", sToday.minusDays(14), playerIds).getId();
+        verifyResultsService(3, c3id, new int[] { c2id, c1id, c3id });
+
+        int c4id = sCompetitionService.createCompetition("RS-4", sToday.minusDays(7), playerIds).getId();
+        verifyResultsService(4, c4id, new int[] { c2id, c1id, c4id, c3id });
+    }
+
+    /**
+     * Verifies the results service contains the expected data.
+     * 
+     * @param expectedNumberOfCompetitions the expected number of competitions
+     * @param expectedCurrentCompetitionID the expected ID of the current competition (0 if none)
+     * @param expectedOrder the expected order of the competitions by their ID (null if none)
+     */
+    private void verifyResultsService(int expectedNumberOfCompetitions, int expectedCurrentCompetitionID, int[] expectedOrder)
+    {
+        List<FinskaCompetition> competitions = sResultsService.getCompetitions();
+        Assert.assertNotNull(competitions);
+        Assert.assertEquals(expectedNumberOfCompetitions, competitions.size());
+        Assert.assertEquals(0, sResultsService.getLeaderBoard().size());
+        Assert.assertEquals(0, sResultsService.getRoundResults().size());
+        FinskaCompetition currentCompetition = sResultsService.getCurrentCompetition();
+        if (expectedCurrentCompetitionID == 0)
+        {
+            Assert.assertNull(currentCompetition);
+            Assert.assertNull(expectedOrder);
+        }
+        else
+        {
+            Assert.assertNotNull(currentCompetition);
+            Assert.assertEquals(expectedCurrentCompetitionID, currentCompetition.getId());
+            Assert.assertNotNull(expectedOrder);
+            Assert.assertEquals(expectedOrder.length, competitions.size());
+            for (int i = 0; i < expectedOrder.length; i++)
+            {
+                Assert.assertEquals(expectedOrder[i], competitions.get(i).getId());
+            }
+        }
+    }
+
+    /**
+     * Test the competition service.
      * 
      * @throws PersistenceException error during storage
      */
@@ -82,7 +142,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Map<Integer, Player> players = sPlayerService.getPlayers();
         int[] playerIds = players.keySet().stream().mapToInt(Integer::intValue).toArray();
 
-        LocalDate startDate = sToday.plusDays(1); // Ensure start date is in the future.
+        LocalDate startDate = sToday.plusDays(1);
         FinskaCompetition c1 = sCompetitionService.createCompetition("T1 - A", startDate, playerIds);
  
         verifyCompetition(c1, c1.getId(), "T1 - A", startDate, playerIds, false);
@@ -131,7 +191,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     }
 
     /**
-     * Test the round entity.
+     * Test the round and match services.
      * 
      * @throws PersistenceException error during storage
      */
@@ -145,7 +205,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 
         int[] playerIds = new int[] { p1.getId(), p2.getId(), p3.getId() };
 
-        FinskaCompetition competition = sCompetitionService.createCompetition("C1", sToday.minusDays(7), playerIds);
+        FinskaCompetition competition = sCompetitionService.createCompetition("C1", sToday.minusDays(1), playerIds);
         int numberOfRounds = competition.numberOfRounds(); // Other tests may have added rounds
 
         playerIds = new int[] { p1.getId(), p3.getId() };
@@ -179,7 +239,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         verifyMatch(match, round.getKey(), winnerIds, false);
 
         // Refresh the data after the change
-        competition = sResultsService.getCurrentCompetition();
+        competition = sResultsService.getCompetition(competition.getId());
         round = competition.getRound(round.getKey());
         Assert.assertEquals(1, round.numberOfMatches());
 
@@ -187,7 +247,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         verifyMatch(match, round.getKey(), updatedPlayerIds, true);
 
         // Refresh the data after the change
-        competition = sResultsService.getCurrentCompetition();
+        competition = sResultsService.getCompetition(competition.getId());
         round = competition.getRound(round.getKey());
 
         Assert.assertEquals(1, round.numberOfMatches());
@@ -260,7 +320,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     }
 
     /**
-     * Test the player entity.
+     * Test the player service.
      * 
      * @throws PersistenceException error during storage
      */
@@ -302,7 +362,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     }
 
     /**
-     * Verifies the handling for service methods.
+     * Verifies the error handling for service methods.
      * 
      * @throws PersistenceException persistence error
      */
