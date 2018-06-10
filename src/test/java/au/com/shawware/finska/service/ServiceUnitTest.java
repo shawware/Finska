@@ -176,14 +176,21 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         int[] winnerIds = new int[] { p3.getId() };
 
         FinskaMatch match = sMatchService.createMatch(competition.getId(), round.getKey(), winnerIds, false);
+        verifyMatch(match, round.getKey(), winnerIds, false);
+
+        // Refresh the data after the change
+        competition = sResultsService.getCurrentCompetition();
+        round = competition.getRound(round.getKey());
+        Assert.assertEquals(1, round.numberOfMatches());
+
+        match = sMatchService.updateMatch(competition.getId(), round.getKey(), match.getKey(), updatedPlayerIds, true);
+        verifyMatch(match, round.getKey(), updatedPlayerIds, true);
 
         // Refresh the data after the change
         competition = sResultsService.getCurrentCompetition();
         round = competition.getRound(round.getKey());
 
         Assert.assertEquals(1, round.numberOfMatches());
-
-        verifyMatch(match, round.getKey(), winnerIds, false);
     }
 
     /**
