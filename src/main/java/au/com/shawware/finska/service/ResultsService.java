@@ -157,9 +157,9 @@ public class ResultsService implements IChangeObserver
     @SuppressWarnings("boxing")
     public List<EntrantResult> getLeaderBoard(int competitionID, int rounds)
     {
-        if (mCompetitions.containsKey(competitionID))
+        if (!mCompetitions.containsKey(competitionID))
         {
-            throw new IllegalArgumentException("Invalid competition ID: " + competitionID); //$NON-NLS-1$
+            throw new IllegalArgumentException("Competition does not exist: " + competitionID); //$NON-NLS-1$
         }
         return LeaderBoardGenerator.generateLeaderBoard(mCompilers.get(competitionID), rounds);
     }

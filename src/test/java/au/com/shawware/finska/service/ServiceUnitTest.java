@@ -404,5 +404,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         FinskaRound round = sRoundService.createRound(competition.getId(), roundDate, playerIds);
         verifyCheckedExceptionThrown(() ->
             sMatchService.updateMatch(competition.getId(), round.getKey(), 0, playerIds, false),   IllegalArgumentException.class, "Match 0 is not present in this round");
+
+        verifyCheckedExceptionThrown(() -> sResultsService.getLeaderBoard(0, 0),                   IllegalArgumentException.class, "Competition does not exist: 0");
     }
 }
