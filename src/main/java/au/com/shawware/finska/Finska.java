@@ -18,6 +18,7 @@ import java.util.Map;
 import au.com.shawware.compadmin.converter.HtmlConverter;
 import au.com.shawware.compadmin.converter.IConverter;
 import au.com.shawware.compadmin.scoring.EntrantResult;
+import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.finska.service.ResultsService;
@@ -89,7 +90,8 @@ public class Finska
         int status = 0;
         try
         {
-            Map<Integer, Player> players = mService.getPlayers();
+            FinskaCompetition competition = mService.getCurrentCompetition();
+            Map<Integer, Player> players = competition.getEntrantMap();
             List<EntrantResult> leaderBoard = mService.getLeaderBoard();
             if ((leaderBoard.size() > 0) && (players.size() > 0))
             {

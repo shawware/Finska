@@ -70,6 +70,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 
         int[] playerIds = new int[] { p1.getId(), p2.getId(), p3.getId() };
 
+        // The primary competition is in the past, so it will be the current competition.
         sCompetition = sCompetitionService.createCompetition("C1", LocalDate.of(2018, 5, 5), playerIds);
     }
 
@@ -85,7 +86,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Map<Integer, Player> players = sPlayerService.getPlayers();
         int[] playerIds = players.keySet().stream().mapToInt(Integer::intValue).toArray();
 
-        LocalDate startDate =  LocalDate.of(2018, 6, 2);
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.plusDays(1); // Ensure start date is in the future.
         FinskaCompetition c1 = sCompetitionService.createCompetition("T1 - A", startDate, playerIds);
  
         verifyCompetition(c1, c1.getId(), "T1 - A", startDate, playerIds, false);
@@ -93,7 +95,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         FinskaCompetition c2 = sResultsService.getCompetition(c1.getId());
         verifyCompetition(c2, c1.getId(), "T1 - A", startDate, playerIds, true);
 
-        LocalDate updatedStartDate =  LocalDate.of(2018, 6, 3);
+        LocalDate updatedStartDate = startDate.plusDays(2);
         int[] updatedPlayerIds = new int[playerIds.length - 1];
         for (int i=1; i<playerIds.length; i++) {
             updatedPlayerIds[i-1] = playerIds[i];
@@ -103,7 +105,6 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
 
         c2 = sResultsService.getCompetition(c1.getId());
         verifyCompetition(c2, c1.getId(), "T1 - B", updatedStartDate, updatedPlayerIds, true);
-
     }
 
     /**
@@ -144,7 +145,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         throws PersistenceException
     {
         // Refresh given that other tests may have added data
-        sCompetition = sResultsService.getCompetition();
+        sCompetition = sResultsService.getCurrentCompetition();
         int numberOfRounds = sCompetition.numberOfRounds(); // Other tests may have added rounds
 
         /*
@@ -169,7 +170,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         FinskaRound round = sRoundService.createRound(sCompetition.getId(), roundDate, playerIds);
 
         // Refresh the data after the change
-        sCompetition = sResultsService.getCompetition();
+        sCompetition = sResultsService.getCurrentCompetition();
 
         Assert.assertEquals(numberOfRounds + 1, sCompetition.numberOfRounds());
         verifyRound(round, numberOfRounds + 1, roundDate, playerIds);
@@ -188,7 +189,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         FinskaMatch match = sMatchService.createMatch(sCompetition.getId(), round.getKey(), winnerIds, false);
 
         // Refresh the data after the change
-        sCompetition = sResultsService.getCompetition();
+        sCompetition = sResultsService.getCurrentCompetition();
         round = sCompetition.getRound(round.getKey());
 
         Assert.assertEquals(1, round.numberOfMatches());
@@ -219,7 +220,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
             Assert.assertTrue(round.hasPlayer(id));
         });
 
-        FinskaCompetition comp = sResultsService.getCompetition();
+        FinskaCompetition comp = sResultsService.getCurrentCompetition();
         Set<Integer> roundIds = comp.getRoundIds();
         List<FinskaRound> rounds = comp.getRounds();
         FinskaRound copy = comp.getRound(round.getKey());
@@ -251,7 +252,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
             match.getWinner(id); // Will throw an exception if not present
         });
 
-        FinskaCompetition comp = sResultsService.getCompetition();
+        FinskaCompetition comp = sResultsService.getCurrentCompetition();
         FinskaRound round = comp.getRound(roundNumber);
         Set<Integer> matchIds = round.getMatchIds();
         List<FinskaMatch> matches = round.getMatches();

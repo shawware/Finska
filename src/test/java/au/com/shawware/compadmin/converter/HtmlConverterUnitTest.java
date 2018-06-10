@@ -21,6 +21,7 @@ import org.junit.Test;
 import au.com.shawware.compadmin.entity.Entrant;
 import au.com.shawware.compadmin.scoring.AbstractScoringUnitTest;
 import au.com.shawware.compadmin.scoring.EntrantResult;
+import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.finska.service.ResultsService;
@@ -48,7 +49,8 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
             ServiceFactory services = ServiceFactory.getFactory(factory, scoringSystem);
             ResultsService service = services.getResultsService();
-            Map<Integer, Player> players = service.getPlayers();
+            FinskaCompetition competition = service.getCurrentCompetition();
+            Map<Integer, Player> players = competition.getEntrantMap();
             List<EntrantResult> leaderBoard = service.getLeaderBoard();
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/leaderboard.html")));
             IConverter converter = new HtmlConverter("finska");
@@ -75,10 +77,12 @@ public class HtmlConverterUnitTest extends AbstractScoringUnitTest
             ScoringSystem scoringSystem = new ScoringSystem(3, 1, 1, 1, 0);
             ServiceFactory services = ServiceFactory.getFactory(factory, scoringSystem);
             ResultsService service = services.getResultsService();
+            FinskaCompetition competition = service.getCurrentCompetition();
+            Map<Integer, Player> players = competition.getEntrantMap();
             List<List<EntrantResult>> roundResults = service.getRoundResults();
             Writer output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("/tmp/rounds.html")));
             IConverter converter = new HtmlConverter("finska");
-            converter.convertRoundResults(service.getPlayers(), roundResults, output);
+            converter.convertRoundResults(players, roundResults, output);
             output.close();
         }
         catch (PersistenceException | IOException e)

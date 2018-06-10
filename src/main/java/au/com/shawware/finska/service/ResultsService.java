@@ -7,16 +7,20 @@
 
 package au.com.shawware.finska.service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import au.com.shawware.compadmin.entity.Competition;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.IResultsCompiler;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.finska.entity.FinskaCompetition;
-import au.com.shawware.finska.entity.FinskaRound;
-import au.com.shawware.finska.entity.Player;
 import au.com.shawware.finska.persistence.IEntityRepository;
 import au.com.shawware.finska.scoring.CompetitionAnalyser;
 import au.com.shawware.finska.scoring.ScoringSystem;
@@ -34,13 +38,18 @@ public class ResultsService implements IChangeObserver
     /** The Finska scoring system to use. */
     private final ScoringSystem mScoringSystem;
 
+    /** A comparator for sorting competitions by the start date. */
+    private final Comparator<FinskaCompetition> mNaturalSortByStartDate;
+    /** A comparator for sorting competitions by the start date in reverse. */
+    private final Comparator<FinskaCompetition> mReverseSortByStartDate;
+
     // Items based on others, created during initialisation.
     /** The full set of competitions. */
     private Map<Integer, FinskaCompetition> mCompetitions;
-    /** The competition we are processing. */
-    private FinskaCompetition mCompetition;
-    /** The results compiler for the competition, players and scoring system. */
-    private IResultsCompiler mCompiler;
+    /** The current competition (if any) we are processing. */
+    private FinskaCompetition mCurrentCompetition;
+    /** The results compiler for each competition. */
+    private Map<Integer, IResultsCompiler> mCompilers;
 
     /**
      * Constructs a new service.
@@ -50,21 +59,62 @@ public class ResultsService implements IChangeObserver
      */
     /*package*/ ResultsService(IEntityRepository repository, ScoringSystem scoringSystem)
     {
-        mRepository    = repository;
-        mScoringSystem = scoringSystem;
+        mRepository             = repository;
+        mScoringSystem          = scoringSystem;
+        mCompilers              = new HashMap<>();
+        mNaturalSortByStartDate = Comparator.comparing(Competition::getStartDate, Comparator.naturalOrder());
+        mReverseSortByStartDate = Comparator.comparing(Competition::getStartDate, Comparator.reverseOrder());
     }
 
     @Override
+    @SuppressWarnings("boxing")
     public void repositoryUpdated()
         throws PersistenceException
     {
-        Integer ID = new Integer(1); // TODO: inject ID?
         mCompetitions = mRepository.getCompetitions();
-        if (mCompetitions.containsKey(ID)) 
+        mCurrentCompetition = getCurrentCompetition(mCompetitions);
+        mCompilers.clear();
+        mCompetitions.values().forEach(competition -> {
+            mCompilers.put(competition.getId(), new CompetitionAnalyser(competition, mScoringSystem));
+        });
+    }
+
+    /**
+     * Calculates the current competition.
+     * 
+     * @param competitions the full set of competitions
+     * 
+     * @return The current competition.
+     */
+    private FinskaCompetition getCurrentCompetition(Map<Integer, FinskaCompetition> competitions)
+    {
+        FinskaCompetition current;
+        if (competitions.size() == 0)
         {
-            mCompetition = mCompetitions.get(ID);
-            mCompiler = new CompetitionAnalyser(mCompetition, mScoringSystem);
+            current = null;
         }
+        else if (competitions.size() == 1)
+        {
+            current = competitions.values().stream().findFirst().get();
+        }
+        else
+        {
+            LocalDate today = LocalDate.now();
+            Optional<FinskaCompetition> possible;
+            possible = competitions.values().stream()
+                            .filter(c -> c.getStartDate().isBefore(today))
+                            .max(mNaturalSortByStartDate);
+            if (possible.isPresent())
+            {
+                current = possible.get();
+            }
+            else
+            {
+                possible = competitions.values().stream().min(mNaturalSortByStartDate);
+                current = possible.get();
+            }
+        }
+        return current;
     }
 
     /**
@@ -75,9 +125,19 @@ public class ResultsService implements IChangeObserver
      * 
      * @return The calculated leader board.
      */
+    @SuppressWarnings("boxing")
     public List<EntrantResult> getLeaderBoard()
     {
-        return LeaderBoardGenerator.generateLeaderBoard(mCompiler);
+        List<EntrantResult> leaderBoard;
+        if (mCurrentCompetition == null)
+        {
+            leaderBoard = new ArrayList<>();
+        }
+        else
+        {
+            leaderBoard = LeaderBoardGenerator.generateLeaderBoard(mCompilers.get(mCurrentCompetition.getId()));
+        }
+        return leaderBoard;
     }
 
     /**
@@ -87,25 +147,41 @@ public class ResultsService implements IChangeObserver
      * The result is never <code>null</code> but can be empty if there is
      * no data found.
      * 
+     * @param competitionID the competition ID
      * @param rounds the number of rounds
      * 
      * @return The calculated leader board.
      *
-     * @throws IllegalArgumentException invalid number of rounds 
+     * @throws IllegalArgumentException invalid competition ID or number of rounds 
      */
-    public List<EntrantResult> getLeaderBoard(int rounds)
+    @SuppressWarnings("boxing")
+    public List<EntrantResult> getLeaderBoard(int competitionID, int rounds)
     {
-        return LeaderBoardGenerator.generateLeaderBoard(mCompiler, rounds);
+        if (mCompetitions.containsKey(competitionID))
+        {
+            throw new IllegalArgumentException("Invalid competition ID: " + competitionID); //$NON-NLS-1$
+        }
+        return LeaderBoardGenerator.generateLeaderBoard(mCompilers.get(competitionID), rounds);
     }
 
     /**
-     * Retrieve the results and the running for each round.
+     * Retrieve the results and the running total for each round.
      * 
      * @return The results after each round in time sequence.
      */
+    @SuppressWarnings("boxing")
     public List<List<EntrantResult>> getRoundResults()
     {
-        return mCompiler.compileRoundResults();
+        List<List<EntrantResult>> roundResults;
+        if (mCurrentCompetition == null)
+        {
+            roundResults = new ArrayList<>();
+        }
+        else
+        {
+            roundResults = mCompilers.get(mCurrentCompetition.getId()).compileRoundResults();
+        }
+        return roundResults;
     }
 
     /**
@@ -115,7 +191,9 @@ public class ResultsService implements IChangeObserver
      */
     public List<FinskaCompetition> getCompetitions()
     {
-        return mCompetitions.values().stream().collect(Collectors.toList());
+        return mCompetitions.values().stream()
+                .sorted(mReverseSortByStartDate)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -136,54 +214,8 @@ public class ResultsService implements IChangeObserver
      * 
      * @return The current competition or null if there is none.
      */
-    public FinskaCompetition getCompetition()
+    public FinskaCompetition getCurrentCompetition()
     {
-        return mCompetition;
-    }
-
-    /**
-     * Retrieves the rounds for the current competition.
-     * 
-     * @return The list of rounds in time order.
-     */
-    public List<FinskaRound> getRounds()
-    {
-        return mCompetition.getRounds();
-    }
-
-    /**
-     * Retrieves a specific round for the current competition.
-     * 
-     * @param number the round number
-     *
-     * @return The round.
-     */
-    public FinskaRound getRound(int number)
-    {
-        return mCompetition.getRound(number);
-    }
-
-    /**
-     * Retrieve the player data for the current competition.
-     * The result is never <code>null</code> but can be empty if there
-     * is an error or no players are found.
-     * 
-     * @return The player data map - never null.
-     */
-    public Map<Integer, Player> getPlayers()
-    {
-        return mCompetition.getEntrantMap();
-    }
-
-    /**
-     * Retrieve the player data for the specified player.
-     * 
-     * @param id the player's ID
-     *
-     * @return The player.
-     */
-    public Player getPlayer(int id)
-    {
-        return mCompetition.getEntrant(id);
+        return mCurrentCompetition;
     }
 }
