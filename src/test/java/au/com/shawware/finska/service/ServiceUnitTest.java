@@ -44,6 +44,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     private static MatchService sMatchService;
     /** The match service to use in our tests. */
     private static PlayerService sPlayerService;
+    /** Today. */
+    private static LocalDate sToday;
     /** The test competition. */
     private static FinskaCompetition sCompetition;
 
@@ -71,7 +73,8 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         int[] playerIds = new int[] { p1.getId(), p2.getId(), p3.getId() };
 
         // The primary competition is in the past, so it will be the current competition.
-        sCompetition = sCompetitionService.createCompetition("C1", LocalDate.of(2018, 5, 5), playerIds);
+        sToday = LocalDate.now();
+        sCompetition = sCompetitionService.createCompetition("C1", sToday.minusDays(7), playerIds);
     }
 
     /**
@@ -86,8 +89,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Map<Integer, Player> players = sPlayerService.getPlayers();
         int[] playerIds = players.keySet().stream().mapToInt(Integer::intValue).toArray();
 
-        LocalDate today = LocalDate.now();
-        LocalDate startDate = today.plusDays(1); // Ensure start date is in the future.
+        LocalDate startDate = sToday.plusDays(1); // Ensure start date is in the future.
         FinskaCompetition c1 = sCompetitionService.createCompetition("T1 - A", startDate, playerIds);
  
         verifyCompetition(c1, c1.getId(), "T1 - A", startDate, playerIds, false);
@@ -160,7 +162,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
         Player p3 = players.get(allPlayerIds.get(2));
 
         int[] playerIds = new int[] { p1.getId(), p3.getId() };
-        LocalDate roundDate = LocalDate.of(2018, 5, 6);
+        LocalDate roundDate = sCompetition.getStartDate().plusDays(1);
 
         Set<Integer> roundIds = sCompetition.getRoundIds();
         List<FinskaRound> rounds = sCompetition.getRounds();
@@ -314,7 +316,7 @@ public class ServiceUnitTest extends AbstractFinskaPersistenceUnitTest
     public void verifyErrorHandling()
         throws PersistenceException
     {
-        LocalDate roundDate = LocalDate.of(2018, 5, 6);
+        LocalDate roundDate = sCompetition.getStartDate().plusDays(5);
         int[] playerIds = new int[] { 1, 2, 3 };
 
         verifyCheckedExceptionThrown(() -> sPlayerService.createPlayer(null),                      IllegalArgumentException.class, "Empty player name");
