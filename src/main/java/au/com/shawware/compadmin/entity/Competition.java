@@ -154,7 +154,7 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
     }
 
     /**
-     * This competition's entrants.
+     * This competition's entrants, ordered by name.
      * 
      * @return The entrants.
      */
@@ -244,7 +244,7 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
     }
 
     /**
-     * This competition's rounds.
+     * This competition's rounds, ordered by round number (within this competition).
      * 
      * @return The rounds in sequential order.
      */

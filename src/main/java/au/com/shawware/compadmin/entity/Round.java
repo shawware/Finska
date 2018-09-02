@@ -134,14 +134,17 @@ public abstract class Round<MatchType extends Match> extends AbstractEntity<Inte
     }
 
     /**
-     * Get a stream over this round's matches.
+     * This round's matches, ordered by match number (within this round).
      * 
      * @return The matches in sequential order.
      */
     @JsonIgnore
     public List<MatchType> getMatches()
     {
-        return mMatches.values().stream().collect(Collectors.toList());
+        return mMatches.values()
+                       .stream()
+                       .sorted((m1, m2) -> m1.getKey().compareTo(m2.getKey()))
+                       .collect(Collectors.toList());
     }
 
     /**
