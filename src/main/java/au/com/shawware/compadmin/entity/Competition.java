@@ -161,7 +161,10 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
     @JsonIgnore
     public List<EntrantType> getEntrants()
     {
-        return mEntrants.values().stream().collect(Collectors.toList());
+        return mEntrants.values()
+                        .stream()
+                        .sorted((p1, p2) -> p1.getKey().compareTo(p2.getKey()))
+                        .collect(Collectors.toList());
     }
 
     /**
@@ -248,7 +251,10 @@ public abstract class Competition<EntrantType extends Entrant, RoundType extends
     @JsonIgnore
     public List<RoundType> getRounds()
     {
-        return mRounds.values().stream().collect(Collectors.toList());
+        return mRounds.values()
+                      .stream()
+                      .sorted((r1, r2) -> r1.getKey().compareTo(r2.getKey()))
+                      .collect(Collectors.toList());
     }
 
     /**
