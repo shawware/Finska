@@ -23,6 +23,7 @@ import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
 import au.com.shawware.finska.entity.FinskaCompetition;
 import au.com.shawware.finska.persistence.IEntityRepository;
 import au.com.shawware.finska.scoring.CompetitionAnalyser;
+import au.com.shawware.finska.scoring.ResultItem;
 import au.com.shawware.finska.scoring.ScoringSystem;
 import au.com.shawware.util.persistence.PersistenceException;
 
@@ -182,6 +183,21 @@ public class ResultsService implements IChangeObserver
             roundResults = mCompilers.get(mCurrentCompetition.getId()).compileRoundResults();
         }
         return roundResults;
+    }
+
+    @SuppressWarnings("boxing")
+    public Map<Integer, int[]> getLeaderBoardHistory(boolean rank)
+    {
+        Map<Integer, int[]> history;
+        if (mCurrentCompetition == null)
+        {
+            history = new HashMap<>();
+        }
+        else
+        {
+            history = LeaderBoardGenerator.generateHistory(mCompilers.get(mCurrentCompetition.getId()), mCurrentCompetition.numberOfRounds(), rank, ResultItem.POINTS.toString());
+        }
+        return history;
     }
 
     /**
