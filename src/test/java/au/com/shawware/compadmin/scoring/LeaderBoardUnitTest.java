@@ -155,32 +155,32 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler);
         verifyResults(actualResults, expectedResults, true, (rounds > 1), false);
 
-       if (rounds == 1)
-       {
-           actualResults = compiler.compilePreviousResults();
-           Assert.assertNotNull(actualResults);
-           Assert.assertEquals(0, actualResults.size());
-       }
-       else if (rounds == 2)
-       {
-           actualResults = compiler.compilePreviousResults();
-           verifyResults(actualResults, expectedResults2, false, false, false);
-           actualResults = compiler.compileResults(rounds - 1);
-           verifyResults(actualResults, expectedResults2, false, false, false);
-           actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 1);
-           verifyResults(actualResults, expectedResults2, true, false, false);
-       }
-       else // (rounds == 3)
-       {
-           actualResults = compiler.compilePreviousResults();
-           verifyResults(actualResults, expectedResults2, false, false, false);
-           actualResults = compiler.compileResults(rounds - 2);
-           verifyResults(actualResults, expectedResults3, false, false, false);
-           actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 1);
-           verifyResults(actualResults, expectedResults2, true, true, false);
-           actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 2);
-           verifyResults(actualResults, expectedResults3, true, false, false);
-       }
+        if (rounds == 1)
+        {
+            actualResults = compiler.compilePreviousResults();
+            Assert.assertNotNull(actualResults);
+            Assert.assertEquals(0, actualResults.size());
+        }
+        else if (rounds == 2)
+        {
+            actualResults = compiler.compilePreviousResults();
+            verifyResults(actualResults, expectedResults2, false, false, false);
+            actualResults = compiler.compileResults(rounds - 1);
+            verifyResults(actualResults, expectedResults2, false, false, false);
+            actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 1);
+            verifyResults(actualResults, expectedResults2, true, false, false);
+        }
+        else // (rounds == 3)
+        {
+            actualResults = compiler.compilePreviousResults();
+            verifyResults(actualResults, expectedResults2, false, false, false);
+            actualResults = compiler.compileResults(rounds - 2);
+            verifyResults(actualResults, expectedResults3, false, false, false);
+            actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 1);
+            verifyResults(actualResults, expectedResults2, true, true, false);
+            actualResults = LeaderBoardGenerator.generateLeaderBoard(compiler, rounds - 2);
+            verifyResults(actualResults, expectedResults3, true, false, false);
+        }
     }
 
     /**
@@ -216,7 +216,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
      * @param actualResults the actual results
      * @param expectedResults the expected results
      * @param ranked whether the actual results have been ranked
-     * @param hasPreviousRank whether the actual results have a previos rank
+     * @param hasPreviousRank whether the actual results have a previous rank
      * @param hasTotal whether the results contain a running total
      */
     private void verifyResults(List<EntrantResult> actualResults, Number[][] expectedResults,
