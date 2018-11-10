@@ -133,10 +133,10 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     {
         TestCompetition competition = generateCompetition(MATCHES, 0, 9);
         IResultsCompiler compiler = new TestCompiler(competition);
-        Map<Integer, int[]> actualHistory;
+        Map<Integer, Number[]> actualHistory;
 
         // Entrant ID is index + 1
-        int[][] expectedRankHistory =
+        Number[][] expectedRankHistory =
         {
                 { 2, 3, 3 },
                 { 5, 2, 1 },
@@ -149,7 +149,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyHistory(expectedRankHistory, actualHistory);
 
         actualHistory = LeaderBoardGenerator.generateHistory(compiler, 3, false, TestResultItems.POINTS);
-        int[][] expectedScoreHistory =
+        Number[][] expectedScoreHistory =
         {
                 { 3, 3, 4 },
                 { 0, 3, 6 },
@@ -167,7 +167,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
      * @param expectedHistory the expected history
      * @param actualHistory the actual history
      */
-    private void verifyHistory(int[][] expectedHistory, Map<Integer, int[]> actualHistory)
+    private void verifyHistory(Number[][] expectedHistory, Map<Integer, Number[]> actualHistory)
     {
         Assert.assertNotNull(actualHistory);
         Assert.assertEquals(expectedHistory.length, actualHistory.size());

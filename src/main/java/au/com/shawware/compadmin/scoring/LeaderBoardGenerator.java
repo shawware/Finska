@@ -75,9 +75,9 @@ public class LeaderBoardGenerator
      * @return A map of the results indexed by entrant ID.
      */
     @SuppressWarnings("boxing")
-    public static Map<Integer, int[]> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String scoreItem)
+    public static Map<Integer, Number[]> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String scoreItem)
     {
-        Map<Integer, int[]> history = new HashMap<>();
+        Map<Integer, Number[]> history = new HashMap<>();
         if (rounds <= 0)
         {
             return history;
@@ -88,14 +88,14 @@ public class LeaderBoardGenerator
             for (EntrantResult result : results)
             {
                 int entrantID = result.getEntrantID();
-                int[] row;
+                Number[] row;
                 if (history.containsKey(entrantID))
                 {
                     row = history.get(entrantID);
                 }
                 else
                 {
-                    row = new int[rounds];
+                    row = new Number[rounds];
                     history.put(entrantID, row);
                 }
                 row[i - 1] = rank ? result.getRank() : result.getResultItemValueAsInt(scoreItem);

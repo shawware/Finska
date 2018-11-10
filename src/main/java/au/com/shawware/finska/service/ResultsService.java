@@ -186,9 +186,9 @@ public class ResultsService implements IChangeObserver
     }
 
     @SuppressWarnings("boxing")
-    public Map<Integer, int[]> getLeaderBoardHistory(boolean rank)
+    public Map<Integer, Number[]> getLeaderBoardHistory(boolean rank)
     {
-        Map<Integer, int[]> history;
+        Map<Integer, Number[]> history;
         if (mCurrentCompetition == null)
         {
             history = new HashMap<>();
