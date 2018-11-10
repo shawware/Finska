@@ -63,6 +63,46 @@ public class LeaderBoardGenerator
         }
         return currentResults;
     }
+    
+    /**
+     * Compile the history of the entrants' results over all the rounds.
+     * 
+     * @param compiler the results compiler to use
+     * @param rounds how many rounds to generate the history for
+     * @param rank whether to generate rank or score results
+     * @param scoreItem the name of the entrant result item holding the score
+     * 
+     * @return A map of the results indexed by entrant ID.
+     */
+    @SuppressWarnings("boxing")
+    public static Map<Integer, int[]> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String scoreItem)
+    {
+        Map<Integer, int[]> history = new HashMap<>();
+        if (rounds <= 0)
+        {
+            return history;
+        }
+        for (int i = 1; i <= rounds; i++)
+        {
+            List<EntrantResult> results = generateLeaderBoard(compiler, i);
+            for (EntrantResult result : results)
+            {
+                int entrantID = result.getEntrantID();
+                int[] row;
+                if (history.containsKey(entrantID))
+                {
+                    row = history.get(entrantID);
+                }
+                else
+                {
+                    row = new int[rounds];
+                    history.put(entrantID, row);
+                }
+                row[i - 1] = rank ? result.getRank() : result.getResultItemValueAsInt(scoreItem);
+            }
+        }
+        return history;
+    }
 
     /**
      * Post-processes the compiled results. This includes sorting, ranking

@@ -25,6 +25,24 @@ import au.com.shawware.compadmin.entity.TestCompetition;
 @SuppressWarnings({ "boxing", "static-method", "nls" })
 public class LeaderBoardUnitTest extends AbstractScoringUnitTest
 {
+    /*
+     * Test fixture with all rounds and matches.
+     * Format: round# and match args.
+     */
+    private static final int[][] MATCHES = new int[][]
+    {
+        { 1, 1, 2, 2, 1 },
+        { 1, 3, 4, 1, 0 },
+        { 1, 5, 6, 3, 2 },
+        { 2, 1, 4, 1, 2 },
+        { 2, 2, 5, 3, 2 },
+        { 2, 3, 6, 0, 1 },
+        { 3, 1, 6, 1, 1 },
+        { 3, 2, 3, 3, 1 },
+        { 3, 4, 5, 1, 1 },
+        { 4, 4, 5, 1, 1 },
+    };
+
     /**
      * Test the algorithms in {@link AbstractResultsCompiler} and
      * {@link LeaderBoardGenerator}.
@@ -32,23 +50,6 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     @Test
     public void testLeaderBoardAlgorithm()
     {
-        /*
-         * Test fixture with all rounds and matches.
-         * Format: round# and match args.
-         */
-        final int[][] matches = new int[][]
-        {
-            { 1, 1, 2, 2, 1 },
-            { 1, 3, 4, 1, 0 },
-            { 1, 5, 6, 3, 2 },
-            { 2, 1, 4, 1, 2 },
-            { 2, 2, 5, 3, 2 },
-            { 2, 3, 6, 0, 1 },
-            { 3, 1, 6, 1, 1 },
-            { 3, 2, 3, 3, 1 },
-            { 3, 4, 5, 1, 1 },
-            { 4, 4, 5, 1, 1 },
-        };
 
         TestCompetition competition;
 
@@ -60,7 +61,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
          * the rank delta.
          */
         // Test Round 1 only.
-        competition = generateCompetition(matches, 0, 3);
+        competition = generateCompetition(MATCHES, 0, 3);
         Number[][] round1Results = new Number[][]
         {
             { 1, 5, 1, 1, 0, 0, 3, 2,  1,     1.5, 3, 3 },
@@ -73,7 +74,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 1, round1Results, null, null);
 
         // Test Round 2 only.
-        competition = generateCompetition(matches, 3, 6);
+        competition = generateCompetition(MATCHES, 3, 6);
         Number[][] round2Results = new Number[][]
         {
             { 1, 2, 1, 1, 0, 0, 3, 2,  1,     1.5, 3, 3 },
@@ -86,7 +87,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 1, round2Results, null, null);
 
         // Test Round 3 only.
-        competition = generateCompetition(matches, 6, 9);
+        competition = generateCompetition(MATCHES, 6, 9);
         Number[][] round3Results = new Number[][]
         {
             { 1, 2, 1, 1, 0, 0, 3, 1,  2,     3.0, 3, 6 },
@@ -99,7 +100,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 1, round3Results, null, null);
 
         // Test Rounds 1 and 2 together.
-        competition = generateCompetition(matches, 0, 6);
+        competition = generateCompetition(MATCHES, 0, 6);
         Number[][] rounds1and2Results = new Number[][]
         {
             { 1, 5, 2, 1, 0, 1, 5, 5,  0,     1.0, 3, 1,  0 },
@@ -112,7 +113,7 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 2, rounds1and2Results, round1Results, null);
 
         // Test Rounds 1, 2 and 3 together.
-        competition = generateCompetition(matches, 0, 9);
+        competition = generateCompetition(MATCHES, 0, 9);
         Number[][] rounds1to3results = new Number[][]
         {
             { 1, 2, 3, 2, 0, 1, 7, 5,  2,     1.4, 6, 2,  1 },
@@ -125,6 +126,56 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
         verifyLeaderBoardAlgorithm(competition, 3, rounds1to3results, rounds1and2Results, round1Results);
 
         verifyRoundResults(competition, round1Results, round2Results, round3Results);
+    }
+
+    @Test
+    public void verifyHistoryAlgorithm()
+    {
+        TestCompetition competition = generateCompetition(MATCHES, 0, 9);
+        IResultsCompiler compiler = new TestCompiler(competition);
+        Map<Integer, int[]> actualHistory;
+
+        // Entrant ID is index + 1
+        int[][] expectedRankHistory =
+        {
+                { 2, 3, 3 },
+                { 5, 2, 1 },
+                { 3, 6, 6 },
+                { 6, 5, 5 },
+                { 1, 1, 2 },
+                { 4, 3, 3 },
+        };
+        actualHistory = LeaderBoardGenerator.generateHistory(compiler, 3, true, null);
+        verifyHistory(expectedRankHistory, actualHistory);
+
+        actualHistory = LeaderBoardGenerator.generateHistory(compiler, 3, false, TestResultItems.POINTS);
+        int[][] expectedScoreHistory =
+        {
+                { 3, 3, 4 },
+                { 0, 3, 6 },
+                { 3, 3, 3 },
+                { 0, 3, 4 },
+                { 3, 3, 4 },
+                { 0, 3, 4 },
+        };
+        verifyHistory(expectedScoreHistory, actualHistory);
+    }
+    
+    /**
+     * Verifies the actual history matches the expected.
+     * 
+     * @param expectedHistory the expected history
+     * @param actualHistory the actual history
+     */
+    private void verifyHistory(int[][] expectedHistory, Map<Integer, int[]> actualHistory)
+    {
+        Assert.assertNotNull(actualHistory);
+        Assert.assertEquals(expectedHistory.length, actualHistory.size());
+        for (int i = 0; i < expectedHistory.length; i++)
+        {
+            Assert.assertTrue(actualHistory.containsKey(i + 1));
+            Assert.assertArrayEquals(expectedHistory[i], actualHistory.get(i + 1));
+        }
     }
 
     /**
