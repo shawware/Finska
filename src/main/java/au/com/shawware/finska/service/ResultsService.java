@@ -186,7 +186,7 @@ public class ResultsService implements IChangeObserver
     }
 
     @SuppressWarnings("boxing")
-    public Map<Integer, Number[]> getLeaderBoardHistory(boolean rank)
+    public Map<Integer, Number[]> getRankHistory()
     {
         Map<Integer, Number[]> history;
         if (mCurrentCompetition == null)
@@ -195,7 +195,22 @@ public class ResultsService implements IChangeObserver
         }
         else
         {
-            history = LeaderBoardGenerator.generateHistory(mCompilers.get(mCurrentCompetition.getId()), mCurrentCompetition.numberOfRounds(), rank, ResultItem.POINTS.toString());
+            history = LeaderBoardGenerator.generateRankHistory(mCompilers.get(mCurrentCompetition.getId()), mCurrentCompetition.numberOfRounds());
+        }
+        return history;
+    }
+
+    @SuppressWarnings("boxing")
+    public Map<Integer, Number[]> getResultHistory()
+    {
+        Map<Integer, Number[]> history;
+        if (mCurrentCompetition == null)
+        {
+            history = new HashMap<>();
+        }
+        else
+        {
+            history = LeaderBoardGenerator.generateResultHistory(mCompilers.get(mCurrentCompetition.getId()), mCurrentCompetition.numberOfRounds(), ResultItem.POINTS.toString());
         }
         return history;
     }

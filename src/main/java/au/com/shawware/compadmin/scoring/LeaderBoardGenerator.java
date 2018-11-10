@@ -65,7 +65,7 @@ public class LeaderBoardGenerator
     }
     
     /**
-     * Compile the history of the entrants' results over all the rounds.
+     * Compile the history of the entrants' rank over all the rounds.
      * 
      * @param compiler the results compiler to use
      * @param rounds how many rounds to generate the history for
@@ -74,8 +74,38 @@ public class LeaderBoardGenerator
      * 
      * @return A map of the results indexed by entrant ID.
      */
+    public static Map<Integer, Number[]> generateRankHistory(IResultsCompiler compiler, int rounds)
+    {
+        return generateHistory(compiler, rounds, true, null);
+    }
+    
+    /**
+     * Compile the history of the entrants' results over all the rounds.
+     * 
+     * @param compiler the results compiler to use
+     * @param rounds how many rounds to generate the history for
+     * @param spec the result item specification
+     * @param resultItem the particular result item to retrieve
+     * 
+     * @return A map of the results indexed by entrant ID.
+     */
+    public static Map<Integer, Number[]> generateResultHistory(IResultsCompiler compiler, int rounds, String resultItem)
+    {
+        return generateHistory(compiler, rounds, false, resultItem);
+    }
+
+    /**
+     * Compile the history of the entrants' results over all the rounds.
+     * 
+     * @param compiler the results compiler to use
+     * @param rounds how many rounds to generate the history for
+     * @param rank whether to generate rank or score results
+     * @param resultItem the particular result item to retrieve
+     * 
+     * @return A map of the results indexed by entrant ID.
+     */
     @SuppressWarnings("boxing")
-    public static Map<Integer, Number[]> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String scoreItem)
+    private static Map<Integer, Number[]> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String resultItem)
     {
         Map<Integer, Number[]> history = new HashMap<>();
         if (rounds <= 0)
@@ -98,7 +128,23 @@ public class LeaderBoardGenerator
                     row = new Number[rounds];
                     history.put(entrantID, row);
                 }
-                row[i - 1] = rank ? result.getRank() : result.getResultItemValueAsInt(scoreItem);
+                Number item;
+                if (rank)
+                {
+                    item = result.getRank();
+                }
+                else
+                {
+                    if (result.getResultSpecification().isInteger(resultItem))
+                    {
+                        item = result.getResultItemValueAsInt(resultItem);
+                    }
+                    else
+                    {
+                        item = result.getResultItemValueAsDouble(resultItem);
+                    }
+                }
+                row[i - 1] = item;
             }
         }
         return history;

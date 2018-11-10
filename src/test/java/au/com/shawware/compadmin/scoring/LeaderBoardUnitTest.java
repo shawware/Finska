@@ -145,10 +145,10 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
                 { 1, 1, 2 },
                 { 4, 3, 3 },
         };
-        actualHistory = LeaderBoardGenerator.generateHistory(compiler, 3, true, null);
+        actualHistory = LeaderBoardGenerator.generateRankHistory(compiler, 3);
         verifyHistory(expectedRankHistory, actualHistory);
 
-        actualHistory = LeaderBoardGenerator.generateHistory(compiler, 3, false, TestResultItems.POINTS);
+        actualHistory = LeaderBoardGenerator.generateResultHistory(compiler, 3, TestResultItems.POINTS);
         Number[][] expectedScoreHistory =
         {
                 { 3, 3, 4 },
