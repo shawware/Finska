@@ -69,12 +69,10 @@ public class LeaderBoardGenerator
      * 
      * @param compiler the results compiler to use
      * @param rounds how many rounds to generate the history for
-     * @param rank whether to generate rank or score results
-     * @param scoreItem the name of the entrant result item holding the score
      * 
-     * @return A map of the results indexed by entrant ID.
+     * @return The sorted list of the entrants' rank history.
      */
-    public static Map<Integer, Number[]> generateRankHistory(IResultsCompiler compiler, int rounds)
+    public static List<EntrantHistory> generateRankHistory(IResultsCompiler compiler, int rounds)
     {
         return generateHistory(compiler, rounds, true, null);
     }
@@ -87,9 +85,9 @@ public class LeaderBoardGenerator
      * @param spec the result item specification
      * @param resultItem the particular result item to retrieve
      * 
-     * @return A map of the results indexed by entrant ID.
+     * @return The sorted list of the entrants' result history.
      */
-    public static Map<Integer, Number[]> generateResultHistory(IResultsCompiler compiler, int rounds, String resultItem)
+    public static List<EntrantHistory> generateResultHistory(IResultsCompiler compiler, int rounds, String resultItem)
     {
         return generateHistory(compiler, rounds, false, resultItem);
     }
@@ -102,31 +100,33 @@ public class LeaderBoardGenerator
      * @param rank whether to generate rank or score results
      * @param resultItem the particular result item to retrieve
      * 
-     * @return A map of the results indexed by entrant ID.
+     * @return The sorted list of the entrants' history.
      */
     @SuppressWarnings("boxing")
-    private static Map<Integer, Number[]> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String resultItem)
+    private static List<EntrantHistory> generateHistory(IResultsCompiler compiler, int rounds, boolean rank, String resultItem)
     {
-        Map<Integer, Number[]> history = new HashMap<>();
+        List<EntrantHistory> history = new ArrayList<>();
         if (rounds <= 0)
         {
             return history;
         }
+        Map<Integer, Number[]> historyData = new HashMap<>();
+        List<EntrantResult> results = null;
         for (int i = 1; i <= rounds; i++)
         {
-            List<EntrantResult> results = generateLeaderBoard(compiler, i);
+            results = generateLeaderBoard(compiler, i);
             for (EntrantResult result : results)
             {
                 int entrantID = result.getEntrantID();
                 Number[] row;
-                if (history.containsKey(entrantID))
+                if (historyData.containsKey(entrantID))
                 {
-                    row = history.get(entrantID);
+                    row = historyData.get(entrantID);
                 }
                 else
                 {
                     row = new Number[rounds];
-                    history.put(entrantID, row);
+                    historyData.put(entrantID, row);
                 }
                 Number item;
                 if (rank)
@@ -146,6 +146,16 @@ public class LeaderBoardGenerator
                 }
                 row[i - 1] = item;
             }
+        }
+        /*
+         * The results are always ordered by rank. The final value for results
+         * will be as at the last round and we use this ordering.
+         */
+        if (results != null) // This should always be the case.
+        {
+            results.forEach(result -> {
+                history.add(new EntrantHistory(result.getEntrantID(), historyData.get(result.getEntrantID())));
+            });
         }
         return history;
     }

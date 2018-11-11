@@ -133,30 +133,29 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
     {
         TestCompetition competition = generateCompetition(MATCHES, 0, 9);
         IResultsCompiler compiler = new TestCompiler(competition);
-        Map<Integer, Number[]> actualHistory;
+        List<EntrantHistory> actualHistory;
 
-        // Entrant ID is index + 1
-        Number[][] expectedRankHistory =
+        EntrantHistory[] expectedRankHistory =
         {
-                { 2, 3, 3 },
-                { 5, 2, 1 },
-                { 3, 6, 6 },
-                { 6, 5, 5 },
-                { 1, 1, 2 },
-                { 4, 3, 3 },
+            new EntrantHistory(2, new Integer[]{ 5, 2, 1 }),
+            new EntrantHistory(5, new Integer[]{ 1, 1, 2 }),
+            new EntrantHistory(1, new Integer[]{ 2, 3, 3 }),
+            new EntrantHistory(6, new Integer[]{ 4, 3, 3 }),
+            new EntrantHistory(4, new Integer[]{ 6, 5, 5 }),
+            new EntrantHistory(3, new Integer[]{ 3, 6, 6 }),
         };
         actualHistory = LeaderBoardGenerator.generateRankHistory(compiler, 3);
         verifyHistory(expectedRankHistory, actualHistory);
 
         actualHistory = LeaderBoardGenerator.generateResultHistory(compiler, 3, TestResultItems.POINTS);
-        Number[][] expectedScoreHistory =
+        EntrantHistory[] expectedScoreHistory =
         {
-                { 3, 3, 4 },
-                { 0, 3, 6 },
-                { 3, 3, 3 },
-                { 0, 3, 4 },
-                { 3, 3, 4 },
-                { 0, 3, 4 },
+            new EntrantHistory(2, new Integer[]{ 0, 3, 6 }),
+            new EntrantHistory(5, new Integer[]{ 3, 3, 4 }),
+            new EntrantHistory(1, new Integer[]{ 3, 3, 4 }),
+            new EntrantHistory(6, new Integer[]{ 0, 3, 4 }),
+            new EntrantHistory(4, new Integer[]{ 0, 3, 4 }),
+            new EntrantHistory(3, new Integer[]{ 3, 3, 3 }),
         };
         verifyHistory(expectedScoreHistory, actualHistory);
     }
@@ -167,14 +166,15 @@ public class LeaderBoardUnitTest extends AbstractScoringUnitTest
      * @param expectedHistory the expected history
      * @param actualHistory the actual history
      */
-    private void verifyHistory(Number[][] expectedHistory, Map<Integer, Number[]> actualHistory)
+    private void verifyHistory(EntrantHistory[] expectedHistory, List<EntrantHistory> actualHistory)
     {
         Assert.assertNotNull(actualHistory);
         Assert.assertEquals(expectedHistory.length, actualHistory.size());
         for (int i = 0; i < expectedHistory.length; i++)
         {
-            Assert.assertTrue(actualHistory.containsKey(i + 1));
-            Assert.assertArrayEquals(expectedHistory[i], actualHistory.get(i + 1));
+            EntrantHistory history = actualHistory.get(i);
+            Assert.assertEquals(expectedHistory[i].getEntrantID(), history.getEntrantID());
+            Assert.assertArrayEquals(expectedHistory[i].getHistory(), history.getHistory());
         }
     }
 

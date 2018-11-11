@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import au.com.shawware.compadmin.entity.Competition;
+import au.com.shawware.compadmin.scoring.EntrantHistory;
 import au.com.shawware.compadmin.scoring.EntrantResult;
 import au.com.shawware.compadmin.scoring.IResultsCompiler;
 import au.com.shawware.compadmin.scoring.LeaderBoardGenerator;
@@ -186,12 +187,12 @@ public class ResultsService implements IChangeObserver
     }
 
     @SuppressWarnings("boxing")
-    public Map<Integer, Number[]> getRankHistory()
+    public List<EntrantHistory> getRankHistory()
     {
-        Map<Integer, Number[]> history;
+        List<EntrantHistory> history;
         if (mCurrentCompetition == null)
         {
-            history = new HashMap<>();
+            history = new ArrayList<>();
         }
         else
         {
@@ -201,12 +202,12 @@ public class ResultsService implements IChangeObserver
     }
 
     @SuppressWarnings("boxing")
-    public Map<Integer, Number[]> getResultHistory()
+    public List<EntrantHistory> getResultHistory()
     {
-        Map<Integer, Number[]> history;
+        List<EntrantHistory> history;
         if (mCurrentCompetition == null)
         {
-            history = new HashMap<>();
+            history = new ArrayList<>();
         }
         else
         {
